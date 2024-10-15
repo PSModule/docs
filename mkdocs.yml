@@ -1,4 +1,4 @@
-site_name: ${{ REPO_NAME }}
+site_name: PSModule Docs
 theme:
   name: material
   language: en
@@ -41,8 +41,8 @@ theme:
     - search.suggest
     - search.highlight
 
-repo_name: PSModule/${{ REPO_NAME }}
-repo_url: https://github.com/PSModule/${{ REPO_NAME }}
+repo_name: PSModule/docs
+repo_url: https://github.com/PSModule/docs
 
 plugins:
   - search
