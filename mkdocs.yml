@@ -40,19 +40,33 @@ theme:
   icon:
     repo: material/github
   features:
-    - navigation.instant
-    - navigation.instant.progress
-    - navigation.tabs
-    - navigation.indexes
-    - navigation.top
-    - navigation.tracking
-    - search.suggest
-    - search.highlight
+    - announce.dismiss
     - content.action.edit
     - content.action.view
     - content.code.annotate
     - content.code.copy
+    # - content.code.select
+    # - content.footnote.tooltips
+    # - content.tabs.link
     - content.tooltips
+    # - header.autohide
+    # - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    # - navigation.prune
+    - navigation.sections
+    - navigation.tabs
+    # - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+    # - toc.integrate
 
 nav:
   - Home: index.md
