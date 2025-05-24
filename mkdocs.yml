@@ -11,8 +11,8 @@ theme:
   language: en
   custom_dir: ./overrides
   font:
-    text: Roboto
-    code: Sono
+    text: Noto Sans
+    code: Noto Sans Mono
   logo: assets/images/icon.png
   favicon: assets/images/icon.png
   palette:
@@ -97,6 +97,9 @@ copyright: Copyright &copy; 2023 - 2025 PSModule
 plugins:
   - meta
   - search
+  - social:
+      cards_layout_options:
+        font_family: Noto Sans
   - table-reader # https://timvink.github.io/mkdocs-table-reader-plugin/
   - blog:
       blog_dir: Blog
