@@ -85,6 +85,7 @@ plugins:
   - table-reader # https://timvink.github.io/mkdocs-table-reader-plugin/
   - blog:
       blog_dir: Blog
+      post_dir: "{blog}/Posts"
       blog_toc: true
   - git-committers: # https://github.com/ojacques/mkdocs-git-committers-plugin-2
       repository: PSModule/docs
@@ -95,7 +96,7 @@ plugins:
       enable_creation_date: true
       type: timeago
   - rss: # https://guts.github.io/mkdocs-rss-plugin/
-      match_path: Blog/posts/.*
+      match_path: Blog/Posts/.*
       date_from_meta:
         as_creation: date.created
         as_update: date.updated
