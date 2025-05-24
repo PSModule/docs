@@ -10,7 +10,7 @@ $owner = $env:GITHUB_REPOSITORY_OWNER
 LogGroup "Connect to organization [$owner]" {
     Connect-GitHubApp -Organization $owner -Default
     Write-Output "Owner: $owner"
-    $rawRepos = Get-GitHubRepository -Organization $owner
+    $rawRepos = Get-GitHubRepository -Organization $owner -AdditionalProperty Description
     Write-Output "Found $($rawRepos.Count) repositories"
     $repos = $rawRepos | ForEach-Object {
         $rawRepo = $_
@@ -18,10 +18,10 @@ LogGroup "Connect to organization [$owner]" {
         $properties | Where-Object { $_.property_name -eq 'Type' } | ForEach-Object {
             $type = $_.value
             [pscustomobject]@{
-                Name        = $rawRepo.name
+                Name        = $rawRepo.Name
                 Owner       = $owner
                 Type        = $type
-                Description = $rawRepo.description
+                Description = $rawRepo.Description
             }
         }
     } | Sort-Object Type, Name
