@@ -52,6 +52,7 @@ theme:
     - content.action.view
     - content.code.annotate
     - content.code.copy
+    - content.tooltips
 
 nav:
   - Home: index.md
