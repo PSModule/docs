@@ -7,6 +7,12 @@ By leveraging the GitHub platform and PowerShell, we aim to automate the repetit
 
 In the list [Products and projects we focus on](#products-and-projects-we-focus-on) you will see what we support.
 
+| Name | Value | Description |
+|-|-|-|
+| qwe | ewq | qweqwe |
+| wer | rew | werwer |
+| rew | ert | yerte  |
+
 ## Supported Platforms
 
 This development framework is built to serve the needs of modern developers and environments. We prioritize supporting the latest Long-Term Servicing
