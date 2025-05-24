@@ -1,3 +1,8 @@
+---
+hide:
+  - navigation
+---
+
 # A GitHub & PowerShell development framework
 
 We empower PowerShell-savvy developers to effortlessly transform their ideas into impactful solutions.
