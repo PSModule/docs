@@ -2,6 +2,7 @@ site_name: PSModule Docs
 theme:
   name: material
   language: en
+  custom_dir: overrides
   font:
     text: Roboto
     code: Sono
@@ -48,10 +49,10 @@ theme:
 nav:
   - Home: README.md
   - Projects:
-    - PowerShell Modules: PowerShell/index.md
-    - GitHub Actions: GitHub-Actions/index.md
+      - PowerShell Modules: PowerShell/index.md
+      - GitHub Actions: GitHub-Actions/index.md
   - Blog:
-    - blog/index.md
+      - blog/index.md
 
 repo_name: PSModule/docs
 repo_url: https://github.com/PSModule/docs
