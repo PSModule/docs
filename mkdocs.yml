@@ -150,6 +150,9 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/PSModule/
       name: PSModule on GitHub
+    - icon: material/powershell
+      link: https://www.powershellgallery.com/profiles/PSModule.io
+      name: PSModule on the PowerShell Gallery
   consent:
     title: Cookie consent
     description: >-
