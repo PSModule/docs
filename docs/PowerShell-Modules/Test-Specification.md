@@ -42,10 +42,10 @@ Each function is tested within a structured Pester `Describe` block that follows
 
 ## Example Test Structure
 
-```powershell
+```pwsh
 Describe 'Uri' {
     Describe 'Get-Uri' {
-        Dontext 'Get-Uri - simple usage' {
+        Context 'Get-Uri - simple usage' {
             It 'Get-Uri - gets the URI object when provided a string' {
                 $result = Get-Uri -InputString 'https://example.com'
                 $result | Should -BeOfType [System.Uri]

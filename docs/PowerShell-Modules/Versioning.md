@@ -1,5 +1,3 @@
-Understood. I will research how changes in exported PowerShell module components (functions, variables, classes, and enums) impact Semantic Versioning (SemVer). The focus will be on defining a specification that determines whether a change results in a major, minor, or patch version bump. The outcome will be a Markdown document outlining these rules, considering your framework's approach where only the next version from the current stable release matters, and users are expected to stay up-to-date. I will also ensure the spec is structured for use with custom PowerShell scripts.
-
 # PowerShell Module Semantic Versioning Specification
 
 ## Introduction
