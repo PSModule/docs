@@ -1,0 +1,26 @@
+name: Update profile
+
+on:
+  workflow_dispatch:
+  push:
+  schedule:
+    - cron: '0 * * * *'
+
+permissions: {}
+
+jobs:
+  update_readme:
+    name: Update Profile README
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Update README
+        uses: PSModule/GitHub-Script@v1
+        with:
+          ClientID: ${{ secrets.SCRIBBLER_BOT_CLIENT_ID }}
+          PrivateKey: ${{ secrets.SCRIBBLER_BOT_PRIVATE_KEY }}
+          Script: .github/scripts/UpdateReadme.ps1
