@@ -19,24 +19,22 @@ theme:
     # Palette toggle for automatic mode
     - media: '(prefers-color-scheme)'
       toggle:
-        primary: black
-        accent: green
         icon: material/link
         name: Switch to dark mode
     # Palette toggle for dark mode
     - media: '(prefers-color-scheme: dark)'
       scheme: slate
+      primary: blue
+      accent: green
       toggle:
-        primary: black
-        accent: green
         icon: material/toggle-switch-off-outline
         name: Switch to light mode
     # Palette toggle for light mode
     - media: '(prefers-color-scheme: light)'
       scheme: default
+      primary: blue
+      accent: green
       toggle:
-        primary: indigo
-        accent: green
         icon: material/toggle-switch
         name: Switch to system preference
   icon:
