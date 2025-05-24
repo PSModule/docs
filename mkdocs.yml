@@ -123,7 +123,7 @@ plugins:
 
 markdown_extensions:
   - toc:
-      permalink: 🔗 # Adds a link icon to headings
+      permalink: ':material-link-variant:' # Adds a link icon to headings
   - attr_list
   - abbr
   - admonition
