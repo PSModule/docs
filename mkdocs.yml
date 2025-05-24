@@ -39,6 +39,7 @@ theme:
         name: Switch to system preference
   icon:
     repo: material/github
+    link: material/link-variant
   features:
     - announce.dismiss
     - content.action.edit
