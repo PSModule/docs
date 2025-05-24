@@ -9,7 +9,7 @@ theme:
   favicon: assets/icon.png
   palette:
     # Palette toggle for automatic mode
-    - media: "(prefers-color-scheme)"
+    - media: '(prefers-color-scheme)'
       toggle:
         icon: material/link
         name: Switch to dark mode
@@ -31,6 +31,8 @@ theme:
         name: Switch to system preference
   icon:
     repo: material/github
+    edit: material/pencil
+    view: material/eye
   features:
     - navigation.instant
     - navigation.instant.progress
@@ -40,6 +42,7 @@ theme:
     - navigation.tracking
     - search.suggest
     - search.highlight
+    - content.action.edit
 
 # nav:
 #   - Home: README.md
@@ -83,3 +86,6 @@ extra:
     actions:
       - accept
       - reject
+
+extra_css:
+  - stylesheets/extra.css
