@@ -50,11 +50,12 @@ nav:
   - Projects:
     - PowerShell Modules: PowerShell/index.md
     - GitHub Actions: GitHub-Actions/index.md
-  - blog:
+  - Blog:
     - blog/index.md
 
 repo_name: PSModule/docs
 repo_url: https://github.com/PSModule/docs
+edit_uri: edit/main/docs/
 copyright: Copyright &copy; 2016 - 2025 PSModule
 
 plugins:
