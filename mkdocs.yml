@@ -68,7 +68,7 @@ copyright: Copyright &copy; 2023 - 2025 PSModule
 plugins:
   - meta
   - blog:
-    blog_toc: true
+      blog_toc: true
   - search
   - git-committers: # https://github.com/ojacques/mkdocs-git-committers-plugin-2
       repository: PSModule/docs
