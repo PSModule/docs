@@ -5,6 +5,7 @@
 # https://www.mkdocs.org/getting-started/
 
 site_name: PSModule Docs
+site_url: https://psmodule.io/docs/
 theme:
   name: material
   language: en
