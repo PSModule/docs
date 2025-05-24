@@ -5,6 +5,8 @@ Our approach centers around a development framework that allows developers to fo
 By leveraging the GitHub platform and PowerShell, we aim to automate the repetitive tasks, enabling developers — whether as consumers or contributors
  — to concentrate on coding without distractions.
 
+Visit the [docs][PSModuleDocs]
+
 ## Supported Platforms
 
 This development framework is built to serve the needs of modern developers and environments. We prioritize supporting the latest Long-Term Servicing

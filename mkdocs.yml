@@ -123,6 +123,7 @@ markdown_extensions:
   - pymdownx.snippets:
       auto_append:
         - includes/abbreviations.md
+        - includes/links.md
 extra:
   social:
     - icon: fontawesome/brands/discord
