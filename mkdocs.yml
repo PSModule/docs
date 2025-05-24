@@ -31,8 +31,6 @@ theme:
         name: Switch to system preference
   icon:
     repo: material/github
-    edit: material/pencil
-    view: material/eye
   features:
     - navigation.instant
     - navigation.instant.progress
@@ -44,11 +42,13 @@ theme:
     - search.highlight
     - content.action.edit
 
-# nav:
-#   - Home: README.md
-#   - Projects:
-#     - PowerShell Modules: PowerShell/index.md
-#     - GitHub Actions: GitHub-Actions/index.md
+nav:
+  - Home: README.md
+  - Projects:
+    - PowerShell Modules: PowerShell/index.md
+    - GitHub Actions: GitHub-Actions/index.md
+  - blog:
+    - blog/index.md
 
 repo_name: PSModule/docs
 repo_url: https://github.com/PSModule/docs
