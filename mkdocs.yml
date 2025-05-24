@@ -11,8 +11,8 @@ theme:
   language: en
   custom_dir: ./overrides
   font:
-    text: Noto Sans
-    code: Noto Sans Mono
+    text: Mona Sans
+    code: Source Code Pro
   logo: assets/images/icon.png
   favicon: assets/images/icon.png
   palette:
@@ -95,7 +95,7 @@ plugins:
   - search
   - social:
       cards_layout_options:
-        font_family: Noto Sans
+        font_family: Mona Sans
         background_color: deeppink
   - table-reader # https://timvink.github.io/mkdocs-table-reader-plugin/
   - blog:
