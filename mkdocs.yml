@@ -24,16 +24,16 @@ theme:
     # Palette toggle for dark mode
     - media: '(prefers-color-scheme: dark)'
       scheme: slate
-      primary: blue
-      accent: green
+      primary: black
+      accent: blue
       toggle:
         icon: material/toggle-switch-off-outline
         name: Switch to light mode
     # Palette toggle for light mode
     - media: '(prefers-color-scheme: light)'
       scheme: default
-      primary: blue
-      accent: green
+      primary: black
+      accent: blue
       toggle:
         icon: material/toggle-switch
         name: Switch to system preference
