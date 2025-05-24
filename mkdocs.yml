@@ -67,6 +67,8 @@ copyright: Copyright &copy; 2023 - 2025 PSModule
 
 plugins:
   - meta
+  - blog:
+    blog_toc: true
   - search
   - git-committers: # https://github.com/ojacques/mkdocs-git-committers-plugin-2
       repository: PSModule/docs
@@ -76,6 +78,11 @@ plugins:
   - git-revision-date-localized:
       enable_creation_date: true
       type: timeago
+  - rss: # https://guts.github.io/mkdocs-rss-plugin/
+      match_path: Blog/posts/.*
+      date_from_meta:
+        as_creation: date.created
+        as_update: date.updated
 
 markdown_extensions:
   - toc:
@@ -105,4 +112,4 @@ extra:
       - reject
 
 extra_css:
-  - stylesheets/extra.css
+  - assets/stylesheets/extra.css
