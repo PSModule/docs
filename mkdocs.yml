@@ -41,11 +41,11 @@ theme:
     - search.suggest
     - search.highlight
 
-nav:
-  - Home: README.md
-  - Projects:
-    - PowerShell Modules: PowerShell/index.md
-    - GitHub Actions: GitHub-Actions/index.md
+# nav:
+#   - Home: README.md
+#   - Projects:
+#     - PowerShell Modules: PowerShell/index.md
+#     - GitHub Actions: GitHub-Actions/index.md
 
 repo_name: PSModule/docs
 repo_url: https://github.com/PSModule/docs
