@@ -54,22 +54,25 @@ theme:
     - content.code.copy
 
 nav:
-  - Home: README.md
-  - Projects:
-      - PowerShell Modules: PowerShell/index.md
-          - PowerShell/Test-Specification.md
-          - PowerShell/Versioning.md
-      - GitHub Actions: GitHub-Actions/index.md
-          - GitHub-Actions/Some-More.md
-          - GitHub-Actions/Test-Something.md
-          - GitHub-Actions/Subtopic/index.md
-          - GitHub-Actions/Subtopic/Some-More.md
-          - GitHub-Actions/Subtopic/Test-Something.md
-  - Solutions:
-      - Solutions/index.md
-  - Blog:
-      - Blog/index.md
-  - About: About/index.md
+- Home: index.md
+- Projects:
+  - PowerShell Modules:
+    - PowerShell-Modules/index.md
+    - Test-Specification: PowerShell-Modules/Test-Specification.md
+    - Versioning: PowerShell-Modules/Versioning.md
+  - GitHub Actions:
+    - GitHub-Actions/index.md
+    - Some More: GitHub-Actions/Some-More.md
+    - Test Something: GitHub-Actions/Test-Something.md
+    - Subtopic:
+      - GitHub-Actions/Subtopic/index.md
+      - Some More: GitHub-Actions/Subtopic/Some-More.md
+      - Test Something: GitHub-Actions/Subtopic/Test-Something.md
+- Solutions:
+  - Solutions/index.md
+- Blog:
+  - Blog/index.md
+- About: About/index.md
 
 repo_name: PSModule/docs
 repo_url: https://github.com/PSModule/docs
