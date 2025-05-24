@@ -2,7 +2,7 @@ site_name: PSModule Docs
 theme:
   name: material
   language: en
-  custom_dir: overrides
+  custom_dir: ./overrides
   font:
     text: Roboto
     code: Sono
