@@ -1,7 +1,3 @@
----
-comments: true
----
-
 # GitHub Actions
 
 Action parameters:

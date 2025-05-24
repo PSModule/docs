@@ -60,6 +60,7 @@ edit_uri: edit/main/docs/
 copyright: Copyright &copy; 2016 - 2025 PSModule
 
 plugins:
+  - meta
   - search
   - git-committers: # https://github.com/ojacques/mkdocs-git-committers-plugin-2
       repository: PSModule/docs
