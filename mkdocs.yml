@@ -54,25 +54,25 @@ theme:
     - content.code.copy
 
 nav:
-- Home: index.md
-- Projects:
-  - PowerShell Modules:
-    - PowerShell-Modules/index.md
-    - Test-Specification: PowerShell-Modules/Test-Specification.md
-    - Versioning: PowerShell-Modules/Versioning.md
-  - GitHub Actions:
-    - GitHub-Actions/index.md
-    - Some More: GitHub-Actions/Some-More.md
-    - Test Something: GitHub-Actions/Test-Something.md
-    - Subtopic:
-      - GitHub-Actions/Subtopic/index.md
-      - Some More: GitHub-Actions/Subtopic/Some-More.md
-      - Test Something: GitHub-Actions/Subtopic/Test-Something.md
-- Solutions:
-  - Solutions/index.md
-- Blog:
-  - Blog/index.md
-- About: About/index.md
+  - Home: index.md
+  - Projects:
+      - PowerShell Modules:
+          - PowerShell-Modules/index.md
+          - Test-Specification: PowerShell-Modules/Test-Specification.md
+          - Versioning: PowerShell-Modules/Versioning.md
+      - GitHub Actions:
+          - GitHub-Actions/index.md
+          - Some More: GitHub-Actions/Some-More.md
+          - Test Something: GitHub-Actions/Test-Something.md
+          - Subtopic:
+              - GitHub-Actions/Subtopic/index.md
+              - Some More: GitHub-Actions/Subtopic/Some-More.md
+              - Test Something: GitHub-Actions/Subtopic/Test-Something.md
+  - Solutions:
+      - Solutions/index.md
+  - Blog:
+      - Blog/index.md
+  - About: About/index.md
 
 repo_name: PSModule/docs
 repo_url: https://github.com/PSModule/docs
@@ -82,6 +82,7 @@ copyright: Copyright &copy; 2023 - 2025 PSModule
 plugins:
   - meta
   - search
+  - table-reader # https://timvink.github.io/mkdocs-table-reader-plugin/
   - blog:
       blog_dir: Blog
       blog_toc: true
@@ -105,7 +106,13 @@ markdown_extensions:
   - attr_list
   - admonition
   - md_in_html
+  - tables
   - pymdownx.details # Enables collapsible admonitions
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
 extra:
   social:
@@ -127,4 +134,8 @@ extra:
       - reject
 
 extra_css:
-- assets/stylesheets/extra.css
+  - assets/stylesheets/extra.css
+
+extra_javascript:
+  - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
+  - assets/javascripts/tablesort.js

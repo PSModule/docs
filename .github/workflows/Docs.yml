@@ -40,6 +40,7 @@ jobs:
           pip install mkdocs-git-committers-plugin-2
           pip install mkdocs-rss-plugin
           pip install "mkdocs-material[imaging]"
+          pip install mkdocs-table-reader-plugin
 
       - name: Build mkdocs-material project
         run: |
