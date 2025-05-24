@@ -123,7 +123,7 @@ plugins:
 
 markdown_extensions:
   - toc:
-      permalink: true # Adds a link icon to headings
+      permalink: 🔗 # Adds a link icon to headings
   - attr_list
   - abbr
   - admonition
