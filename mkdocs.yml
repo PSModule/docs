@@ -1,3 +1,9 @@
+# Material for MkDocs configuration
+# https://squidfunk.github.io/mkdocs-material/getting-started/
+#
+# Mkdocs configuration
+# https://www.mkdocs.org/getting-started/
+
 site_name: PSModule Docs
 theme:
   name: material
