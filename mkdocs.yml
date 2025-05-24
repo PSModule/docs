@@ -60,9 +60,11 @@ copyright: Copyright &copy; 2016 - 2025 PSModule
 
 plugins:
   - search
-  - git-committers:
+  - git-committers: # https://github.com/ojacques/mkdocs-git-committers-plugin-2
       repository: PSModule/docs
       branch: main
+      exclude_committers:
+        - 'web-flow'
   - git-revision-date-localized:
       enable_creation_date: true
       type: timeago
