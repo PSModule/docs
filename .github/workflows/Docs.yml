@@ -10,8 +10,6 @@ on:
       - mkdocs.yml
       - .github/workflows/Docs.yml
 
-permissions: {}
-
 env:
   GH_TOKEN: ${{ github.token }}
   MKDOCS_GIT_COMMITTERS_APIKEY: ${{ github.token }}
@@ -20,11 +18,13 @@ defaults:
   run:
     shell: pwsh
 
+permissions:
+  pages: write    # to deploy to Pages
+  id-token: write # to verify the deployment originates from an appropriate source
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read # to checkout the repo
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,9 +47,6 @@ jobs:
 
   deploy:
     needs: build
-    permissions:
-      pages: write    # to deploy to Pages
-      id-token: write # to verify the deployment originates from an appropriate source
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
