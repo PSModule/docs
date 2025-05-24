@@ -41,6 +41,9 @@ theme:
     - search.suggest
     - search.highlight
     - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
 
 nav:
   - Home: README.md
@@ -52,6 +55,7 @@ nav:
 
 repo_name: PSModule/docs
 repo_url: https://github.com/PSModule/docs
+copyright: Copyright &copy; 2016 - 2025 PSModule
 
 plugins:
   - search
