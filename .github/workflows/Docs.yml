@@ -19,6 +19,7 @@ defaults:
     shell: pwsh
 
 permissions:
+  contents: write  # to push GitHub Pages to the gh-pages branch
   pages: write    # to deploy to Pages
   id-token: write # to verify the deployment originates from an appropriate source
 
