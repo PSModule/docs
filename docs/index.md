@@ -13,7 +13,7 @@ By leveraging the GitHub platform and PowerShell, we aim to automate the repetit
 ## Supported Platforms
 
 This development framework is built to serve the needs of modern developers and environments. We prioritize supporting the latest Long-Term Servicing
-([LTS](Dictionary/index.md#LTS){data-preview}) version of PowerShell to ensure that we can leverage the most recent features and capabilities, keeping our framework aligned with the demands
+([LTS](Dictionary/index.md#lts){data-preview}) version of PowerShell to ensure that we can leverage the most recent features and capabilities, keeping our framework aligned with the demands
 of today’s development landscape. We assume most of the users of this framework work on modern platforms and have access to the latest versions of
 PowerShell or seek to use it to develop solutions intended to run on modern systems, like GitHub Actions, Azure Functions on a developer machine.
 
