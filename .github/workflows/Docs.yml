@@ -30,7 +30,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/configure-pages@v5
+      - name: Connect to GitHub
+        uses: PSModule/GitHub-Script@v1
 
       - name: Install mkdocs-material
         env:
@@ -51,15 +52,5 @@ jobs:
         run: |
           mkdocs build --config-file ./mkdocs.yml --strict --site-dir _site/
 
-      - uses: actions/upload-pages-artifact@v3
-
-  deploy:
-    needs: build
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        run: mkdocs gh-deploy --force
