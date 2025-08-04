@@ -32,9 +32,14 @@ jobs:
 
       - uses: actions/configure-pages@v5
 
-      - name: Install mkdoks-material
+      - name: Install mkdocs-material
+        env:
+          GH_TOKEN: ${{ secrets.MATERIAL_FOR_MKDOCS_INSIDER_PAT }}
         run: |
-          pip install mkdocs-material
+          pip install git+https://${GH_TOKEN}@github.com/squidfunk/mkdocs-material-insiders.git
+
+      - name: Install plugins
+        run: |
           pip install mkdocs-git-authors-plugin
           pip install mkdocs-git-revision-date-localized-plugin
           pip install mkdocs-git-committers-plugin-2
