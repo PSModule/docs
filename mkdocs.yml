@@ -13,8 +13,8 @@ theme:
   font:
     text: Mona Sans
     code: Source Code Pro
-  logo: assets/images/icon.png
-  favicon: assets/images/icon.png
+  logo: docs/assets/images/icon.png
+  favicon: docs/assets/images/icon.png
   palette:
     # Palette toggle for automatic mode
     - media: '(prefers-color-scheme)'
