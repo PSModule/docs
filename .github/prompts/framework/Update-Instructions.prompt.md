@@ -75,7 +75,7 @@ The following tasks should be executed in order, with each task depending on the
 **Goal**: Clean up legacy instruction files after successful migration
 **Actions**:
 1. Verify all content has been successfully migrated from legacy files
-2. Move any files in `.github/instructions/` (outside framework/repo) to appropriate subfolders
+2. Delete any files in `.github/instructions/` (outside framework/repo) after confirming their content has been migrated to appropriate framework/repo subfolders
 3. Remove `.github/copilot-instructions.md` ONLY after verifying complete migration
 4. Clean up any other legacy instruction files found
 
@@ -96,7 +96,7 @@ The following tasks should be executed in order, with each task depending on the
 2. Separate framework-level generic guidance from repo-specific guidance:
    - `.github/instructions/framework/...` = generic, reusable, automation-managed
    - `.github/instructions/repo/...` = project-specific, manually curated
-   - Other files or folders in the `.github/instructions/` directory MUST be treated as potential candidates for either framework or repo-specific instructions, resulting in its content being moved to the appropriate subfolder and deleted
+   - Other files or folders in the `.github/instructions/` directory MUST be treated as potential candidates for either framework or repo-specific instructions, resulting in its content being migrated to the appropriate subfolder and then deleted
 3. Evaluate and extract content from `.github/instructions/repo/...` to create or update the corresponding framework instructions
 4. Move any existing content from `.github/copilot-instructions.md` into the appropriate path-scoped files
 
@@ -191,6 +191,11 @@ Migration process for `.github/copilot-instructions.md`:
    - Language-specific guidance → appropriate language folders
 4. Preserve all valuable content; do not lose important guidance (T005)
 5. Remove `.github/copilot-instructions.md` ONLY after verifying all content has been properly migrated (T007)
+
+Cleanup process for loose instruction files (T007):
+1. Verify all content from loose instruction files has been migrated to framework/repo structure
+2. Delete loose files after confirming successful content migration
+3. Do not move files - delete them after migration is confirmed complete
 
 ## Content model for every instruction file
 
@@ -331,7 +336,7 @@ Upon successful completion of all tasks, the following deliverables will be prod
 ### From T005-T007: Migration and Cleanup
 3. Content migration from `.github/copilot-instructions.md` completed
 4. Cleanup: `.github/copilot-instructions.md` file removed after successful migration
-5. Cleanup: Any loose instruction files moved to appropriate framework/repo subfolders
+5. Cleanup: Any loose instruction files deleted after content migrated to appropriate framework/repo subfolders
 
 ### From T008: Final Validation
 6. Final validation of system completeness and accuracy
