@@ -1131,32 +1131,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#instructions-structured-guidance" class="md-nav__link">
+  <a href="#file-structure-specification_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Instructions (Structured Guidance)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#prompts-reusable-templates" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Prompts (Reusable Templates)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#chat-modes-conversation-contexts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Chat Modes (Conversation Contexts)
+        File Structure Specification
       
     </span>
   </a>
@@ -1874,32 +1852,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#instructions-structured-guidance" class="md-nav__link">
+  <a href="#file-structure-specification_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Instructions (Structured Guidance)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#prompts-reusable-templates" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Prompts (Reusable Templates)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#chat-modes-conversation-contexts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Chat Modes (Conversation Contexts)
+        File Structure Specification
       
     </span>
   </a>
@@ -2290,39 +2246,125 @@ architecture implements a scalable multi-tier approach for managing:</p>
         └── {chatmode-files}              # Project-specific chat modes
 </code></pre></div>
 <h3 id="file-structure-specification">File Structure Specification<a class="headerlink" href="#file-structure-specification" title="Permanent link">#</a></h3>
-<h4 id="instructions-structured-guidance">Instructions (Structured Guidance)<a class="headerlink" href="#instructions-structured-guidance" title="Permanent link">#</a></h4>
-<p><strong>Enterprise Files (Enterprise-Managed, Optional)</strong>
-- <strong><code>instructions/enterprise/main.instructions.md</code></strong>: Enterprise-wide guidelines, compliance requirements, and governance
-- <strong><code>instructions/enterprise/{Language}/main.instructions.md</code></strong>: Enterprise-specific language standards (e.g., "C# Enterprise coding standards")
-- <strong><code>instructions/enterprise/{Language}/{context}.instructions.md</code></strong>: Enterprise-specific patterns for compliance, security, or organizational needs</p>
-<p><strong>Organization Files (Community/Framework-Managed)</strong>
-- <strong><code>instructions/organization/main.instructions.md</code></strong>: Universal framework guidelines and architectural principles
-- <strong><code>instructions/organization/{Language}/main.instructions.md</code></strong>: Community standard style guides and language-specific patterns
-- <strong><code>instructions/organization/{Language}/{context}.instructions.md</code></strong>: Framework-specific patterns for specialized scenarios</p>
-<p><strong>Repository Files (Repository-Managed)</strong>
-- <strong><code>instructions/repository/main.instructions.md</code></strong>: Repository-specific context, technology stack, and project rules
-- <strong><code>instructions/repository/{Language}/main.instructions.md</code></strong>: Project-specific language overrides and patterns
-- <strong><code>instructions/repository/{Language}/{context}.instructions.md</code></strong>: Most specific project-based overrides</p>
-<h4 id="prompts-reusable-templates">Prompts (Reusable Templates)<a class="headerlink" href="#prompts-reusable-templates" title="Permanent link">#</a></h4>
-<p><strong>Organization Files (Community/Framework-Managed)</strong>
-- <strong><code>prompts/organization/{name}.prompt.md</code></strong>: Standard community prompt templates for common development scenarios
-- Organization prompts provide consistent templates for frequent framework-related tasks</p>
-<p><strong>Enterprise Files (Enterprise-Managed, Optional)</strong>
-- <strong><code>prompts/enterprise/{name}.prompt.md</code></strong>: Enterprise-customized prompt templates incorporating company standards
-- Enterprise prompts extend community templates with enterprise-specific requirements</p>
-<p><strong>Repository Files (Repository-Managed)</strong>
-- <strong><code>prompts/repository/{name}.prompt.md</code></strong>: Project-specific prompt templates tailored to repository requirements
-- Repository prompts provide the most specific project-based customizations</p>
-<h4 id="chat-modes-conversation-contexts">Chat Modes (Conversation Contexts)<a class="headerlink" href="#chat-modes-conversation-contexts" title="Permanent link">#</a></h4>
-<p><strong>Organization Files (Community/Framework-Managed)</strong>
-- <strong><code>chatmodes/organization/{name}.chatmode.md</code></strong>: Standard conversation contexts and AI behaviors from the community
-- Organization chat modes provide consistent interaction patterns across framework adopters</p>
-<p><strong>Enterprise Files (Enterprise-Managed, Optional)</strong>
-- <strong><code>chatmodes/enterprise/{name}.chatmode.md</code></strong>: Enterprise-specific conversation contexts incorporating company culture and standards
-- Enterprise chat modes customize AI interactions for enterprise-specific needs and compliance</p>
-<p><strong>Repository Files (Repository-Managed)</strong>
-- <strong><code>chatmodes/repository/{name}.chatmode.md</code></strong>: Project-specific conversation contexts and behaviors
-- Repository chat modes provide the most granular project-based AI interaction customization</p>
+<h4 id="file-structure-specification_1">File Structure Specification<a class="headerlink" href="#file-structure-specification_1" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Configuration Type</th>
+<th>Tier</th>
+<th>File Path</th>
+<th>Management</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Instructions</strong></td>
+<td>Enterprise</td>
+<td><code>instructions/enterprise/main.instructions.md</code></td>
+<td>Enterprise-Managed, Optional</td>
+<td>Enterprise-wide guidelines, compliance requirements, and governance</td>
+</tr>
+<tr>
+<td><strong>Instructions</strong></td>
+<td>Enterprise</td>
+<td><code>instructions/enterprise/{Language}/main.instructions.md</code></td>
+<td>Enterprise-Managed, Optional</td>
+<td>Enterprise-specific language standards (e.g., "C# Enterprise coding standards")</td>
+</tr>
+<tr>
+<td><strong>Instructions</strong></td>
+<td>Enterprise</td>
+<td><code>instructions/enterprise/{Language}/{context}.instructions.md</code></td>
+<td>Enterprise-Managed, Optional</td>
+<td>Enterprise-specific patterns for compliance, security, or organizational needs</td>
+</tr>
+<tr>
+<td><strong>Instructions</strong></td>
+<td>Organization</td>
+<td><code>instructions/organization/main.instructions.md</code></td>
+<td>Community/Framework-Managed</td>
+<td>Universal framework guidelines and architectural principles</td>
+</tr>
+<tr>
+<td><strong>Instructions</strong></td>
+<td>Organization</td>
+<td><code>instructions/organization/{Language}/main.instructions.md</code></td>
+<td>Community/Framework-Managed</td>
+<td>Community standard style guides and language-specific patterns</td>
+</tr>
+<tr>
+<td><strong>Instructions</strong></td>
+<td>Organization</td>
+<td><code>instructions/organization/{Language}/{context}.instructions.md</code></td>
+<td>Community/Framework-Managed</td>
+<td>Framework-specific patterns for specialized scenarios</td>
+</tr>
+<tr>
+<td><strong>Instructions</strong></td>
+<td>Repository</td>
+<td><code>instructions/repository/main.instructions.md</code></td>
+<td>Repository-Managed</td>
+<td>Repository-specific context, technology stack, and project rules</td>
+</tr>
+<tr>
+<td><strong>Instructions</strong></td>
+<td>Repository</td>
+<td><code>instructions/repository/{Language}/main.instructions.md</code></td>
+<td>Repository-Managed</td>
+<td>Project-specific language overrides and patterns</td>
+</tr>
+<tr>
+<td><strong>Instructions</strong></td>
+<td>Repository</td>
+<td><code>instructions/repository/{Language}/{context}.instructions.md</code></td>
+<td>Repository-Managed</td>
+<td>Most specific project-based overrides</td>
+</tr>
+<tr>
+<td><strong>Prompts</strong></td>
+<td>Enterprise</td>
+<td><code>prompts/enterprise/{name}.prompt.md</code></td>
+<td>Enterprise-Managed, Optional</td>
+<td>Enterprise-customized prompt templates incorporating company standards</td>
+</tr>
+<tr>
+<td><strong>Prompts</strong></td>
+<td>Organization</td>
+<td><code>prompts/organization/{name}.prompt.md</code></td>
+<td>Community/Framework-Managed</td>
+<td>Standard community prompt templates for common development scenarios</td>
+</tr>
+<tr>
+<td><strong>Prompts</strong></td>
+<td>Repository</td>
+<td><code>prompts/repository/{name}.prompt.md</code></td>
+<td>Repository-Managed</td>
+<td>Project-specific prompt templates tailored to repository requirements</td>
+</tr>
+<tr>
+<td><strong>Chat Modes</strong></td>
+<td>Enterprise</td>
+<td><code>chatmodes/enterprise/{name}.chatmode.md</code></td>
+<td>Enterprise-Managed, Optional</td>
+<td>Enterprise-specific conversation contexts incorporating company culture and standards</td>
+</tr>
+<tr>
+<td><strong>Chat Modes</strong></td>
+<td>Organization</td>
+<td><code>chatmodes/organization/{name}.chatmode.md</code></td>
+<td>Community/Framework-Managed</td>
+<td>Standard conversation contexts and AI behaviors from the community</td>
+</tr>
+<tr>
+<td><strong>Chat Modes</strong></td>
+<td>Repository</td>
+<td><code>chatmodes/repository/{name}.chatmode.md</code></td>
+<td>Repository-Managed</td>
+<td>Project-specific conversation contexts and behaviors</td>
+</tr>
+</tbody>
+</table>
 <h4 id="context-file-examples">Context File Examples<a class="headerlink" href="#context-file-examples" title="Permanent link">#</a></h4>
 <p>For instructions, context-specific files may include:
 - File extension patterns: <code>tests.instructions.md</code>, <code>classes.instructions.md</code>
@@ -2475,7 +2517,7 @@ specifications, with tier identification for configuration management.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="September 28, 2025 23:13:08 UTC"><span class="timeago" datetime="2025-09-28T23:13:08+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="September 28, 2025 23:13:08 UTC">2025-09-28</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="September 28, 2025 23:48:27 UTC"><span class="timeago" datetime="2025-09-28T23:48:27+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="September 28, 2025 23:48:27 UTC">2025-09-28</span>
   </span>
 
     
