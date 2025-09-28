@@ -116,50 +116,25 @@ The `.github/` folder contains three Copilot configuration directories, each sup
 
 ### File Structure Specification
 
-#### Instructions (Structured Guidance)
+#### File Structure Specification
 
-**Enterprise Files (Enterprise-Managed, Optional)**
-- **`instructions/enterprise/main.instructions.md`**: Enterprise-wide guidelines, compliance requirements, and governance
-- **`instructions/enterprise/{Language}/main.instructions.md`**: Enterprise-specific language standards (e.g., "C# Enterprise coding standards")
-- **`instructions/enterprise/{Language}/{context}.instructions.md`**: Enterprise-specific patterns for compliance, security, or organizational needs
-
-**Organization Files (Community/Framework-Managed)**
-- **`instructions/organization/main.instructions.md`**: Universal framework guidelines and architectural principles
-- **`instructions/organization/{Language}/main.instructions.md`**: Community standard style guides and language-specific patterns
-- **`instructions/organization/{Language}/{context}.instructions.md`**: Framework-specific patterns for specialized scenarios
-
-**Repository Files (Repository-Managed)**
-- **`instructions/repository/main.instructions.md`**: Repository-specific context, technology stack, and project rules
-- **`instructions/repository/{Language}/main.instructions.md`**: Project-specific language overrides and patterns
-- **`instructions/repository/{Language}/{context}.instructions.md`**: Most specific project-based overrides
-
-#### Prompts (Reusable Templates)
-
-**Organization Files (Community/Framework-Managed)**
-- **`prompts/organization/{name}.prompt.md`**: Standard community prompt templates for common development scenarios
-- Organization prompts provide consistent templates for frequent framework-related tasks
-
-**Enterprise Files (Enterprise-Managed, Optional)**
-- **`prompts/enterprise/{name}.prompt.md`**: Enterprise-customized prompt templates incorporating company standards
-- Enterprise prompts extend community templates with enterprise-specific requirements
-
-**Repository Files (Repository-Managed)**
-- **`prompts/repository/{name}.prompt.md`**: Project-specific prompt templates tailored to repository requirements
-- Repository prompts provide the most specific project-based customizations
-
-#### Chat Modes (Conversation Contexts)
-
-**Organization Files (Community/Framework-Managed)**
-- **`chatmodes/organization/{name}.chatmode.md`**: Standard conversation contexts and AI behaviors from the community
-- Organization chat modes provide consistent interaction patterns across framework adopters
-
-**Enterprise Files (Enterprise-Managed, Optional)**
-- **`chatmodes/enterprise/{name}.chatmode.md`**: Enterprise-specific conversation contexts incorporating company culture and standards
-- Enterprise chat modes customize AI interactions for enterprise-specific needs and compliance
-
-**Repository Files (Repository-Managed)**
-- **`chatmodes/repository/{name}.chatmode.md`**: Project-specific conversation contexts and behaviors
-- Repository chat modes provide the most granular project-based AI interaction customization
+| Configuration Type | Tier | File Path | Management | Description |
+|-------------------|------|-----------|------------|-------------|
+| **Instructions** | Enterprise | `instructions/enterprise/main.instructions.md` | Enterprise-Managed, Optional | Enterprise-wide guidelines, compliance requirements, and governance |
+| **Instructions** | Enterprise | `instructions/enterprise/{Language}/main.instructions.md` | Enterprise-Managed, Optional | Enterprise-specific language standards (e.g., "C# Enterprise coding standards") |
+| **Instructions** | Enterprise | `instructions/enterprise/{Language}/{context}.instructions.md` | Enterprise-Managed, Optional | Enterprise-specific patterns for compliance, security, or organizational needs |
+| **Instructions** | Organization | `instructions/organization/main.instructions.md` | Community/Framework-Managed | Universal framework guidelines and architectural principles |
+| **Instructions** | Organization | `instructions/organization/{Language}/main.instructions.md` | Community/Framework-Managed | Community standard style guides and language-specific patterns |
+| **Instructions** | Organization | `instructions/organization/{Language}/{context}.instructions.md` | Community/Framework-Managed | Framework-specific patterns for specialized scenarios |
+| **Instructions** | Repository | `instructions/repository/main.instructions.md` | Repository-Managed | Repository-specific context, technology stack, and project rules |
+| **Instructions** | Repository | `instructions/repository/{Language}/main.instructions.md` | Repository-Managed | Project-specific language overrides and patterns |
+| **Instructions** | Repository | `instructions/repository/{Language}/{context}.instructions.md` | Repository-Managed | Most specific project-based overrides |
+| **Prompts** | Enterprise | `prompts/enterprise/{name}.prompt.md` | Enterprise-Managed, Optional | Enterprise-customized prompt templates incorporating company standards |
+| **Prompts** | Organization | `prompts/organization/{name}.prompt.md` | Community/Framework-Managed | Standard community prompt templates for common development scenarios |
+| **Prompts** | Repository | `prompts/repository/{name}.prompt.md` | Repository-Managed | Project-specific prompt templates tailored to repository requirements |
+| **Chat Modes** | Enterprise | `chatmodes/enterprise/{name}.chatmode.md` | Enterprise-Managed, Optional | Enterprise-specific conversation contexts incorporating company culture and standards |
+| **Chat Modes** | Organization | `chatmodes/organization/{name}.chatmode.md` | Community/Framework-Managed | Standard conversation contexts and AI behaviors from the community |
+| **Chat Modes** | Repository | `chatmodes/repository/{name}.chatmode.md` | Repository-Managed | Project-specific conversation contexts and behaviors |
 
 #### Context File Examples
 For instructions, context-specific files may include:
