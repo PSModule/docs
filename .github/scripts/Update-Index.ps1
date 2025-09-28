@@ -1,4 +1,6 @@
-﻿[Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+﻿#Requires -Module GitHub
+
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute(
     'PSAvoidLongLines', '',
     Justification = 'Markdown templates'
 )]

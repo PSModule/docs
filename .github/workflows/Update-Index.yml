@@ -1,4 +1,4 @@
-name: Update profile
+name: Update index
 
 on:
   workflow_dispatch:
@@ -9,18 +9,18 @@ on:
 permissions: {}
 
 jobs:
-  update_readme:
-    name: Update Profile README
+  update_index:
+    name: Update index
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           persist-credentials: false
 
-      - name: Update README
+      - name: Update index
         uses: PSModule/GitHub-Script@v1
         with:
           ClientID: ${{ secrets.SCRIBBLER_BOT_CLIENT_ID }}
           PrivateKey: ${{ secrets.SCRIBBLER_BOT_PRIVATE_KEY }}
-          Script: .github/scripts/UpdateReadme.ps1
+          Script: .github/scripts/Update-Index.ps1
