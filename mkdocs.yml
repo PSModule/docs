@@ -87,7 +87,7 @@ nav:
               - Test Something: GitHub-Actions/Subtopic/Test-Something.md
   - Solutions:
       - Solutions/index.md
-      - Solutions/GitHub-Copilot-Customization-Architecture.md
+      - GitHub Copilot Customization: Solutions/GitHub-Copilot-Customization-Architecture.md
   - Blog:
       - Blog/index.md
   - About:
