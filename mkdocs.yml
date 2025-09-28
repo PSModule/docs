@@ -87,11 +87,11 @@ nav:
               - Test Something: GitHub-Actions/Subtopic/Test-Something.md
   - Solutions:
       - Solutions/index.md
+      - Solutions/GitHub-Copilot-Customization-Architecture.md
   - Blog:
       - Blog/index.md
   - About:
       - About/index.md
-      - Instruction Architecture: About/Instruction-Architecture.md
 
 repo_name: PSModule/docs
 repo_url: https://github.com/PSModule/docs
