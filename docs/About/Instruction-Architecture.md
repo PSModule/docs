@@ -1,60 +1,194 @@
-# PSModule Instruction Architecture
+# GitHub Copilot File Manageme### Automation and Synchronization
 
-This document describes the Copilot instruction system used across PSModule repositories to provide consistent guidance to AI coding agents.
+All organization-tier Copilot files can be automatically synchron1. **Organization main instructions** (`instructions/organization/main.instructions.md`) - Organization-wide framework patterns
+2. **Organization language instructions** (`instructions/organization/{Language}/main.instructions.md`) - Organization-wide language-specific patterns
+3. **Organization context instructions** (`instructions/organization/{Language}/{context}.instructions.md`) - Organization-wide specialized patternsd from a central source to target repositories. The synchronization mechanism can be configured for different organizational contexts:
 
-## Overview
+**Standard Organization Setup:**
+- Source: Organization's `.github` repository
+- Target: Repositories with specific custom properties (e.g., `type: module`, `framework: standard`)
 
-The PSModule ecosystem uses a structured instruction system that guides AI agents in making consistent changes across multiple repositories while allowing for project-specific customization.
+**Enterprise Setup:**
+- Source: Dedicated organization or repository within the enterprise
+- Target: All managed repositories or those matching specific criteria
 
-## Architecture
+**Community Framework Setup:**
+- Source: Framework organization's `.github` repository
+- Target: Repositories adopting the community framework
 
-### Two-Tier Hierarchy
+The synchronization process applies to all Copilot configuration types:
+- **Updates**: All files under `organization/` folders are managed by automation and will be overwritten during sync
+- **Preserves**: All files under `repository/` folders are never modified by the sync mechanism
+- **Flexibility**: Organizations can choose their synchronization criteria and automation approachcture
 
-The instruction system follows a two-tier hierarchy:
+This specification documents a scalable GitHub Copilot file management architecture designed to provide consistent guidance, prompts, and chat modes across multiple repositories in community organizations and enterprises.
+
+## Purpose and Context
+
+Modern software organizations require a structured system for managing GitHub Copilot configuration files that enables AI agents to make consistent changes across multiple repositories while allowing for project-specific customization.
+
+Due to the absence of native organization-wide configuration support in GitHub that provides a single location for common Copilot configurations, this architecture implements a scalable two-tier approach for managing:
+
+- **Instructions**: Guidance and patterns for AI agents
+- **Prompts**: Reusable prompt templates and patterns
+- **Chat modes**: Specialized conversation contexts and behaviors
+
+This architecture serves multiple organizational contexts:
+- **Community Organizations**: Open source projects and community frameworks requiring consistent standards across repositories
+- **Enterprises**: Large organizations needing centralized AI assistance standards across teams and projects
+- **Enterprise Profiles**: Addresses the "enterprise profile" challenge by providing repository-level customization within organizational standardsEach Copilot configuration type follows a consistent two-tier management approach:
+
+- **Organization tier**: Managed via automation from the organization level
+- **Repository tier**: Managed locally within each repository
+
+This design allows organizations to maintain consistency across all managed repositories while preserving flexibility for repository-specific requirements.
+
+## Architecture Specification
+
+### Design Decision: Legacy File Elimination
+
+The file `.github/copilot-instructions.md` is not supported in this architecture. This specification replaces the simplified single-file approach with a structured system that manages all GitHub Copilot configuration files through organization-managed and repository-managed tiers.
+
+### Automation and Synchronization
+
+All organization-tier Copilot files are automatically synchronized from the organization's `.github` repository to all repositories that have:
+- A custom property named `type`
+- With the value `module`
+
+The synchronization process applies to all Copilot configuration types:
+- **Updates**: All files under `organization/` folders are managed by automation and will be overwritten during sync
+- **Preserves**: All files under `repository/` folders are never modified by the sync mechanism
+- **Source**: Organization files originate from the PSModule organization's `.github` repository### Folder Structure Specification
+
+The `.github/` folder contains three Copilot configuration directories, each following the two-tier structure:
 
 ```
-.github/instructions/
-├── framework/                    # Generic, reusable patterns (automation-managed)
-│   ├── main.instructions.md     # Universal cross-language guidelines
-│   └── {Language}/              # Language-specific framework patterns
-│       ├── main.instructions.md
-│       ├── tests.instructions.md
-│       └── classes.instructions.md
-└── repo/                        # Project-specific patterns (manually curated)
-    ├── main.instructions.md     # Repository context and rules
-    └── {Language}/              # Project-specific language patterns
-        └── main.instructions.md
+.github/
+├── instructions/                 # AI agent guidance and patterns
+│   ├── organization/            # Organization-managed instruction patterns (automated sync)
+│   │   ├── main.instructions.md # Core organizational framework guidelines
+│   │   └── {Language}/          # Language/technology-specific framework patterns
+│   │       ├── main.instructions.md # Style guide and core instructions
+│   │       └── {context}.instructions.md # Specialized context instructions
+│   └── repository/              # Repository-managed instruction overrides (manual)
+│       ├── main.instructions.md # Repository context and specific rules
+│       └── {Language}/          # Repository-specific language customizations
+│           ├── main.instructions.md # Repository language patterns
+│           └── {context}.instructions.md # Repository context overrides
+├── prompts/                     # Reusable prompt templates
+│   ├── organization/            # Organization-managed prompts (automated sync)
+│   │   └── {prompt-files}       # Standard organization prompt templates
+│   └── repository/              # Repository-managed prompts (manual)
+│       └── {prompt-files}       # Project-specific prompt templates
+└── chatmodes/                   # Specialized conversation contexts
+    ├── organization/            # Organization-managed chat modes (automated sync)
+    │   └── {chatmode-files}     # Standard organization chat modes
+    └── repository/              # Repository-managed chat modes (manual)
+        └── {chatmode-files}     # Project-specific chat modes
 ```
 
-### Content Hierarchy and Precedence
+### File Structure Specification
 
-Instructions are applied in precedence order, with more specific rules taking precedence:
+#### Instructions (Structured Guidance)
 
-1. **Framework instructions** provide foundation and universal patterns
-2. **Repository instructions** override and extend framework instructions
-3. **Language-specific instructions** inherit from their main instruction files
-4. **Repository language instructions** take precedence over framework language instructions
+**Organization Files (Organization-Managed)**
+- **`instructions/organization/main.instructions.md`**: Universal organizational framework guidelines and architectural principles
+- **`instructions/organization/{Language}/main.instructions.md`**: Core style guide and language-specific framework instructions
+- **`instructions/organization/{Language}/{context}.instructions.md`**: Specialized framework patterns for specific scenarios
 
-## Usage
+**Repository Files (Repository-Managed)**
+- **`instructions/repository/main.instructions.md`**: Repository-specific context, technology stack information, and project-specific rules
+- **`instructions/repository/{Language}/main.instructions.md`**: Repository-specific language style and patterns that override or extend framework instructions
+- **`instructions/repository/{Language}/{context}.instructions.md`**: Project-specific overrides for specialized scenarios
+
+#### Prompts (Reusable Templates)
+
+**Organization Files (Organization-Managed)**
+- **`prompts/organization/{name}.prompt.md`**: Standard organization-wide prompt templates for common scenarios
+- Organization prompts provide consistent templates for frequent development tasks
+
+**Repository Files (Repository-Managed)**
+- **`prompts/repository/{name}.prompt.md`**: Project-specific prompt templates tailored to repository requirements
+- Repository prompts extend or override organization templates for specialized use cases
+
+#### Chat Modes (Conversation Contexts)
+
+**Organization Files (Organization-Managed)**
+- **`chatmodes/organization/{name}.chatmode.md`**: Standard conversation contexts and specialized AI behaviors
+- Organization chat modes provide consistent interaction patterns across repositories
+
+**Repository Files (Repository-Managed)**
+- **`chatmodes/repository/{name}.chatmode.md`**: Project-specific conversation contexts and behaviors
+- Repository chat modes customize AI interactions for specific project needs
+
+#### Context File Examples
+For instructions, context-specific files may include:
+- File extension patterns: `tests.instructions.md`, `classes.instructions.md`
+- Folder-specific patterns: `workflows.instructions.md`, `docs.instructions.md`
+- Functional patterns: `api.instructions.md`, `config.instructions.md`
+
+### Precedence Specification
+
+#### Instruction Precedence
+
+Instructions are evaluated and applied in hierarchical order, with more specific instructions taking precedence:
+
+1. **Organization main instructions** (`instructions/organization/main.instructions.md`) - Organization-wide PSModule patterns
+2. **Organization language instructions** (`instructions/organization/{Language}/main.instructions.md`) - Organization-wide language-specific patterns
+3. **Organization context instructions** (`instructions/organization/{Language}/{context}.instructions.md`) - Organization-wide specialized patterns
+4. **Repository main instructions** (`instructions/repository/main.instructions.md`) - Project-specific context and overrides
+5. **Repository language instructions** (`instructions/repository/{Language}/main.instructions.md`) - Project-specific language patterns
+6. **Repository context instructions** (`instructions/repository/{Language}/{context}.instructions.md`) - Most specific project-based overrides
+
+#### Prompt and Chat Mode Precedence
+
+For prompts and chat modes, repository-specific files take precedence over organization files when both exist:
+
+- **Organization prompts/chat modes**: Provide default templates and behaviors
+- **Repository prompts/chat modes**: Override or extend organization defaults for project-specific needs
+
+This precedence system ensures that repository-specific requirements can override organization-wide patterns while maintaining consistency where no overrides exist.### Migration from Legacy Implementation
+
+Repositories transitioning from the legacy `.github/copilot-instructions.md` approach should:
+
+1. **Remove** the `.github/copilot-instructions.md` file
+2. **Create** the new folder structure under `.github/` with `instructions/`, `prompts/`, and `chatmodes/` directories
+3. **Distribute** existing content appropriately:
+   - Universal organizational patterns → Will be provided via organization sync to `instructions/organization/`
+   - Repository-specific context → `instructions/repository/main.instructions.md`
+   - Language-specific patterns → Appropriate `instructions/repository/{Language}/` folders
+   - Prompt templates → `prompts/repository/` (if any existed)
+   - Chat configurations → `chatmodes/repository/` (if any existed)
+
+Note: Organization files for all Copilot configuration types will be automatically synchronized from the organization level, so manual creation is not necessary.
+
+## Implementation Guidelines
 
 ### For AI Agents
 
-When editing files, agents should:
+When processing files in repositories using this architecture, AI agents should:
 
-1. Locate the file you intend to edit and note its extension and repository segment (code, docs, workflows, etc.)
-2. Load all matching framework instructions under `/.github/instructions/framework/`, then load the corresponding repository overrides under `/.github/instructions/repo/`
-3. Respect the precedence order: framework → framework language → repository → repository language, applying the most specific rule last
-4. If gaps appear, record them as enhancements and avoid unverified assumptions
-5. After completing work, confirm that updates continue to fit the documented architecture and that any new patterns are captured in the appropriate instruction file
+1. **Verify architecture compliance**: Confirm the absence of `.github/copilot-instructions.md` and presence of the three-folder Copilot structure under `.github/`
+2. **Identify target file characteristics**: Note file extension, folder context, and repository segment
+3. **Load configurations in precedence order**:
+   - Apply instruction hierarchy from organization main through repository context
+   - Use repository-specific prompts and chat modes when available, falling back to organization defaults
+4. **Apply precedence rules**: Later-loaded configurations override earlier ones when conflicts exist
+5. **Document patterns**: Record new patterns in appropriate files for future enhancement
+6. **Validate changes**: Ensure modifications align with the architectural specification
 
-### For Contributors
+### For Repository Contributors
 
-- Always consult both framework and repo instructions before editing
-- Follow the `applyTo` glob when determining relevancy; do not assume coverage
-- Document new patterns promptly so they can be promoted to framework guidance when reusable
+Repository maintainers should understand:
 
-## File Format
+- **Organization files**: These are automatically synchronized across all Copilot configuration types and should not be manually edited
+- **Repository files**: These are manually maintained and contain project-specific customizations for instructions, prompts, and chat modes
+- **Precedence hierarchy**: Repository files can override organization files for all configuration types
+- **Pattern documentation**: New patterns should be documented promptly in the appropriate scope (organization patterns should be proposed to the organization's central repository)
 
+## File Format Specifications
+
+### Instructions Format
 All instruction files must follow this format:
 
 ```yaml
@@ -66,17 +200,37 @@ description: "Brief, actionable description of the instruction's purpose"
 
 Content structure: Context lead, Goal, Execution steps, Behavior rules, Output format, Error handling, Definitions
 
-## Key Principles
+### Prompts Format
+Prompt files should follow established GitHub Copilot prompt conventions with clear context and expected outcomes.
 
-- Honor convention over configuration, context awareness, pipeline friendliness, and cross-platform compatibility
-- Maintain strong typing, clear documentation, robust authentication abstractions, and enterprise GitHub support throughout the ecosystem
-- Expect tight coupling with GitHub Actions, PSModule authentication helpers, structured logging (`LogGroup`), and cross-repo dependencies
-- Validate changes against both local tooling and CI automation
+### Chat Modes Format
+Chat mode files should define conversation contexts, specialized behaviors, and interaction patterns following GitHub Copilot chat mode specifications.
 
-## Definitions
+## Design Principles
 
-| Term | Description |
+This architecture is guided by the following principles:
+
+- **Comprehensive Copilot management**: Unified approach to managing all GitHub Copilot configuration files (instructions, prompts, chat modes)
+- **Separation of concerns**: Organization-level configurations are managed centrally while repository-specific configurations remain under local control
+- **Automation-friendly**: The organization tier supports automated synchronization across all configuration types without affecting repository-managed content
+- **Hierarchical precedence**: More specific configurations override general ones, enabling customization while maintaining consistency
+- **Convention over configuration**: Established patterns and cross-platform compatibility are prioritized
+- **Enterprise integration**: Designed for GitHub enterprise environments with proper authentication, logging, and CI/CD integration
+- **Scalable governance**: Organization-wide consistency without sacrificing project-specific flexibility
+
+## Terminology
+
+| Term | Definition |
 | --- | --- |
-| **Framework instructions** | Canonical, reusable rules under `/.github/instructions/framework/` that apply across PSModule repositories |
-| **Repository instructions** | Overrides located under `/.github/instructions/repo/` describing project-specific expectations |
-| **Precedence order** | Evaluation order where the most specific applicable instruction file governs the final decision |
+| **Organization instructions** | Organization-managed instruction files under `.github/instructions/organization/` that provide consistent patterns across all managed repositories |
+| **Repository instructions** | Repository-managed instruction files under `.github/instructions/repository/` that contain project-specific overrides and extensions |
+| **Organization prompts** | Organization-managed prompt templates under `.github/prompts/organization/` that provide standard reusable patterns |
+| **Repository prompts** | Repository-managed prompt templates under `.github/prompts/repository/` that contain project-specific prompt customizations |
+| **Organization chat modes** | Organization-managed conversation contexts under `.github/chatmodes/organization/` that define standard AI interaction patterns |
+| **Repository chat modes** | Repository-managed conversation contexts under `.github/chatmodes/repository/` that define project-specific AI behaviors |
+| **Main instructions** | The primary `main.instructions.md` file at the root of organization or repository instruction folders containing core guidelines for that scope |
+| **Language instructions** | Language or technology-specific instructions contained within `{Language}/` subfolders |
+| **Context instructions** | Specialized instructions for specific file types, folders, or scenarios (e.g., `tests.instructions.md`, `workflows.instructions.md`) |
+| **Precedence hierarchy** | The evaluation order where more specific configuration files override more general ones across all Copilot file types |
+| **Automatic synchronization** | The process by which organization files are updated from a central source to target repositories for all Copilot configuration types |
+| **Managed repository** | A repository that receives automated synchronization based on organizational criteria (custom properties, naming patterns, etc.) |
