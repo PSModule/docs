@@ -22,11 +22,13 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Lint code base
         uses: super-linter/super-linter@latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          VALIDATE_BIOME_FORMAT: false
           VALIDATE_JSON_PRETTIER: false
           VALIDATE_MARKDOWN_PRETTIER: false
           VALIDATE_YAML_PRETTIER: false
