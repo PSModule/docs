@@ -33,7 +33,7 @@ jobs:
           persist-credentials: false
 
       - name: Connect to GitHub
-        uses: PSModule/GitHub-Script@v1
+        uses: PSModule/GitHub-Script@0097f3bbe3f413f3b577b9bcc600727b0ca3201a # v1.7.10
 
       - name: Install mkdocs-material
         env:
