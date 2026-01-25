@@ -1023,7 +1023,7 @@ We have created a framework that automates the process of creating, testing, and
 <details>
    <summary>How we do it in PSModule</summary>
 
-Projects are based on the `Template-Action` repository template will automatically have the necessary workflows and configurations set up to automate the process of creating, testing, and deploying PowerShell based Azure Function Apps to Azure. This includes workflows for building, testing, and deploying the function app, as well as a configuration file for setting up the function app's metadata and dependencies.
+Projects based on the `Template-Action` repository template will automatically have the necessary workflows and configurations set up to automate the process of creating, testing, and deploying PowerShell based Azure Function Apps to Azure. This includes workflows for building, testing, and deploying the function app, as well as a configuration file for setting up the function app's metadata and dependencies.
 Using custom properties we set `RepoType` to `FunctionApp`.
 We use branch policies to control the flow of changes to the `main` branch, and we use labels to control the versioning of the module when a pull request is merged.
 
@@ -1141,7 +1141,7 @@ We use branch policies to control the flow of changes to the `main` branch, and 
     <tr>
         <td><a href="https://github.com/PSModule/Get-IssueFormData/">Get&#8209;IssueFormData</a></td>
         <td>
-            Get the data from a issue that was generated based on a issue form
+            Get the data from an issue that was generated based on an issue form
             <br>
             <a href="https://github.com/PSModule/Get-IssueFormData/issues"><img src="https://img.shields.io/github/issues-raw/PSModule/Get-IssueFormData?style=flat-square&label=&labelColor=rgba(0%2C%200%2C%200%2C%200)&color=rgba(0%2C%200%2C%200%2C%200)&logo=data:image/svg%2bxml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+R2l0SHViIElzc3VlczwvdGl0bGU+PHBhdGggZD0iTTggOS41YTEuNSAxLjUgMCAxIDAgMC0zIDEuNSAxLjUgMCAwIDAgMCAzWiIgZmlsbD0iIzg0OEQ5NyIvPjxwYXRoIGQ9Ik04IDBhOCA4IDAgMSAxIDAgMTZBOCA4IDAgMCAxIDggMFpNMS41IDhhNi41IDYuNSAwIDEgMCAxMyAwIDYuNSA2LjUgMCAwIDAtMTMgMFoiIGZpbGw9IiM4NDhEOTciLz48L3N2Zz4=" alt="GitHub Issues"></a>
             <a href="https://github.com/PSModule/Get-IssueFormData/pulls"><img src="https://img.shields.io/github/issues-pr-raw/PSModule/Get-IssueFormData?style=flat-square&label=&labelColor=rgba(0%2C%200%2C%200%2C%200)&color=rgba(0%2C%200%2C%200%2C%200)&logo=data:image/svg%2bxml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+R2l0SHViIFB1bGwgUmVxdWVzdHM8L3RpdGxlPjxwYXRoIGQ9Ik0xLjUgMy4yNWEyLjI1IDIuMjUgMCAxIDEgMyAyLjEyMnY1LjI1NmEyLjI1MSAyLjI1MSAwIDEgMS0xLjUgMFY1LjM3MkEyLjI1IDIuMjUgMCAwIDEgMS41IDMuMjVabTUuNjc3LS4xNzdMOS41NzMuNjc3QS4yNS4yNSAwIDAgMSAxMCAuODU0VjIuNWgxQTIuNSAyLjUgMCAwIDEgMTMuNSA1djUuNjI4YTIuMjUxIDIuMjUxIDAgMSAxLTEuNSAwVjVhMSAxIDAgMCAwLTEtMWgtMXYxLjY0NmEuMjUuMjUgMCAwIDEtLjQyNy4xNzdMNy4xNzcgMy40MjdhLjI1LjI1IDAgMCAxIDAtLjM1NFpNMy43NSAyLjVhLjc1Ljc1IDAgMSAwIDAgMS41Ljc1Ljc1IDAgMCAwIDAtMS41Wm0wIDkuNWEuNzUuNzUgMCAxIDAgMCAxLjUuNzUuNzUgMCAwIDAgMC0xLjVabTguMjUuNzVhLjc1Ljc1IDAgMSAwIDEuNSAwIC43NS43NSAwIDAgMC0xLjUgMFoiIGZpbGw9IiM4NDhEOTciLz48L3N2Zz4NCg==" alt="GitHub Pull Requests"></a>
@@ -1345,14 +1345,14 @@ We use branch policies to control the flow of changes to the `main` branch, and 
    <summary>About</summary>
 
 Reusable workflows are a way to define a workflow in one repository and use it in multiple repositories. They can be used to automate common tasks, such as building, testing, and deploying code, and they can help to streamline the development process by providing a consistent way to perform these tasks across multiple repositories.
-We have created a framework that automates the process of creating, testing, and deploying reusable workflows in a organization. This framework is designed to make it easy for developers to create and share their workflows with the community.
+We have created a framework that automates the process of creating, testing, and deploying reusable workflows in an organization. This framework is designed to make it easy for developers to create and share their workflows with the community.
 
 </details>
 
 <details>
    <summary>How we do it in PSModule</summary>
 
-Projects are based on the `Template-Workflow` repository template will automatically have the necessary workflows and configurations set up to automate the process of creating, testing, and deploying reusable workflows in a organization. This includes workflows for building, testing, and deploying the workflows, as well as a configuration file for setting up the workflows metadata and dependencies.
+Projects based on the `Template-Workflow` repository template will automatically have the necessary workflows and configurations set up to automate the process of creating, testing, and deploying reusable workflows in an organization. This includes workflows for building, testing, and deploying the workflows, as well as a configuration file for setting up the workflow's metadata and dependencies.
 Using custom properties we set `RepoType` to `Workflow`.
 We use branch policies to control the flow of changes to the `main` branch, and we use labels to control the versioning of the module when a pull request is merged.
 
