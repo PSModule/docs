@@ -12,5 +12,3 @@ updates:
       - github-actions
     schedule:
       interval: weekly
-    cooldown:
-      default: 3
