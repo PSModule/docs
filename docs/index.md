@@ -1132,7 +1132,6 @@ We use branch policies to control the flow of changes to the `main` branch, and 
 
 </details>
 
-
 <details>
    <summary>GitHub Actions on the <a href="https://github.com/marketplace?&verification=&query=publisher%3Apsmodule">GitHub Marketplace</a></summary>
 
