@@ -4,11 +4,11 @@ Work in PSModule is tracked at three levels. The level reflects **scope and aggr
 
 ## The three levels
 
-| Level                    | Issue type   | Scope                                              | Output                                                    |
-| ------------------------ | ------------ | -------------------------------------------------- | --------------------------------------------------------- |
-| **Task**                 | `Task`       | One deliverable. One small reviewable PR.          | Working software.                                          |
-| **Product Backlog Item** | `PBI`        | A body of work composed of multiple Tasks.         | Tracking, delegation, oversight, visibility into progress. |
-| **Epic**                 | `Epic`       | Strategic chunk needing multiple PBIs.             | The co-planning artifact. Where OKRs become initiatives.  |
+| Level                    | Issue type   | Scope                                              | Output                                                              |
+| ------------------------ | ------------ | -------------------------------------------------- | ------------------------------------------------------------------- |
+| **Task**                 | `Task`       | One deliverable. One small reviewable PR.          | Working software.                                                   |
+| **Product Backlog Item** | `PBI`        | A body of work composed of multiple Tasks.         | Tracking, delegation, oversight, visibility into progress.          |
+| **Epic**                 | `Epic`       | Strategic chunk needing multiple PBIs.             | The co-planning artifact. Where OKRs become initiatives.            |
 
 > The name **Product Backlog Item** is chosen for its neutral vibe — it works equally well for a feature, a fix, a refactor, or an internal capability. "Feature" implies user-visible value, which isn't always the case for the middle tier.
 
@@ -76,10 +76,10 @@ Text-level conventions on child issues:
 
 ## How the sections differ by level
 
-| Section                  | Task                          | PBI                                                                 | Epic                                                                 |
-| ------------------------ | ----------------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Section 1 (Context/Req)  | The deliverable's user story  | The grouped goal's user story                                       | The strategic outcome — vision, why, the change in the world         |
-| Section 2 (Decisions)    | Implementation decisions      | Decomposition rationale + interface decisions between children      | Decomposition rationale + which PBIs and why                         |
+| Section                  | Task                          | PBI                                                                  | Epic                                                                 |
+| ------------------------ | ----------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Section 1 (Context/Req)  | The deliverable's user story  | The grouped goal's user story                                        | The strategic outcome — vision, why, the change in the world         |
+| Section 2 (Decisions)    | Implementation decisions      | Decomposition rationale + interface decisions between children       | Decomposition rationale + which PBIs and why                         |
 | Section 3 (Plan)         | Checkbox task list            | Linked list of child issues (Tasks and/or sub-PBIs)                  | Linked list of child PBIs                                            |
 
 For Epics, Section 1 should explicitly contain the **Golden Circle framing**: Why, How, What. See [Principles → Golden Circle](Principles.md#start-with-why--the-golden-circle).

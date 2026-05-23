@@ -84,11 +84,11 @@ After merge, the change runs in production. Signals — errors, logs, user feedb
 
 Borrowed from [Principles → Roadmapping](Principles.md#roadmapping). The planner doesn't only think about today.
 
-|              | Now             | Next            | Later           |
-| ------------ | --------------- | --------------- | --------------- |
-| Conceptual   | Vision delivered now | Vision next | Vision later |
-| Logical      | Approach now    | Approach next   | Approach later  |
-| Detailed     | Tasks in flight | Tasks ready     | Tasks framed    |
+|            | Now                  | Next          | Later        |
+| ---------- | -------------------- | ------------- | ------------ |
+| Conceptual | Vision delivered now | Vision next   | Vision later |
+| Logical    | Approach now         | Approach next | Approach later |
+| Detailed   | Tasks in flight      | Tasks ready   | Tasks framed |
 
 - A Task lives in **Now / Detailed**.
 - A PBI lives somewhere between **Now / Logical** and **Next / Detailed**.

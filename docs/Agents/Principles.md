@@ -128,11 +128,11 @@ Push work as far inward as it can go.
 
 We plan in a 3×3 matrix:
 
-|              | Now           | Next         | Later        |
-| ------------ | ------------- | ------------ | ------------ |
-| Conceptual   | Vision today  | Vision next  | Vision later |
-| Logical      | Approach now  | Approach next| Approach later |
-| Detailed     | Tasks now     | Tasks next   | Tasks later  |
+|              | Now          | Next           | Later          |
+| ------------ | ------------ | -------------- | -------------- |
+| Conceptual   | Vision today | Vision next    | Vision later   |
+| Logical      | Approach now | Approach next  | Approach later |
+| Detailed     | Tasks now    | Tasks next     | Tasks later    |
 
 - **Now / Next / Later** are time horizons without firm dates.
 - **Conceptual / Logical / Detailed** are levels of fidelity.

@@ -29,14 +29,14 @@ Pull requests in PSModule double as **release notes**. The description is writte
 
 ## Change types
 
-| Type        | Icon | Label       | Description                                              |
-| ----------- | ---- | ----------- | -------------------------------------------------------- |
-| Major       | 🌟   | `Major`     | Breaking changes that affect compatibility               |
-| Minor       | 🚀   | `Minor`     | New features or enhancements                             |
-| Patch       | 🩹   | `Patch`     | Small fixes or improvements                              |
-| Fix         | 🪲   | `Patch`     | Bug fixes (Patch-level release impact)                   |
-| Docs        | 📖   | `NoRelease` | Documentation changes only                               |
-| Maintenance | ⚙️    | `NoRelease` | CI/CD, build configs, AI/agent files, internal upkeep    |
+| Type        | Icon | Label       | Description                                           |
+| ----------- | ---- | ----------- | ----------------------------------------------------- |
+| Major       | 🌟   | `Major`     | Breaking changes that affect compatibility            |
+| Minor       | 🚀   | `Minor`     | New features or enhancements                          |
+| Patch       | 🩹   | `Patch`     | Small fixes or improvements                           |
+| Fix         | 🪲   | `Patch`     | Bugfixes (Patch-level release impact)                 |
+| Docs        | 📖   | `NoRelease` | Documentation changes only                            |
+| Maintenance | ⚙️   | `NoRelease` | CI/CD, build configs, AI/agent files, internal upkeep |
 
 ### Detecting the change type
 
@@ -46,11 +46,11 @@ The change type is decided in this order:
 2. **Pre-1.0.0 rule** — projects with no version tags or latest tag below `v1.0.0` follow [SemVer §4](https://semver.org/#spec-item-4). Major is **never** auto-detected for pre-1.0.0 projects. Breaking changes there are classified as Minor (`0.x.0`).
 3. **Artifact-based inference** from the branch diff:
 
-    | Artifact type          | How to recognize                                              | Important files (affect artifact)                              | Non-important (framework / tooling)                                       |
-    | ---------------------- | ------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------- |
-    | PowerShell Module      | `src/` with `.ps1`/`.psm1`, or a `.psd1` manifest             | `src/**`, `*.psd1`, `*.psm1`                                   | `.github/**`, `*.md`, `tests/**`, `scripts/**`, `agents/**`               |
-    | GitHub Action          | `action.yml` at repo root                                     | `action.yml`, `src/**`                                         | `.github/**`, `*.md`, `tests/**`, `agents/**`                             |
-    | Reusable Workflow      | `.github/workflows/` with callable workflows                  | `.github/workflows/**`                                         | `*.md`, `tests/**`, `agents/**`                                            |
+    | Artifact type          | How to recognize                                              | Important files (affect artifact)                              | Non-important (framework / tooling)                              |
+    | ---------------------- | ------------------------------------------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------- |
+    | PowerShell Module      | `src/` with `.ps1`/`.psm1`, or a `.psd1` manifest             | `src/**`, `*.psd1`, `*.psm1`                                   | `.github/**`, `*.md`, `tests/**`, `scripts/**`, `agents/**`      |
+    | GitHub Action          | `action.yml` at repo root                                     | `action.yml`, `src/**`                                         | `.github/**`, `*.md`, `tests/**`, `agents/**`                    |
+    | Reusable Workflow      | `.github/workflows/` with callable workflows                  | `.github/workflows/**`                                         | `*.md`, `tests/**`, `agents/**`                                  |
 
 4. **Classification rules** (apply in order):
     1. **Docs** — all changes are documentation only.
