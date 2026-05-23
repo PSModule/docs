@@ -57,7 +57,7 @@ Read [](file:///c%3A/Repos/github.com/PSModule/Other/.github-private/instruction
 
 Now I have a solid picture of your current agent setup. Let me synthesize what I see and propose a restructuring plan.
 
----
+---------------------------------------------------------
 
 ## Analysis of Current State
 
@@ -84,7 +84,7 @@ Now I have a solid picture of your current agent setup. Let me synthesize what I
 
 5. The issue format documentation (what a well-structured issue looks like, formatting rules, labels) is also better as docs that agents reference.
 
----
+---------------------------------------------------------
 
 ## Proposed Restructuring
 
@@ -114,7 +114,7 @@ agents/
   review.md           # Phase 6: PR review loop (merges code-reviewer + pr-reviewer)
 ```
 
----
+---------------------------------------------------------
 
 ### Agent Details
 
@@ -191,7 +191,7 @@ Essentially the current `pr-manager` but slimmed — PR format rules live in doc
 
 Merges `code-reviewer` + `pr-reviewer` into one agent with two modes (pre-flight vs. active review), as they already partially overlap.
 
----
+---------------------------------------------------------
 
 ### Sub-Issue Decomposition (in `plan.md`)
 
@@ -206,7 +206,7 @@ When you tell the planner to decompose:
 3. Updates the parent issue's implementation plan to reference sub-issues instead of inline tasks
 4. Each sub-issue is designed to be picked up by one worker independently
 
----
+---------------------------------------------------------
 
 ### Workflow Diagram
 
@@ -222,7 +222,7 @@ graph LR
     G -->|fixes needed| D
 ```
 
----
+---------------------------------------------------------
 
 ## Questions Back to You
 
@@ -239,7 +239,7 @@ graph LR
 
 5. **The `implement` agent** — Should it stay as one agent that handles both PowerShell modules and GitHub Actions (switching based on context), or remain split into specialized implementers?
 
-----------------------------------------
+---------------------------------------------------------
 
 The idea was that the PR-Reviewer agent was meant to be used by the authors side to answer feedback from someone and look at errors in CI, and the code-reviewer from a PR reviewers side to look for missing things in the contribution on a PR. So come with feedback ensure that good taste was followed, that security best practices are followed etc. So the names of those agents are clunky.
 
@@ -291,7 +291,7 @@ Guding principles and practices:
   - Planning can therefore be done in a 3x3 matrix, Now, next, later + Conseptual, Logical and Detailed.
 - Test Driven Development - We need to define the tests and take care when we update them.
 - Human in the loop - Agents help us do better work - they are not here to replace us on all aspects yet.
-- DevOps (including SRE) - Everything is continuous, ever evolving, ever changing. Lets build systems, practices and teams that understand they are in on the whole loop. "You build it, you run it".
+- DevOps (including SRE) - Everything is continuous, ever evolving, ever changing. Lets create systems, practices and teams that understand they are in on the whole loop. "You build it, you run it".
 - Context Development Lifecycle -> We ensure we have the right context and that we maintain that as a product that is evergreen and declarative.
 - Software Development Lifecycle -> We deliver the software using source code management, ci/cd tooling and build tools from DevOps, SRE to deliver software and services.
 - Lean Software Development (often also linked with YAGNI, Ya aint gonna need it).
@@ -338,7 +338,7 @@ Answers to questions:
 - Extracted docs live in PSModule/docs that is a separate repo, and its published on the web via GitHub pages reachable on <https://psmodule.io/docs>. Agents can have links to the docs, their links should ideally not change, but we can update that if needed.
 - The implement agent should look at the decision on what language, and then reference the docs for guidance on how to write that language. It should also consider the linting rules for the language that is available in the repo, if not apply the same linter rules.
 
---------------------------------------
+---------------------------------------------------------
 
 Read [](file:///c%3A/Repos/github.com/PSModule/Docs)
 

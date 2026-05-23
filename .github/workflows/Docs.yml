@@ -19,6 +19,7 @@ permissions:
 
 jobs:
   build:
+    name: Build and deploy docs
     runs-on: ubuntu-24.04
     environment:
       name: github-pages
