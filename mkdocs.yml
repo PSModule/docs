@@ -88,6 +88,20 @@ nav:
   - Solutions:
       - Solutions/index.md
       - GitHub Copilot Customization: Solutions/GitHub-Copilot-Customization-Architecture.md
+  - Agents:
+      - Agents/index.md
+      - Principles: Agents/Principles.md
+      - Workflow: Agents/Workflow.md
+      - Issue Format: Agents/Issue-Format.md
+      - Issue Hierarchy: Agents/Issue-Hierarchy.md
+      - PR Format: Agents/PR-Format.md
+      - Commit Conventions: Agents/Commit-Conventions.md
+      - Review Etiquette: Agents/Review-Etiquette.md
+      - README-Driven Context: Agents/Readme-Driven-Context.md
+      - Standards:
+          - Agents/Standards/index.md
+          - PowerShell Module: Agents/Standards/PowerShell-Module.md
+          - GitHub Actions: Agents/Standards/GitHub-Actions.md
   - Blog:
       - Blog/index.md
   - About:
