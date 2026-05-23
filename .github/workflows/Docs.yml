@@ -7,52 +7,38 @@ on:
       - main
     paths:
       - docs/**
-      - mkdocs.yml
+      - zensical.toml
       - .github/workflows/Docs.yml
 
-env:
-  GH_TOKEN: ${{ github.token }}
-  MKDOCS_GIT_COMMITTERS_APIKEY: ${{ github.token }}
-
-defaults:
-  run:
-    shell: pwsh
-
 permissions:
-  contents: write  # to push GitHub Pages to the gh-pages branch
+  contents: read
   pages: write    # to deploy to Pages
   id-token: write # to verify the deployment originates from an appropriate source
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v5
         with:
-          fetch-depth: 0
-          persist-credentials: false
+          python-version: 3.x
 
-      - name: Connect to GitHub
-        uses: PSModule/GitHub-Script@0097f3bbe3f413f3b577b9bcc600727b0ca3201a # v1.7.10
+      - name: Install Zensical
+        run: pip install zensical
 
-      - name: Install mkdocs-material
-        env:
-          GH_TOKEN: ${{ secrets.MATERIAL_FOR_MKDOCS_INSIDER_PAT }}
-        run: |
-          pip install git+https://$env:GH_TOKEN@github.com/squidfunk/mkdocs-material-insiders.git
+      - name: Build Zensical project
+        run: zensical build --clean
 
-      - name: Install plugins
-        run: |
-          pip install mkdocs-git-authors-plugin
-          pip install mkdocs-git-revision-date-localized-plugin
-          pip install mkdocs-git-committers-plugin-2
-          pip install mkdocs-rss-plugin
-          pip install "mkdocs-material[imaging]"
-          pip install mkdocs-table-reader-plugin
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
 
-      - name: Build mkdocs-material project
-        run: |
-          mkdocs build --config-file ./mkdocs.yml --strict --site-dir _site/
-
-      - name: Deploy to GitHub Pages
-        run: mkdocs gh-deploy --force
+      - uses: actions/deploy-pages@v4
+        id: deployment
