@@ -35,6 +35,14 @@ A good OKR is one that anyone — contributor, user, or agent — can read and i
 
 We are building something for people who should **want** to use it. Without users, we are nothing. Every decision is filtered through: does this make the product more wanted, or less?
 
+## Build for all developers
+
+We target all platforms and all shells. Our code, scripts, workflows, and documentation must work regardless of whether the developer is on Windows, macOS, or Linux. Line endings, path separators, shell assumptions — none of these should silently break someone's experience. Repository configuration (`.gitattributes`, CI matrices, test environments) must reflect this.
+
+## Build for the modern engineer
+
+We build for engineers using the latest tools and platforms. We do not support deprecated or end-of-life software. Concretely: we target **PowerShell** (cross-platform, actively developed) — not Windows PowerShell (legacy, frozen at 5.1). The same applies across the stack: latest stable releases, current LTS versions, modern APIs. If a tool has a successor, use the successor.
+
 ## Dogfooding
 
 Be the first customer of every service we build. But avoid full self-dependency on a service before it is proven — explore and use it in non-critical contexts first, then promote it as confidence grows.

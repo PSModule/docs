@@ -24,11 +24,11 @@ This matters because:
 
 Each role is a focused agent. Standards are referenced, not embedded.
 
-| Role        | Phase            | Purpose                                                                 |
-| ----------- | ---------------- | ----------------------------------------------------------------------- |
+| Role        | Phase                   | Purpose                                                                 |
+| ----------- | ----------------------- | ----------------------------------------------------------------------- |
 | Define      | Capture + Refine + Plan | Capture a desire, ground it, and produce a planned issue or sub-issues. |
 | Implement   | Build + Ship + Respond  | Branch, draft PR, code, micro-commit, track progress, finalize PR.      |
-| Reviewer    | Review           | Review someone else's PR for delivery, taste, and security.             |
+| Reviewer    | Review                  | Review someone else's PR for delivery, taste, and security.             |
 
 ## What lives here
 
