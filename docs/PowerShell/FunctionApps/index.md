@@ -1,47 +1,18 @@
-# Function Apps
+# PowerShell-based Function Apps
 
-PSModule Function Apps are PowerShell based Azure Functions that run serverless, event-driven code. They are built with the [PSModule framework](https://github.com/PSModule/PSModule) and follow a consistent layout, naming, and versioning convention.
+## What it is
 
-## Getting started
+Azure Function Apps are a serverless compute service that runs event-driven code without requiring dedicated infrastructure. PSModule function apps are written in PowerShell and deployed to Azure, responding to events such as HTTP requests, timers, or Azure service messages. See the [Azure Functions documentation](https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview).
 
-<details>
-   <summary>About</summary>
+## Why we care
 
-A PowerShell based Azure Function App is a serverless compute service that enables you to run event-driven code without having to manage the infrastructure. Azure Functions are ideal for processing data, integrating systems, and building simple APIs or microservices. They can be triggered by a variety of events, such as HTTP requests, timers, or messages from Azure services like Azure Storage, Event Grid, or Service Bus.
-We have created a framework that automates the process of creating, testing, and deploying PowerShell based Azure Function Apps to Azure. This framework is designed to make it easy for developers to create and deploy their Azure Function Apps without having to worry about the underlying infrastructure.
+Serverless PowerShell functions extend automation into cloud-native, event-driven scenarios that traditional scripts and pipelines cannot cover alone. They enable lightweight, always-on integrations — such as GitHub App webhooks, scheduled maintenance tasks, and API bridges — to run reliably without managing servers or paying for idle compute.
 
-</details>
+## How we do it
 
-<details>
-   <summary>How we do it in PSModule</summary>
+PSModule function apps are built from the [Template-FunctionApp](https://github.com/PSModule/Template-FunctionApp) repository template, which wires up the [Process-FunctionApp](https://github.com/PSModule/Process-FunctionApp) reusable workflow for automated build, test, and Azure deployment. The `AZURE_CREDENTIALS` secret provides the service principal for deployment, and PR labels control versioning the same way they do for modules. The `RepoType: FunctionApp` custom property integrates each repository with organization-wide tooling.
 
-Projects based on the `Template-FunctionApp` repository template will automatically have the necessary workflows and configurations set up to automate the process of creating, testing, and deploying PowerShell based Azure Function Apps to Azure. This includes workflows for building, testing, and deploying the function app, as well as a configuration file for setting up the function app's metadata and dependencies.
-Using custom properties we set `RepoType` to `FunctionApp`.
-We use branch policies to control the flow of changes to the `main` branch, and we use labels to control the versioning of the module when a pull request is merged.
-
-</details>
-
-<details>
-   <summary>Create a new project</summary>
-
-1. Create a repository based on the template [Template-FunctionApp](https://github.com/PSModule/Template-FunctionApp). The module will by default use the name of the repository.
-1. Create a repository or organization secret called `AZURE_CREDENTIALS`, holding the credentials for the Azure service principal.
-1. Configure the settings you want for the repository including a branch policy for the `main` branch.
-1. On a topic branch:
-   1. develop the code you want to add to your function app.
-   1. delete the parts you do not need.
-   1. update the tests in the `tests` folder.
-1. Create a PR. Add a label to the PR depending on what you want to do.
-    - `Major` - Will create a major release (vX.0.0) when merged. If specified with "Prerelease", a major version will be created using the prerelease tag (vX.0.0-\<branchName\>).
-    - `Minor` - Will create a minor release (vX.Y.0) when merged. If specified with "Prerelease", a minor version will be created using the prerelease tag (vX.Y.0-\<branchName\>).
-    - `Patch` - Will create a minor release (vX.Y.Z) when merged. If specified with "Prerelease", a minor version will be created using the prerelease tag (vX.Y.Z-\<branchName\>). A patch version bump is the default if nothing is specified for the PR.
-    - `Prerelease` - CI will create a prerelease of the module using the branch name as a prerelease tag in the version. This will create both a repository release and a prerelease version of the module on the PowerShell Gallery.
-1. Once the PR is created, the [Process-FunctionApp](https://github.com/PSModule/Process-FunctionApp) workflow will trigger.
-1. When the PR is merged, a release will be created and the function app will be deployed to Azure with a stable version based on the version bump indicator the PR was was labeled with. Prerelease tags will be cleaned up on the repository.
-
-</details>
-
-## Function Apps we maintain
+## What we have delivered
 
 <!-- FUNCTIONAPP_LIST_START -->
 
