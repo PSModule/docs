@@ -31,24 +31,22 @@ nav = [
     {"DSC" = [
       "PowerShell/DSC/index.md",
     ]},
+    {"Function Apps" = [
+      "PowerShell/FunctionApps/index.md",
+    ]},
   ]},
   {"GitHub Actions" = [
     "GitHub-Actions/index.md",
     {"Standards" = "GitHub-Actions/Standards.md"},
-    {"Some More" = "GitHub-Actions/Some-More.md"},
-    {"Test Something" = "GitHub-Actions/Test-Something.md"},
-    {"Subtopic" = [
-      "GitHub-Actions/Subtopic/index.md",
-      {"Some More" = "GitHub-Actions/Subtopic/Some-More.md"},
-      {"Test Something" = "GitHub-Actions/Subtopic/Test-Something.md"},
-    ]},
   ]},
   {"Solutions" = [
     "Solutions/index.md",
     {"GitHub Copilot Customization" = "Solutions/GitHub-Copilot-Customization-Architecture.md"},
+    {"Self-Service System" = "Solutions/Self-service-system.md"},
   ]},
   {"Ways of Working" = [
     "Ways-of-Working/index.md",
+    {"Workflow" = "Ways-of-Working/Workflow.md"},
     {"Principles" = "Ways-of-Working/Principles.md"},
     {"Issue Format" = "Ways-of-Working/Issue-Format.md"},
     {"Issue Hierarchy" = "Ways-of-Working/Issue-Hierarchy.md"},
@@ -56,14 +54,17 @@ nav = [
     {"Commit Conventions" = "Ways-of-Working/Commit-Conventions.md"},
     {"Review Etiquette" = "Ways-of-Working/Review-Etiquette.md"},
     {"README-Driven Context" = "Ways-of-Working/Readme-Driven-Context.md"},
+    {"Git Worktrees" = "Ways-of-Working/Git-Worktrees.md"},
   ]},
   {"Agents" = [
     "Agents/index.md",
     {"Workflow" = "Agents/Workflow.md"},
-    {"Git Worktrees" = "Agents/Git-Worktrees.md"},
     {"Standards" = [
       "Agents/Standards/index.md",
     ]},
+  ]},
+  {"Dictionary" = [
+    "Dictionary/index.md",
   ]},
 ]
 
