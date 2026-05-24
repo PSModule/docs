@@ -252,7 +252,7 @@ function Update-MDSection {
     }
 }
 
-Update-MDSection -Path '.\docs\index.md' -Name 'MODULE_LIST' -Content $moduleTable
+Update-MDSection -Path '.\docs\PowerShell\Modules\index.md' -Name 'MODULE_LIST' -Content $moduleTable
 Update-MDSection -Path '.\docs\index.md' -Name 'ACTION_LIST' -Content $actionTable
 Update-MDSection -Path '.\docs\index.md' -Name 'FUNCTIONAPP_LIST' -Content $functionAppTable
 Update-MDSection -Path '.\docs\index.md' -Name 'WORKFLOW_LIST' -Content $workflowTable
