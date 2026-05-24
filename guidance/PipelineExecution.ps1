@@ -11,9 +11,11 @@
     param (
         [string]$Parameter = 'Default-Parameter'
     )
-    Write-Verbose "Set-DefaultParameterValue: Setting Parameter to '$Parameter'"
-    Start-Sleep -Seconds 1
-    return $Parameter
+    if ($PSCmdlet.ShouldProcess($Parameter, 'Set default parameter value')) {
+        Write-Verbose "Set-DefaultParameterValue: Setting Parameter to '$Parameter'"
+        Start-Sleep -Seconds 1
+        return $Parameter
+    }
 }
 
 function Step-One {
