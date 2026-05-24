@@ -75,16 +75,17 @@ LLM tokens are not the right tool for work that has a deterministic answer. Use 
 An echo of platform engineering's "a product starts with a README." Every change flows through context before it touches code:
 
 ```text
-Intention of change → Update documentation → Update README → Update code
+Intention of change → Update documentation → Update README → Update tests → Update code
 ```
 
-Code echoes the docs, not the other way around. The README and the docs are the **specification**. If a change isn't reflected in context first, the code has no contract to implement against — and agents have nothing to read.
+Code echoes the docs, not the other way around. The README and the docs are the **specification**. Tests validate the interface we want to see. If a change isn't reflected in context first, the code has no contract to implement against — and agents have nothing to read.
 
 This means:
 
 - A new feature starts as a documented intent (issue, README update, or docs change) before any code is written.
-- A refactor updates the relevant documentation **first**, then the code follows to match.
-- If the docs and the code disagree, the docs are wrong — fix the docs, then fix the code to match.
+- Tests are written or updated to assert the interface the documentation describes — before the implementation exists.
+- A refactor updates the relevant documentation **first**, then the tests, then the code follows to match.
+- If the docs and the code disagree, the docs are wrong — fix the docs, fix the tests, then fix the code to match.
 
 This is what makes agentic development work at scale. Agents read context. If the context is stale or missing, the agent builds the wrong thing. Keeping context ahead of code is how we stay in control.
 
