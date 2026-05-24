@@ -1,55 +1,22 @@
 # Workflow
 
-How the agent roles connect across the **Context Development Lifecycle (CDLC)** and the **Software Development Lifecycle (SDLC)**, embedded in DevOps practice.
+How the agent roles map to the [Ways of Working workflow](../Ways-of-Working/Workflow.md). Each phase is owned by a specific agent.
 
-## The big picture
-
-The CDLC and the SDLC run side by side. The CDLC keeps **context** evergreen — issues, decisions, READMEs, docs. The SDLC delivers **software** — code, tests, releases. Each iteration of one feeds the other.
+## The lifecycle
 
 ```text
-        ┌───────────────────────────────────────────────────────┐
-        │           Context Development Lifecycle               │
-        │                                                       │
-        │                     Define                            │
-        │          (capture → refine → plan)                    │
-        │                       │                               │
-        │        ┌──────────────┼──────────────┐                │
-        │        ▼              ▼              ▼                │
-        │   simple task    sub-issues     checklist             │
-        │                                                       │
-        └───────────────────────┼───────────────────────────────┘
-                                │
-                                ▼
-        ┌───────────────────────┼───────────────────────────────┐
-        │                       │                               │
-        │           Software Development Lifecycle              │
-        │                                                       │
-        │                  Implement                            │
-        │    (branch → draft PR → build → finalize)             │
-        │                       │                               │
-        │                       ▼                               │
-        │                   Reviewer                            │
-        │                       │                               │
-        │              fixes needed? → Implement (respond)      │
-        │                                                       │
-        └───────────────────────────────────────────────────────┘
-                                │
-                                ▼
-                          Run / operate
-                       (DevOps + SRE loop)
-                                │
-                                ▼
-                   Signals, errors, feedback
-                                │
-                                ▼
-                          Define (again)
+   Define → Implement → Reviewer
+               ↑            │
+               └── (respond) ◄┘
 ```
+
+Each role is a focused agent. The shared workflow and conventions are documented in [Ways of Working](../Ways-of-Working/index.md) — agents read those pages as context before acting.
 
 ## The agents
 
 ### Define
 
-Combines **capture**, **refine**, and **plan** into a single flow. Takes any input — a desire, a bug, a signal — and produces a planned, actionable issue.
+Covers the **Capture**, **Refine**, and **Plan** phases. Takes any input — a desire, a bug, a signal — and produces a planned, actionable issue.
 
 **Output is one of:**
 
@@ -60,7 +27,7 @@ See [Issue Format](../Ways-of-Working/Issue-Format.md) and [Issue Hierarchy](../
 
 ### Implement
 
-Takes a planned issue and delivers a merge-ready pull request. Owns the full loop:
+Covers the **Build** and **Ship** phases. Takes a planned issue and delivers a merge-ready pull request. Owns the full loop:
 
 1. **Orient** — read the issue, README, contribution guide, and standards.
 2. **Branch and draft PR** — create a [worktree](Git-Worktrees.md) for the issue, push early so CI attaches and progress is visible. Assign to the user. Link to the issue.
@@ -72,23 +39,9 @@ See [Git Worktrees](Git-Worktrees.md), [PR Format](../Ways-of-Working/PR-Format.
 
 ### Reviewer
 
-Reviews someone else's PR. Checks delivery against the linked issue, good taste, security, and undiscussed decisions.
+Covers the **Review** phase. Reviews someone else's PR. Checks delivery against the linked issue, good taste, security, and undiscussed decisions.
 
 See [Review Etiquette](../Ways-of-Working/Review-Etiquette.md).
-
-## Three horizons of planning
-
-Borrowed from [Principles → Roadmapping](../Ways-of-Working/Principles.md#roadmapping). The planner doesn't only think about today.
-
-|            | Now                  | Next          | Later          |
-| ---------- | -------------------- | ------------- | -------------- |
-| Conceptual | Vision delivered now | Vision next   | Vision later   |
-| Logical    | Approach now         | Approach next | Approach later |
-| Detailed   | Tasks in flight      | Tasks ready   | Tasks framed   |
-
-- A Task lives in **Now / Detailed**.
-- A PBI lives somewhere between **Now / Logical** and **Next / Detailed**.
-- An Epic spans **Now → Next → Later** at **Conceptual / Logical** fidelity.
 
 ## Where the principles show up
 

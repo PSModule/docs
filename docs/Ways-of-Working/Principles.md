@@ -165,14 +165,16 @@ Define the tests when you define the behavior. Update them when behavior changes
 
 Everything is continuous — development, integration, delivery, operation. The same team owns the system across the loop. Build the systems, the practices, and the teams that internalize this.
 
-## Context Development Lifecycle
+## Context as a product
 
-The work of keeping context **right, evergreen, and declarative**. The CDLC sits beside the SDLC:
+The work of keeping context **right, evergreen, and declarative** runs alongside software delivery:
 
-- **SDLC** delivers software using source code management, CI/CD, and DevOps practices.
-- **CDLC** delivers context — issues, decisions, READMEs, agent definitions, this docs site — and treats them as products that must be kept current.
+- **Software delivery** produces code, tests, and releases using source control, CI/CD, and DevOps practices.
+- **Context maintenance** produces issues, decisions, READMEs, agent definitions, and documentation — and treats them as products that must be kept current.
 
-Both lifecycles run continuously. Each iteration of the SDLC produces context that needs CDLC maintenance; each iteration of the CDLC unblocks SDLC work.
+Both run continuously. Each iteration of software delivery produces context that needs maintenance; each iteration of context maintenance unblocks the next round of software work.
+
+See [Workflow](Workflow.md) for how these connect in practice.
 
 ## Lean Software Development
 

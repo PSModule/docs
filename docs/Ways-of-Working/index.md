@@ -6,6 +6,7 @@ This section documents the principles, processes, and norms that every contribut
 
 ## What's covered
 
+- **[Workflow](Workflow.md)** — How work flows from idea to delivery and back again. The phases, the loop, and how they connect.
 - **[Principles](Principles.md)** — Vision, mission, OKRs, product mindset, and the foundational beliefs that drive decisions.
 - **[Issue Format](Issue-Format.md)** — The three-section issue structure, formatting rules, and labels.
 - **[Issue Hierarchy](Issue-Hierarchy.md)** — Epic / Product Backlog Item / Task levels and GitHub issue types.

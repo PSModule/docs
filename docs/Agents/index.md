@@ -20,13 +20,13 @@ Principles, issue format, PR format, commit conventions, review etiquette, and o
 
 ## The lifecycle
 
+The full workflow — phases, the loop, and how they connect — is documented in **[Ways of Working → Workflow](../Ways-of-Working/Workflow.md)**. The agents implement that workflow:
+
 ```text
    Define → Implement → Reviewer
                ↑            │
                └── (respond) ◄┘
 ```
-
-Each role is a focused agent. Standards are referenced, not embedded.
 
 | Role        | Phase                   | Purpose                                                                 |
 | ----------- | ----------------------- | ----------------------------------------------------------------------- |
