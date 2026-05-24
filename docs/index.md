@@ -37,44 +37,7 @@ as our primary toolstack. We concentrate on the following key areas:
 
 ### PowerShell modules
 
-<details>
-   <summary>About</summary>
-
-A PowerShell module is a set of functions, scripts, and cmdlets that are bundled together in a single package. Modules are used to organize and distribute code in a way that is easy to use and share. They can be used to extend the functionality of PowerShell, automate tasks, and create reusable code that can be shared with others.
-We have created a framework that automates the process of creating, testing, and publishing PowerShell modules to the PowerShell Gallery. This framework is designed to make it easy for developers to create and share their PowerShell modules with the community.
-
-</details>
-
-<details>
-   <summary>How we do it in PSModule</summary>
-
-Projects based on the `Template-PSModule` repository template will automatically have the necessary workflows and configurations set up to automate the process of creating, testing, and publishing PowerShell modules to the PowerShell Gallery. This includes workflows for building, testing, and releasing the module, as well as a configuration file for setting up the module's metadata and dependencies.
-Using custom properties we set `RepoType` to `Module`.
-We use branch policies to control the flow of changes to the `main` branch, and we use labels to control the versioning of the module when a pull request is merged.
-
-</details>
-
-<details>
-   <summary>Create a new project</summary>
-
-1. [Create a repository based on the template Template-PSModule](https://github.com/new?template_name=Template-PSModule&template_owner=PSModule). The module will by default use the name of the repository. See [Process-PSModule](https://github.com/PSModule/Process-PSModule) for more info on choosing another name than the repository name.
-1. Create a repository or organization secret called `APIKEY` holding the API key for the PowerShell Gallery.
-1. Configure the settings you want for the repository including a branch policy for the `main` branch.
-1. On a topic branch:
-   1. develop the code you want to add to your module.
-   1. delete the parts you do not need.
-   1. update the tests in the `tests` folder.
-1. Create a PR. Add a label to the PR depending on what you want to do.
-   - `Major` - Will create a major release (vX.0.0) when merged. If specified with "Prerelease", a major version will be created using the prerelease tag (vX.0.0-\<branchName\>).
-   - `Minor` - Will create a minor release (vX.Y.0) when merged. If specified with "Prerelease", a minor version will be created using the prerelease tag (vX.Y.0-\<branchName\>).
-   - `Patch` - Will create a minor release (vX.Y.Z) when merged. If specified with "Prerelease", a minor version will be created using the prerelease tag (vX.Y.Z-\<branchName\>). A patch version bump is the default if nothing is specified for the PR.
-   - `Prerelease` - CI will create a prerelease of the module using the branch name as a prerelease tag in the version. This will create both a repository release and a prerelease version of the module on the PowerShell Gallery.
-1. Once the PR is created, the [Process-PSModule](https://github.com/PSModule/Process-PSModule) workflow will trigger.
-1. When the PR is merged, a release will be created and the module will be published to the PowerShell Gallery with a stable version based on the version bump indicator the PR was was labeled with. Prerelease tags will be cleaned up on the repository.
-
-</details>
-
-See [Modules on the PowerShell Gallery](PowerShell/Modules/index.md).
+See **[PowerShell Modules](PowerShell/Modules/index.md)** for documentation, including how to create a new project and the modules we publish to the PowerShell Gallery.
 
 ### PowerShell based Azure Function Apps
 
