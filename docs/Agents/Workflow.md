@@ -56,7 +56,7 @@ Combines **capture**, **refine**, and **plan** into a single flow. Takes any inp
 - A single Task with Sections 1–3 (context, decisions, checklist).
 - A decomposed PBI or Epic with structured sub-issues, each scoped to one PR.
 
-See [Issue Format](Issue-Format.md) and [Issue Hierarchy](Issue-Hierarchy.md) for the structure.
+See [Issue Format](../Ways-of-Working/Issue-Format.md) and [Issue Hierarchy](../Ways-of-Working/Issue-Hierarchy.md) for the structure.
 
 ### Implement
 
@@ -68,17 +68,17 @@ Takes a planned issue and delivers a merge-ready pull request. Owns the full loo
 4. **Respond** — process reviewer feedback and CI failures. One thread at a time.
 5. **Finalize** — update PR title, labels, and description as a user-facing release note.
 
-See [Git Worktrees](Git-Worktrees.md), [PR Format](PR-Format.md), [Commit Conventions](Commit-Conventions.md), and [Standards](Standards/index.md).
+See [Git Worktrees](Git-Worktrees.md), [PR Format](../Ways-of-Working/PR-Format.md), [Commit Conventions](../Ways-of-Working/Commit-Conventions.md), and [Standards](Standards/index.md).
 
 ### Reviewer
 
 Reviews someone else's PR. Checks delivery against the linked issue, good taste, security, and undiscussed decisions.
 
-See [Review Etiquette](Review-Etiquette.md).
+See [Review Etiquette](../Ways-of-Working/Review-Etiquette.md).
 
 ## Three horizons of planning
 
-Borrowed from [Principles → Roadmapping](Principles.md#roadmapping). The planner doesn't only think about today.
+Borrowed from [Principles → Roadmapping](../Ways-of-Working/Principles.md#roadmapping). The planner doesn't only think about today.
 
 |            | Now                  | Next          | Later          |
 | ---------- | -------------------- | ------------- | -------------- |
@@ -108,7 +108,7 @@ Borrowed from [Principles → Roadmapping](Principles.md#roadmapping). The plann
 | Git Worktrees (parallel work)   | Implement                          |
 | Dogfooding                      | Run / operate phase                |
 
-See [Principles](Principles.md) for the full set.
+See [Principles](../Ways-of-Working/Principles.md) for the full set.
 
 ## Inner and outer loops
 

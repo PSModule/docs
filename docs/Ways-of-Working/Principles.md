@@ -51,7 +51,7 @@ Be the first customer of every service we build. But avoid full self-dependency 
 
 ### Persona, not swarm
 
-Treat the agent ecosystem as one team mate. Many specialized roles, one cohesive bank of knowledge, one consistent voice. See [the Agents index](index.md#why-a-persona-not-a-swarm).
+Treat the agent ecosystem as one team mate. Many specialized roles, one cohesive bank of knowledge, one consistent voice. See [the Agents index](../Agents/index.md#why-a-persona-not-a-swarm).
 
 ### Augmentation, not replacement
 

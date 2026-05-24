@@ -2,7 +2,7 @@
 
 A team mate, not a tool.
 
-The PSModule agents are a small set of role-based collaborators that help capture, refine, plan, build, ship, and review work across the organization. They share one set of evergreen guidelines — published here — and operate against the same human interfaces humans already use: GitHub issues, pull requests, and READMEs.
+The PSModule agents are a small set of role-based collaborators that help capture, refine, plan, build, ship, and review work across the organization. They share one set of evergreen guidelines — published in [Ways of Working](../Ways-of-Working/index.md) — and operate against the same human interfaces humans already use: GitHub issues, pull requests, and READMEs.
 
 ## Why a persona, not a swarm
 
@@ -13,6 +13,10 @@ This matters because:
 - **Knowledge is shared.** A decision documented here is available to every agent that needs it.
 - **Behaviour stays consistent.** The Reviewer and the Builder don't disagree on what "good" looks like — they read the same standards.
 - **Human-agent cooperation is the goal.** Agents augment the team, they do not replace it.
+
+## Shared conventions
+
+Principles, issue format, PR format, commit conventions, review etiquette, and other shared norms live in **[Ways of Working](../Ways-of-Working/index.md)**. Both agents and humans follow those conventions.
 
 ## The lifecycle
 
@@ -32,14 +36,7 @@ Each role is a focused agent. Standards are referenced, not embedded.
 
 ## What lives here
 
-- **[Principles](Principles.md)** — Golden Circle, OKRs, DevOps, Lean, Clean Code, Evolutionary Architecture, and the other ideas underneath everything below.
 - **[Workflow](Workflow.md)** — How the roles connect, the Context Development Lifecycle, and where it meets DevOps.
-- **[Issue Format](Issue-Format.md)** — The three-section structure, formatting, labels, comments.
-- **[Issue Hierarchy](Issue-Hierarchy.md)** — Epic / Product Backlog Item / Task and how to use GitHub issue types.
-- **[PR Format](PR-Format.md)** — Title, description, change types, labels, release-note style.
-- **[Commit Conventions](Commit-Conventions.md)** — How we write commit messages.
-- **[Review Etiquette](Review-Etiquette.md)** — Tone, scope, and how to disagree well.
-- **[README-Driven Context](Readme-Driven-Context.md)** — Why the README is the front door and the contract.
 - **[Git Worktrees](Git-Worktrees.md)** — Bare-clone + worktree layout for parallel work with agents.
 - **[Standards](Standards/index.md)** — Per-language and per-platform standards referenced by the agents.
 
