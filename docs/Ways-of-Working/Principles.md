@@ -161,6 +161,28 @@ Inner / outer loops to be aware of:
 
 Push work as far inward as it can go.
 
+## Shift Left
+
+Move quality gates as early as possible in the development cycle. The later a problem is caught, the more expensive it is to fix — a failing test in the editor is free; a bug in production is not. Design solutions so that validation happens at the earliest possible moment, not as an afterthought.
+
+### Testable locally
+
+A developer (or agent) must be able to run the full test suite locally, without requiring cloud resources, special access, or environment secrets that can't be mocked. If you can't test it on your machine, you can't reason about it in your editor.
+
+This is a design constraint, not an optional addition. A solution that is untestable locally has a hidden cost that compounds with every change. When building new workflows, modules, or automation, ask early: *can someone run this locally?*
+
+### Pre-commit hooks
+
+Validation that runs automatically on `git commit` — before the change enters history and before a PR is opened. Pre-commit hooks close the gap between "I can test it locally if I choose to" and "it is always checked before it leaves my machine."
+
+Typical gates: linting, formatting, static analysis, secret scanning, and fast unit tests. Keep them fast enough to not interrupt flow — if a hook takes more than a few seconds, it will be bypassed.
+
+### Validatable in PRs
+
+Every pull request must trigger automated checks that verify correctness before a human review begins. Tests, linting, module analysis, or any other relevant gate must run in CI on each PR.
+
+A solution without PR validation shifts the cost of catching regressions onto reviewers — and reviewers miss things. Automation catches what humans don't, consistently and at no extra cost per PR.
+
 ## Roadmapping
 
 We plan in a 3×3 matrix:
