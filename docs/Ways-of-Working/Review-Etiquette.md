@@ -4,6 +4,18 @@ How to disagree well, how to keep reviews focused, and how to keep the loop conv
 
 ## For the Reviewer
 
+### What to assess
+
+Consider each of the following dimensions when reviewing a PR:
+
+- **Functional** — Does the code meet the stated needs?
+- **Reliability** — Are we confident that the code will run failure-free?
+- **Performance** — Is the code as efficient as it can be?
+- **Usability** — Consider the user(s) of the service/product we provide; is the experience of high quality with this change?
+- **Security** — Are we improving the security posture of the service/product with the changes to the code? Are we worsening it?
+- **Maintainability** — Is the architecture good for future maintenance?
+- **Standards** — Is the code meeting coding standards for the project and language?
+
 ### Stay in scope
 
 The PR delivers a specific issue. Suggestions that go beyond that issue are **new issues**, not blocking review comments. File the follow-up and link it from the comment.
