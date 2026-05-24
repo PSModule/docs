@@ -9,6 +9,10 @@ $RepeatCount = 10000
 
 'Wrapped in a function = {0}ms' -f (Measure-Command -Expression {
         function Get-RandNum_Core {
+            <#
+                .SYNOPSIS
+                Gets a random number using a shared Random instance.
+            #>
             param ($ranGen)
             $ranGen.Next()
         }
@@ -20,6 +24,10 @@ $RepeatCount = 10000
 
 'For-loop in a function = {0}ms' -f (Measure-Command -Expression {
         function Get-RandNum_All {
+            <#
+                .SYNOPSIS
+                Gets random numbers in a loop using a shared Random instance.
+            #>
             param ($ranGen)
             for ($i = 0; $i -lt $RepeatCount; $i++) {
                 $Null = $ranGen.Next()
