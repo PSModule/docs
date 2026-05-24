@@ -1,6 +1,7 @@
 name: Update index
 
 on:
+  workflow_call:
   workflow_dispatch:
   push:
   schedule:
@@ -18,10 +19,35 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Update index
+      - name: Connect and show repos
         uses: PSModule/GitHub-Script@1ee97bbc652d19c38ae12f6e1e47e9d9fbd12d0a # v1.8.0
         with:
           # Org-level shared secrets used across multiple repositories — no dedicated GitHub Environment needed.
           ClientID: ${{ secrets.SCRIBBLER_BOT_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
           PrivateKey: ${{ secrets.SCRIBBLER_BOT_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
-          Script: .github/scripts/Update-Index.ps1
+          Script: .github/scripts/Connect-And-Show-Repos.ps1
+
+      - name: Update module index
+        uses: PSModule/GitHub-Script@1ee97bbc652d19c38ae12f6e1e47e9d9fbd12d0a # v1.8.0
+        with:
+          Script: .github/scripts/Update-ModuleIndex.ps1
+
+      - name: Update action index
+        uses: PSModule/GitHub-Script@1ee97bbc652d19c38ae12f6e1e47e9d9fbd12d0a # v1.8.0
+        with:
+          Script: .github/scripts/Update-ActionIndex.ps1
+
+      - name: Update function app index
+        uses: PSModule/GitHub-Script@1ee97bbc652d19c38ae12f6e1e47e9d9fbd12d0a # v1.8.0
+        with:
+          Script: .github/scripts/Update-FunctionAppIndex.ps1
+
+      - name: Update workflow index
+        uses: PSModule/GitHub-Script@1ee97bbc652d19c38ae12f6e1e47e9d9fbd12d0a # v1.8.0
+        with:
+          Script: .github/scripts/Update-WorkflowIndex.ps1
+
+      - name: Commit changes
+        uses: PSModule/GitHub-Script@1ee97bbc652d19c38ae12f6e1e47e9d9fbd12d0a # v1.8.0
+        with:
+          Script: .github/scripts/Commit-Changes.ps1

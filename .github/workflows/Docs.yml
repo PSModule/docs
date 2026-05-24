@@ -18,8 +18,14 @@ permissions:
   contents: read
 
 jobs:
+  update_index:
+    name: Update index
+    uses: ./.github/workflows/Update-Index.yml
+    secrets: inherit
+
   build:
     name: Build and deploy docs
+    needs: update_index
     runs-on: ubuntu-24.04
     environment:
       name: github-pages

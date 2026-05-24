@@ -143,6 +143,30 @@ Parameter descriptions are **one-line `#` comments above each parameter** inside
 - **Interface Segregation.** Narrow, intent-named parameter sets.
 - **Dependency Inversion.** Public functions depend on resolved inputs and local abstractions. Private helpers own the concrete REST / GraphQL / filesystem / process calls.
 
+## Parameter design
+
+### Smart defaults
+
+Every parameter that has a natural default should declare one. The most common use case must work with the fewest parameters possible. Reserve `Mandatory` for values the command genuinely cannot infer or derive.
+
+- Prefer `= 'main'` over making `-Branch` mandatory in commands that act on branches.
+- Prefer sensible page sizes, counts, or ranges over requiring callers to specify them.
+- Prefer `= $false` for switches rather than leaving the behaviour implicit.
+
+This is a usability expression of the **Open/Closed** principle: the common path is open by default; callers that need different behaviour extend it by supplying alternatives — they are never forced to know the default just to get started.
+
+### Object-first parameters
+
+Parameters represent attributes of a real-world entity. Design them to reflect that structure.
+
+- **Prefer typed objects.** If a concept has a class — `[GitHubRepo]`, `[GitHubContext]`, `[ContosoProject]` — accept the object rather than its constituent fields. The caller can pass the whole thing; the implementation unpacks what it needs.
+- **Group flat parameters by their conceptual object.** When a typed object is not available, prefix each parameter with the name of the entity it belongs to: `$ServerHost`, `$ServerPort`, `$ServerTls` rather than `$Host`, `$Port`, `$Tls`. The prefix makes the grouping explicit, prevents collisions with unrelated parameters, and avoids shadowing PowerShell built-in variables (`$Host`).
+- **Offer both modes when callers need both.** A parameter set that accepts an object and a parallel parameter set that accepts its individual attributes are equally valid; use both when that genuinely serves users.
+
+This mirrors **Interface Segregation**: each parameter set represents one coherent input contract — not a flat list of loosely related knobs — so callers only touch what they need.
+
+> Note: the rule "avoid repeating the noun" (e.g. `-ID` not `-ProjectID` in `Get-ContosoProject`) applies to a command's *own* noun. The object-prefix convention above applies when a single command spans *multiple* conceptual objects (`$ServerHost` vs `$ClientID`) — the prefix is the object name, not the command noun, so there is no conflict.
+
 ## DRY with judgment
 
 Extract a helper after the same non-trivial logic appears in three or more places, or when duplicated logic is load-bearing. Don't create a helper for a single caller.
