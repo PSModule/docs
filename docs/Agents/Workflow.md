@@ -7,78 +7,74 @@ How the agent roles connect across the **Context Development Lifecycle (CDLC)** 
 The CDLC and the SDLC run side by side. The CDLC keeps **context** evergreen — issues, decisions, READMEs, docs. The SDLC delivers **software** — code, tests, releases. Each iteration of one feeds the other.
 
 ```text
-        ┌────────────────────────────────────────────────────────────┐
-        │                 Context Development Lifecycle              │
-        │                                                            │
-        │   ideator  →  clarifier  →  planner                         │
-        │      ▲                          │                           │
-        │      │                          ▼                           │
-        │   (capture)                  (decide)                       │
-        │                                  │                          │
-        └──────────────────────────────────┼──────────────────────────┘
-                                           │
-                                           ▼
-        ┌──────────────────────────────────┼──────────────────────────┐
-        │                                  │                          │
-        │                  Software Development Lifecycle             │
-        │                                                             │
-        │            builder  →  shipper  →  reviewer                 │
-        │                            ▲           │                    │
-        │                            │           ▼                    │
-        │                       (respond) ◄──  responder              │
-        │                                                             │
-        └─────────────────────────────────────────────────────────────┘
-                                           │
-                                           ▼
-                                     Run / operate
-                                  (DevOps + SRE loop)
-                                           │
-                                           ▼
-                              Signals, errors, feedback
-                                           │
-                                           ▼
-                                       ideator (again)
+        ┌───────────────────────────────────────────────────────┐
+        │           Context Development Lifecycle               │
+        │                                                       │
+        │                     Define                            │
+        │          (capture → refine → plan)                    │
+        │                       │                               │
+        │        ┌──────────────┼──────────────┐                │
+        │        ▼              ▼              ▼                │
+        │   simple task    sub-issues     checklist             │
+        │                                                       │
+        └───────────────────────┼───────────────────────────────┘
+                                │
+                                ▼
+        ┌───────────────────────┼───────────────────────────────┐
+        │                       │                               │
+        │           Software Development Lifecycle              │
+        │                                                       │
+        │                  Implement                            │
+        │    (branch → draft PR → build → finalize)             │
+        │                       │                               │
+        │                       ▼                               │
+        │                   Reviewer                            │
+        │                       │                               │
+        │              fixes needed? → Implement (respond)      │
+        │                                                       │
+        └───────────────────────────────────────────────────────┘
+                                │
+                                ▼
+                          Run / operate
+                       (DevOps + SRE loop)
+                                │
+                                ▼
+                   Signals, errors, feedback
+                                │
+                                ▼
+                          Define (again)
 ```
 
-> A richer visual version of this diagram lives in Figma (linked from the homepage). Mermaid covers the structure; the Figma version covers the relationships between CDLC, SDLC, and operations.
+## The agents
 
-## The roles in order
+### Define
 
-### 1. Capture — Ideator
+Combines **capture**, **refine**, and **plan** into a single flow. Takes any input — a desire, a bug, a signal — and produces a planned, actionable issue.
 
-A desire becomes a real, actionable item. Could be a feature request, a bug, an improvement, a triaged piece of external feedback, or a signal from production. Output: an issue with Section 1 only.
+**Output is one of:**
 
-### 2. Refine — Clarifier
+- A single Task with Sections 1–3 (context, decisions, checklist).
+- A decomposed PBI or Epic with structured sub-issues, each scoped to one PR.
 
-The desire is grounded. Assumptions surfaced. Acceptance criteria sharpened to be testable. Section 1 becomes unambiguous. No solutioning yet.
+See [Issue Format](Issue-Format.md) and [Issue Hierarchy](Issue-Hierarchy.md) for the structure.
 
-### 3. Plan — Planner
+### Implement
 
-The work is decided and (often) decomposed.
+Takes a planned issue and delivers a merge-ready pull request. Owns the full loop:
 
-- **Task** — one deliverable, one PR. Sections 2 and 3 populated.
-- **Product Backlog Item (PBI)** — several Tasks. Section 2 documents decomposition; Section 3 lists children.
-- **Epic** — several PBIs. Top-level co-planning artifact, often paired with an OKR.
+1. **Orient** — read the issue, README, contribution guide, and standards.
+2. **Branch and draft PR** — create a [worktree](Git-Worktrees.md) for the issue, push early so CI attaches and progress is visible. Assign to the user. Link to the issue.
+3. **Build** — micro-commits, one logical change each. Update the issue as each task completes (not in bulk).
+4. **Respond** — process reviewer feedback and CI failures. One thread at a time.
+5. **Finalize** — update PR title, labels, and description as a user-facing release note.
 
-Issue hierarchy is described in [Issue Hierarchy](Issue-Hierarchy.md).
+See [Git Worktrees](Git-Worktrees.md), [PR Format](PR-Format.md), [Commit Conventions](Commit-Conventions.md), and [Standards](Standards/index.md).
 
-### 4. Build — Builder
+### Reviewer
 
-Code is written. The Task issue is the contract. Standards come from [Standards](Standards/index.md); linter rules in the repo win. Commits are small and descriptive.
+Reviews someone else's PR. Checks delivery against the linked issue, good taste, security, and undiscussed decisions.
 
-### 5. Ship — Shipper
-
-The branch becomes a draft PR with a release-note style description. Issue linked, labels applied, reviewers requested.
-
-### 6. Review — Reviewer
-
-Someone other than the author reads the PR with intent: does it deliver the issue, is the code in good taste, are the security best practices respected, are there undiscussed decisions hiding in the diff?
-
-### 7. Respond — Responder
-
-The author closes the loop. One thread at a time: read, evaluate, fix or defer, reply, resolve. CI failures handled similarly. Repeat until the loop converges.
-
-After merge, the change runs in production. Signals — errors, logs, user feedback, alerts — feed back into the Ideator. The loop never really stops.
+See [Review Etiquette](Review-Etiquette.md).
 
 ## Three horizons of planning
 
@@ -96,18 +92,19 @@ Borrowed from [Principles → Roadmapping](Principles.md#roadmapping). The plann
 
 ## Where the principles show up
 
-| Principle                       | Most relevant phase                |
+| Principle                       | Most relevant agent                |
 | ------------------------------- | ---------------------------------- |
-| Golden Circle (Why / How / What)| Capture, Plan                      |
-| OKRs                            | Plan (especially Epic-level)       |
-| YAGNI / Lean                    | Plan, Build                        |
-| Test-Driven Development         | Build                              |
-| Clean Code                      | Build, Review                      |
-| Evolutionary Architecture       | Plan, Build, Review                |
-| 4-eyes                          | Review                             |
-| README-Driven Context           | Build, Ship                        |
-| GTD ("write it down")           | All phases                         |
-| Determinism over intelligence   | Build                              |
+| Golden Circle (Why / How / What)| Define                             |
+| OKRs                            | Define (especially Epic-level)     |
+| YAGNI / Lean                    | Define, Implement                  |
+| Test-Driven Development         | Implement                          |
+| Clean Code                      | Implement, Reviewer                |
+| Evolutionary Architecture       | Define, Implement, Reviewer        |
+| 4-eyes                          | Reviewer                           |
+| README-Driven Context           | Implement                          |
+| GTD ("write it down")           | All agents                         |
+| Determinism over intelligence   | Implement                          |
+| Git Worktrees (parallel work)   | Implement                          |
 | Dogfooding                      | Run / operate phase                |
 
 See [Principles](Principles.md) for the full set.
@@ -116,9 +113,9 @@ See [Principles](Principles.md) for the full set.
 
 The agent workflow is itself a series of loops at different speeds.
 
-- **Innermost** — editor + tests + the Builder. Sub-minute.
-- **Inner** — push + CI + Reviewer + Responder. Minutes to hours.
-- **Outer** — issue lifecycle, decomposition refinement, planning review. Days.
+- **Innermost** — editor + tests + Implement (build). Sub-minute.
+- **Inner** — push + CI + Reviewer + Implement (respond). Minutes to hours.
+- **Outer** — issue lifecycle, decomposition, Define. Days.
 - **Outermost** — strategy, OKR check-ins, vision adjustments. Weeks to quarters.
 
 Each agent operates at its own loop. Keep work close to the loop where it is cheapest to iterate.
