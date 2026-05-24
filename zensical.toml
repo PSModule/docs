@@ -2,7 +2,7 @@
 # https://zensical.org/docs/setup/basics/
 
 [project]
-site_name = "PSModule Docs"
+site_name = "PSModule / Docs"
 site_url = "https://psmodule.io/docs/"
 docs_dir = "docs"
 repo_name = "PSModule/docs"
@@ -16,7 +16,6 @@ extra_javascript = [
 ]
 watch = ["includes"]
 nav = [
-  {"Home" = "index.md"},
   {"Projects" = [
     {"PowerShell Modules" = [
       "PowerShell-Modules/index.md",
