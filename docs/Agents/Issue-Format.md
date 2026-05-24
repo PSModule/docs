@@ -38,11 +38,11 @@ A clear, imperative-mood statement of the work. Not a question, not a symptom.
 
 The description has three sections separated by horizontal rules (`---`), ordered from behavioural to architectural to tactical. The user need is understood before the technical discussion.
 
-| Section | Owner          | Present in                                            |
-| ------- | -------------- | ----------------------------------------------------- |
-| 1 — Context and Request | Ideator → Clarifier   | Every issue at every level (Task, PBI, Epic) |
-| 2 — Technical Decisions | Planner               | Task always; PBI / Epic for decomposition rationale |
-| 3 — Implementation Plan | Planner               | Task always (task list); PBI / Epic (links to children) |
+| Section                   | Owner                 | Present in                                                    |
+| ------------------------- | --------------------- | ------------------------------------------------------------- |
+| 1 — Context and Request   | Ideator → Clarifier   | Every issue at every level (Task, PBI, Epic)                  |
+| 2 — Technical Decisions   | Planner               | Task always; PBI / Epic for decomposition rationale           |
+| 3 — Implementation Plan   | Planner               | Task always (task list); PBI / Epic (links to children)       |
 
 ## Section 1 — Context and Request
 

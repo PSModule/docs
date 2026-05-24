@@ -7,52 +7,47 @@ on:
       - main
     paths:
       - docs/**
-      - mkdocs.yml
+      - zensical.toml
       - .github/workflows/Docs.yml
 
-env:
-  GH_TOKEN: ${{ github.token }}
-  MKDOCS_GIT_COMMITTERS_APIKEY: ${{ github.token }}
-
-defaults:
-  run:
-    shell: pwsh
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
-  contents: write  # to push GitHub Pages to the gh-pages branch
-  pages: write    # to deploy to Pages
-  id-token: write # to verify the deployment originates from an appropriate source
+  contents: read
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Build and deploy docs
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write # deploy to GitHub Pages
+      id-token: write # OIDC token for actions/deploy-pages
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
         with:
-          fetch-depth: 0
           persist-credentials: false
 
-      - name: Connect to GitHub
-        uses: PSModule/GitHub-Script@0097f3bbe3f413f3b577b9bcc600727b0ca3201a # v1.7.10
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: 3.x
 
-      - name: Install mkdocs-material
-        env:
-          GH_TOKEN: ${{ secrets.MATERIAL_FOR_MKDOCS_INSIDER_PAT }}
-        run: |
-          pip install git+https://$env:GH_TOKEN@github.com/squidfunk/mkdocs-material-insiders.git
+      - name: Install Zensical
+        run: pip install zensical
 
-      - name: Install plugins
-        run: |
-          pip install mkdocs-git-authors-plugin
-          pip install mkdocs-git-revision-date-localized-plugin
-          pip install mkdocs-git-committers-plugin-2
-          pip install mkdocs-rss-plugin
-          pip install "mkdocs-material[imaging]"
-          pip install mkdocs-table-reader-plugin
+      - name: Build Zensical project
+        run: zensical build --clean
 
-      - name: Build mkdocs-material project
-        run: |
-          mkdocs build --config-file ./mkdocs.yml --strict --site-dir _site/
+      - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+        with:
+          path: site
 
-      - name: Deploy to GitHub Pages
-        run: mkdocs gh-deploy --force
+      - uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+        id: deployment

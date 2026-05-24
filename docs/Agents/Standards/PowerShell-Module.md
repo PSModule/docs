@@ -8,27 +8,27 @@ Standards for implementing and reviewing PowerShell modules in the PSModule orga
 
 The framework treats `src/` as the source for the compiled module. Place code in the folder that matches its responsibility.
 
-| Folder or file                                | Purpose                                                                                 | Do not put here                                              |
-| --------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `src/header.ps1`                              | Single comment block at the top of the compiled module                                  | Runtime code                                                 |
-| `src/manifest.psd1`                           | Intentional manifest overrides                                                          | Generated values (functions, types, version, GUID, etc.)     |
-| `src/data/*.psd1`                             | Static read-only configuration                                                          | Mutable state, secrets, computed values                       |
-| `src/init/*.ps1`                              | Code that runs once at import (module-scope init, completer registration)               | Per-call logic, network calls, slow work                      |
-| `src/classes/private/*.ps1`                   | Internal classes                                                                        | Public pipeline output types                                  |
-| `src/classes/public/*.ps1`                    | Classes returned to users or accepted as parameter types                                | Transport wrappers with no user-facing model                  |
-| `src/enums/*.ps1`                             | Enums for class properties, parameters, validation                                       | Configuration constants                                       |
-| `src/types/<TypeName>.Types.ps1xml`           | Type metadata — aliases, script properties, member sets                                 | Display views or duplicated class properties                  |
-| `src/formats/<TypeName>.Format.ps1xml`        | Default table / list / wide display views                                                | Behavior, business logic, type aliases                        |
-| `src/functions/private/<Group>/Verb-Noun.ps1` | One private helper per file, grouped by domain                                          | Public aliases, pipeline input, context defaulting            |
-| `src/functions/public/<Group>/Verb-Noun.ps1`  | One exported command per file, grouped by resource or domain                            | Raw transport code, multiple commands per file                |
-| `src/scripts/*.ps1`                           | Scripts loaded via the manifest into caller scope                                       | Normal module-internal code                                   |
-| `src/finally.ps1`                             | End-of-module wiring (removal handlers, etc.)                                            | Per-call logic                                                |
-| `examples/*.ps1`                              | Realistic user scenarios                                                                | Substitutes for comment-based help examples                   |
-| `tests/`                                      | Pester tests and test data                                                              | Generated test results or build output                        |
+| Folder or file                                | Purpose                                                                   | Do not put here                                          |
+| --------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `src/header.ps1`                              | Single comment block at the top of the compiled module                    | Runtime code                                             |
+| `src/manifest.psd1`                           | Intentional manifest overrides                                            | Generated values (functions, types, version, GUID, etc.) |
+| `src/data/*.psd1`                             | Static read-only configuration                                            | Mutable state, secrets, computed values                  |
+| `src/init/*.ps1`                              | Code that runs once at import (module-scope init, completer registration) | Per-call logic, network calls, slow work                 |
+| `src/classes/private/*.ps1`                   | Internal classes                                                          | Public pipeline output types                             |
+| `src/classes/public/*.ps1`                    | Classes returned to users or accepted as parameter types                  | Transport wrappers with no user-facing model             |
+| `src/enums/*.ps1`                             | Enums for class properties, parameters, validation                        | Configuration constants                                  |
+| `src/types/<TypeName>.Types.ps1xml`           | Type metadata — aliases, script properties, member sets                   | Display views or duplicated class properties             |
+| `src/formats/<TypeName>.Format.ps1xml`        | Default table / list / wide display views                                 | Behavior, business logic, type aliases                   |
+| `src/functions/private/<Group>/Verb-Noun.ps1` | One private helper per file, grouped by domain                            | Public aliases, pipeline input, context defaulting       |
+| `src/functions/public/<Group>/Verb-Noun.ps1`  | One exported command per file, grouped by resource or domain              | Raw transport code, multiple commands per file           |
+| `src/scripts/*.ps1`                           | Scripts loaded via the manifest into caller scope                         | Normal module-internal code                              |
+| `src/finally.ps1`                             | End-of-module wiring (removal handlers, etc.)                             | Per-call logic                                           |
+| `examples/*.ps1`                              | Realistic user scenarios                                                  | Substitutes for comment-based help examples              |
+| `tests/`                                      | Pester tests and test data                                                | Generated test results or build output                   |
 
 Layout rules:
 
-- **One declaration per file.** File name matches the declared symbol exactly, including casing.
+- **One declaration per file.** Filename matches the declared symbol exactly, including casing.
 - **Group by domain.** Use resource or behaviour groups — not verb folders, not endpoint paths.
 - **Mirror public and private domains.** Public command under `src/functions/public/Projects/` has related private helpers under `src/functions/private/Projects/`.
 
@@ -68,7 +68,7 @@ Layout rules:
 
 ### Files
 
-- File name equals symbol name plus extension: `Get-ContosoProject.ps1`, `ContosoProject.ps1`, `ContosoProject.Types.ps1xml`.
+- Filename equals symbol name plus extension: `Get-ContosoProject.ps1`, `ContosoProject.ps1`, `ContosoProject.Types.ps1xml`.
 - Casing matches the declared symbol.
 
 ## Style
@@ -149,6 +149,6 @@ Extract a helper after the same non-trivial logic appears in three or more place
 ## Tests
 
 - Pester tests under `tests/`.
-- File names: `<ModuleName>.Tests.ps1` or `<Function>.Tests.ps1`.
+- Filenames: `<ModuleName>.Tests.ps1` or `<Function>.Tests.ps1`.
 - One test file per public command for unit tests; integration tests grouped by scenario.
 - Tests run against the dot-sourced source files, not against an installed module — see [PSModule Test Specification](https://psmodule.io/docs/PowerShell-Modules/Test-Specification/).

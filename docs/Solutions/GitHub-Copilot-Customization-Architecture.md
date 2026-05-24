@@ -80,7 +80,7 @@ The synchronization process applies to all Copilot configuration types:
 
 The `.github/` folder contains three Copilot configuration directories, each supporting the three-tier structure:
 
-```
+```text
 .github/
 ├── instructions/                         # AI agent guidance and patterns
 │   ├── enterprise/                       # Enterprise-managed customizations (automated sync, optional)
@@ -116,10 +116,10 @@ The `.github/` folder contains three Copilot configuration directories, each sup
 
 ### File Structure Specification
 
-#### File Structure Specification
+#### File Structure Details
 
 | Configuration Type | Tier | File Path | Management | Description |
-|-------------------|------|-----------|------------|-------------|
+| ------------------ | ---- | --------- | ---------- | ----------- |
 | **Instructions** | Enterprise | `instructions/enterprise/main.instructions.md` | Enterprise-Managed, Optional | Enterprise-wide guidelines, compliance requirements, and governance |
 | **Instructions** | Enterprise | `instructions/enterprise/{Language}/main.instructions.md` | Enterprise-Managed, Optional | Enterprise-specific language standards (e.g., "C# Enterprise coding standards") |
 | **Instructions** | Enterprise | `instructions/enterprise/{Language}/{context}.instructions.md` | Enterprise-Managed, Optional | Enterprise-specific patterns for compliance, security, or organizational needs |

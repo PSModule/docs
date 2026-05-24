@@ -17,22 +17,18 @@ This matters because:
 ## The lifecycle
 
 ```text
-   ideator → clarifier → planner → builder → shipper → reviewer
-                                                 ↑         │
-                                                 └─ responder ◄┘
+   Define → Implement → Reviewer
+               ↑            │
+               └── (respond) ◄┘
 ```
 
-Each role is a small, focused agent. Standards are referenced, not embedded.
+Each role is a focused agent. Standards are referenced, not embedded.
 
 | Role        | Phase            | Purpose                                                                 |
 | ----------- | ---------------- | ----------------------------------------------------------------------- |
-| Ideator     | Capture          | Capture a desire for change as an actionable issue.                     |
-| Clarifier   | Refine           | Ground the issue in the real problem. Validate acceptance criteria.     |
-| Planner     | Plan             | Decide and decompose. Choose Epic / PBI / Task. Resolve open decisions. |
-| Builder     | Build            | Implement the task. Reference standards. Micro-iterative commits.       |
-| Shipper     | Ship             | Package the work into a PR with a release-note style description.       |
+| Define      | Capture + Refine + Plan | Capture a desire, ground it, and produce a planned issue or sub-issues. |
+| Implement   | Build + Ship + Respond  | Branch, draft PR, code, micro-commit, track progress, finalize PR.      |
 | Reviewer    | Review           | Review someone else's PR for delivery, taste, and security.             |
-| Responder   | Respond          | Author-side: act on reviewer feedback and CI. Close the loop.           |
 
 ## What lives here
 
@@ -44,6 +40,7 @@ Each role is a small, focused agent. Standards are referenced, not embedded.
 - **[Commit Conventions](Commit-Conventions.md)** — How we write commit messages.
 - **[Review Etiquette](Review-Etiquette.md)** — Tone, scope, and how to disagree well.
 - **[README-Driven Context](Readme-Driven-Context.md)** — Why the README is the front door and the contract.
+- **[Git Worktrees](Git-Worktrees.md)** — Bare-clone + worktree layout for parallel work with agents.
 - **[Standards](Standards/index.md)** — Per-language and per-platform standards referenced by the agents.
 
 ## Guiding intent

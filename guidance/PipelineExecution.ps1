@@ -1,14 +1,34 @@
 ﻿function Set-DefaultParameterValue {
-    [CmdletBinding()]
+    <#
+        .SYNOPSIS
+        Sets a default parameter value with a simulated delay.
+
+        .PARAMETER Parameter
+        The parameter value to set.
+    #>
+    [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([string])]
     param (
         [string]$Parameter = 'Default-Parameter'
     )
-    Write-Verbose "Set-DefaultParameterValue: Setting Parameter to '$Parameter'"
-    Start-Sleep -Seconds 1
-    return $Parameter
+    if ($PSCmdlet.ShouldProcess($Parameter, 'Set default parameter value')) {
+        Write-Verbose "Set-DefaultParameterValue: Setting Parameter to '$Parameter'"
+        Start-Sleep -Seconds 1
+        return $Parameter
+    }
 }
 
 function Step-One {
+    <#
+        .SYNOPSIS
+        First pipeline step that multiplies input by 10.
+
+        .PARAMETER InputNumber
+        The number to process.
+
+        .PARAMETER Parameter
+        Optional parameter with a default value.
+    #>
     [CmdletBinding()]
     param (
         [Parameter(ValueFromPipeline = $true)]
@@ -38,6 +58,16 @@ function Step-One {
 }
 
 function Step-Two {
+    <#
+        .SYNOPSIS
+        Second pipeline step that adds 5 to input.
+
+        .PARAMETER InputNumber
+        The number to process.
+
+        .PARAMETER Parameter
+        Optional parameter with a default value.
+    #>
     [CmdletBinding()]
     param (
         [Parameter(ValueFromPipeline = $true)]
@@ -66,6 +96,16 @@ function Step-Two {
 }
 
 function Step-Three {
+    <#
+        .SYNOPSIS
+        Third pipeline step that subtracts 2 from input.
+
+        .PARAMETER InputNumber
+        The number to process.
+
+        .PARAMETER Parameter
+        Optional parameter with a default value.
+    #>
     [CmdletBinding()]
     param (
         [Parameter(ValueFromPipeline = $true)]

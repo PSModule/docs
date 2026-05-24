@@ -23,7 +23,7 @@ We’ve made a deliberate choice not to actively persure to support the older Wi
 newest PowerShell features. Where its low effort to support Windows PowerShell, we will do so, but we will not actively develop modules for it.
 While we recognize that some users may still rely on Windows PowerShell 5.1, they can run tools developed in this framework by installing
 PowerShell 7 alongside it or on remote systems. This decision ensures that this framework can focus on delivering new features for modern development
-without being constrained by legacy technology, which would otherwize require significant effort to develop and maintain, even if it is available in
+without being constrained by legacy technology, which would otherwise require significant effort to develop and maintain, even if it is available in
 the newer versions of PowerShell.
 
 ## Products and projects we focus on
@@ -1131,7 +1131,6 @@ We use branch policies to control the flow of changes to the `main` branch, and 
 1. Create a repository based on the template [Template-Action](https://github.com/PSModule/Template-Action).
 
 </details>
-
 
 <details>
    <summary>GitHub Actions on the <a href="https://github.com/marketplace?&verification=&query=publisher%3Apsmodule">GitHub Marketplace</a></summary>

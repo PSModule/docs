@@ -75,7 +75,7 @@ A lightweight, standalone, executable package that includes everything needed to
 ## D
 
 ### DevOps
-A set of practices that combines software development (Dev) and IT operations (Ops) to shorten the systems development life cycle and provide continuous delivery.
+A set of practices that combines software development (Dev) and IT operations (Ops) to shorten the systems development lifecycle and provide continuous delivery.
 
 ### Docker
 A platform for developing, shipping, and running applications using containerization technology.
@@ -149,7 +149,7 @@ Semantic Versioning (SemVer) - A versioning scheme that uses a three-part versio
 **Example**: Version 1.2.3 where 1 is major, 2 is minor, and 3 is patch.
 
 ### Static Site Generator
-A tool that generates a full static HTML website based on raw data and a set of templates.
+A tool that generates a full static HTML site based on raw data and a set of templates.
 
 ---
 

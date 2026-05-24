@@ -1,6 +1,6 @@
 # Self-service system
 
-Using github events to look at commited service request files that double as config doc for the service.
+Using GitHub events to look at committed service request files that double as config doc for the service.
 
 Backed by messaging systems and a database to track the state of the service request and ability to route
 to the right team for action.

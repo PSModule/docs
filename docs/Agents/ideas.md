@@ -9,7 +9,7 @@ Guiding thoughts:
 
 I want to have agents that helps me on prepping issues in some phases.
 
-- I think maybe ideation, feature request and improvmenets is one type of phase where the goal is to just capture the desire of change and what we want to see in the future, or even bug registration.
+- I think maybe ideation, feature request and improvements is one type of phase where the goal is to just capture the desire of change and what we want to see in the future, or even bug registration.
 - Then we go over to a phase of refinement and clarification. We need to be sure we have clear understanding on what the actual desired outcome would be. This can be done by asking questions in the comments or to the user interactively in the chat. Goal is to ensure we are grounded in what the pain is, what the problem is and what the user wants.
 - Next phase is decision making and planning mode. Lets go back from what we want to see and trace the work that needs to be done and decisions we need to make, revert, or just throw out the window. We should be tracking the necessary decisions on a separate section in the issue body.
 
@@ -17,7 +17,7 @@ I need to implement modes to this custom agent:
 
 I want it to be able to just create a request, without going into technical decision making and planning, just focus on the current state and situation, describe the thing that needs to improve, and the desired outcome. This should be somewhat of a precursor to feature specifications. Its just we want this thing to exist.
 
-I want to also use it for planning, so that we start discussing requirements and decisions, have it ask questions about the setup and grill me on things that seem unclear or decisions we need to make, potential dependencies. By default it should focus on the thinest line of work to get going, so that we can iterate and get experience, then later have review of what should be next (separate planning agent for this).
+I want to also use it for planning, so that we start discussing requirements and decisions, have it ask questions about the setup and grill me on things that seem unclear or decisions we need to make, potential dependencies. By default it should focus on the thinnest line of work to get going, so that we can iterate and get experience, then later have review of what should be next (separate planning agent for this).
 
 I want to be able to instruct the agent to make sub-issues for groups of work that have clear deliveries or interfaces or phases of work that need to be done, with the goal of having multiple workers start working, one issue each. So if we start ideating.
 
@@ -57,14 +57,14 @@ Read [](file:///c%3A/Repos/github.com/PSModule/Other/.github-private/instruction
 
 Now I have a solid picture of your current agent setup. Let me synthesize what I see and propose a restructuring plan.
 
----
+---------------------------------------------------------
 
 ## Analysis of Current State
 
 **What you have today:**
 
 | Agent | Size | Role |
-|-------|------|------|
+| ----- | ---- | ---- |
 | issue-manager.md | ~400 lines | Structures issues into a rigid 3-section format (context, technical decisions, implementation plan) |
 | pr-manager.md | ~350 lines | Creates PRs with release-note style descriptions |
 | pr-reviewer.md | ~200+ lines | Iterative review loop for active PRs |
@@ -84,7 +84,7 @@ Now I have a solid picture of your current agent setup. Let me synthesize what I
 
 5. The issue format documentation (what a well-structured issue looks like, formatting rules, labels) is also better as docs that agents reference.
 
----
+---------------------------------------------------------
 
 ## Proposed Restructuring
 
@@ -95,7 +95,7 @@ Agents should be: **action-oriented, phase-aware, and slim**. Heavy reference ma
 ### Documentation to extract to `PSModule/docs`
 
 | Doc | Content |
-|-----|---------|
+| --- | ------- |
 | `way-of-working/issue-format.md` | The 3-section structure, formatting rules, title conventions, labels, comment conventions |
 | `way-of-working/pr-format.md` | PR description structure, title conventions, change types, release note style |
 | `standards/powershell-module.md` | Everything currently in `psmodule-module-author` about layout, naming, style, parameter design |
@@ -104,7 +104,7 @@ Agents should be: **action-oriented, phase-aware, and slim**. Heavy reference ma
 
 ### New Agent Structure (Phase-Based Naming)
 
-```
+```text
 agents/
   capture.md          # Phase 1: Ideation / Request capture
   refine.md           # Phase 2: Clarification & grounding
@@ -114,7 +114,7 @@ agents/
   review.md           # Phase 6: PR review loop (merges code-reviewer + pr-reviewer)
 ```
 
----
+---------------------------------------------------------
 
 ### Agent Details
 
@@ -191,7 +191,7 @@ Essentially the current `pr-manager` but slimmed — PR format rules live in doc
 
 Merges `code-reviewer` + `pr-reviewer` into one agent with two modes (pre-flight vs. active review), as they already partially overlap.
 
----
+---------------------------------------------------------
 
 ### Sub-Issue Decomposition (in `plan.md`)
 
@@ -206,7 +206,7 @@ When you tell the planner to decompose:
 3. Updates the parent issue's implementation plan to reference sub-issues instead of inline tasks
 4. Each sub-issue is designed to be picked up by one worker independently
 
----
+---------------------------------------------------------
 
 ### Workflow Diagram
 
@@ -222,7 +222,7 @@ graph LR
     G -->|fixes needed| D
 ```
 
----
+---------------------------------------------------------
 
 ## Questions Back to You
 
@@ -239,11 +239,11 @@ graph LR
 
 5. **The `implement` agent** — Should it stay as one agent that handles both PowerShell modules and GitHub Actions (switching based on context), or remain split into specialized implementers?
 
-----------------------------------------
+---------------------------------------------------------
 
 The idea was that the PR-Reviewer agent was meant to be used by the authors side to answer feedback from someone and look at errors in CI, and the code-reviewer from a PR reviewers side to look for missing things in the contribution on a PR. So come with feedback ensure that good taste was followed, that security best practices are followed etc. So the names of those agents are clunky.
 
-Thinking alot of this could almost be blog posts, but they tend to be outdated. So i want this to be more of a documentation that is evergreen.
+Thinking a lot of this could almost be blog posts, but they tend to be outdated. So i want this to be more of a documentation that is evergreen.
 
 I want to create a separate section in my docs for agents documentation so that i can capture principles there.
 I want to have the agent work with a human interface, not the other way around for now. Humans use issues, PRs, readable docs etc. So all definitions, guidelines and standards are consise, but human readable, and agents refer to that doc (which they are already good at).
@@ -256,19 +256,19 @@ I want plan to also create "epic" level issues that can be used as a tracker of 
 
 I think i want 3 levels that the planner agent can work on.
 
-- Task - The single thing that will deliver one deliverable. This should be the size of a small PR thats easy to review and easy to reason on. The PR is always linked back to a task type issue. A PR can some times contain more issues. If its a small body of work to adress a request, a single issue of this type is all that is needed.
-- Feature, but a name that also works for something that doesnt become a feature. I like Broduct Backlog Item, as it has a more "neutral" vibe. "Just a collection of work". If work is bigger, then we need to break the work down to smaller items, and link them to a issue type with greater scope. The only goal here is tracking, delegation and still have oversight and visibility into progress.
+- Task - The single thing that will deliver one deliverable. This should be the size of a small PR that's easy to review and easy to reason on. The PR is always linked back to a task type issue. A PR can some times contain more issues. If its a small body of work to address a request, a single issue of this type is all that is needed.
+- Feature, but a name that also works for something that doesn't become a feature. I like Broduct Backlog Item, as it has a more "neutral" vibe. "Just a collection of work". If work is bigger, then we need to break the work down to smaller items, and link them to a issue type with greater scope. The only goal here is tracking, delegation and still have oversight and visibility into progress.
 - If something requires multiple bigger chunks of work to be able to deliver, then we create a bigger level of item. Typically called epic i think.
-- The levels are meant as a way to track and agregate progress, show connected work, used with "SaFE" or "Nexus" in planning literature, an epic would be a good place where teams co-plan. "As a business we want to deliver this, what do we collectively need to do". This makes it easy to break down OKRs to initiatives (epics) and start delegating the work.
+- The levels are meant as a way to track and aggregate progress, show connected work, used with "SaFE" or "Nexus" in planning literature, an epic would be a good place where teams co-plan. "As a business we want to deliver this, what do we collectively need to do". This makes it easy to break down OKRs to initiatives (epics) and start delegating the work.
 
 Guding principles and practices:
 
 - The Golden Circle from "Start with Why?" - Gound ourself in why we are doing something. Explain the world as it should be. In some cases it could be good to explain the issues with the current situation. Then come down to how we want to do it. We should try to link the concept of Why, how, what to Vision, mission and OKRs. And the link from that into Initiatives / Epics a
 - Start with a vision - What change would you want to make on the world?- What is the specific work here deliver to move the needle?
   - Our vision, just make it easy - Enable others to do more - faster.
-- Mission -> Starts on a project level i think. What is the PSModule mission - its to infuse GitHub with Powershell, but also bring more to the PowerShell ecosystem - using the GitHub platform to its extent.
+- Mission -> Starts on a project level i think. What is the PSModule mission - its to infuse GitHub with PowerShell, but also bring more to the PowerShell ecosystem - using the GitHub platform to its extent.
 - OKRs - Measure what matters - Goal setting from outside in. What do we need to see, measure it, and make goal for those measurements, but they need to drive the right incentive. People should read them and be able to come with ideas on how they can contribute to it. Not as KPIs where you have specific measurements on behavior that needs to be met.
-- Product/serivce mindset - we are delivering something that people should want to use. Without them, we are nothing.
+- Product/service mindset - we are delivering something that people should want to use. Without them, we are nothing.
 - Dog food your services - Be your first customer - but be sure to not fully depend yourself on what you are building first. Explore and use it in non-critical
 - Agent delegation - Agent as a team member
 - Human-Agent cooperation, Human Augmentation
@@ -277,7 +277,7 @@ Guding principles and practices:
 - Use agents/LLMs to do non-deterministic work - like developing new features and automations, but decide carefully if it should be placed instead of deterministic programming (like a program or a script).
 - i.e. create libraries for doing something or converting something back and forth - use AI to create that - so that we dont burn tokens on doing the deterministic work.
 - What kind of deterministic work should it to?
-- Getting Things Done - David Allens concept of boosting productivity. Also makes sense when working with a team and agents. If only you know, noone else can work with you or do the work for you. If its in your mind, then it might escape you mind and be lost. If its not written, you dont have anything to start to process. Writing it down lets you reflect and discuss with others.
+- Getting Things Done - David Allens concept of boosting productivity. Also makes sense when working with a team and agents. If only you know, no one else can work with you or do the work for you. If its in your mind, then it might escape you mind and be lost. If its not written, you dont have anything to start to process. Writing it down lets you reflect and discuss with others.
 - Everything as Code, EVERYTHING - The bedrock of Human - Agent interaction
 - Documentation lives close to the thing it documents.
 - SOLID - All of it, but written in clear text what that means.
@@ -288,12 +288,12 @@ Guding principles and practices:
 - Roadmapping:
   - Planning in 3 horizons - Now, Next, Later
   - Planning on 3 levels - Conseptual, Logical and detailed
-  - Planning can therefor be done in a 3x3 metrix, Now, next, later + Conseptual, Logical and Detailed.
+  - Planning can therefore be done in a 3x3 matrix, Now, next, later + Conseptual, Logical and Detailed.
 - Test Driven Development - We need to define the tests and take care when we update them.
 - Human in the loop - Agents help us do better work - they are not here to replace us on all aspects yet.
-- DevOps (including SRE) - Everything is continious, ever evolving, ever changing. Lets build systems, practices and teams that understand they are in on the whole loop. "You build it, you run it".
-- Context Development Life Cycle -> We ensure we have the right context and that we maintain that as a product that is evergreen and declarative.
-- Software Development Life Cycle -> We deliver the software using source code management, ci/cd tooling and practices from DevOps, SRE to deliver software and services.
+- DevOps (including SRE) - Everything is continuous, ever evolving, ever changing. Lets create systems, practices and teams that understand they are in on the whole loop. "You build it, you run it".
+- Context Development Lifecycle -> We ensure we have the right context and that we maintain that as a product that is evergreen and declarative.
+- Software Development Lifecycle -> We deliver the software using source code management, ci/cd tooling and build tools from DevOps, SRE to deliver software and services.
 - Lean Software Development (often also linked with YAGNI, Ya aint gonna need it).
   - Start very very thin, so you can enable iteration. Get the teams ideas flowing, enable more people to contribute to the work.
 - Clean Code
@@ -306,8 +306,8 @@ Guding principles and practices:
   3 MVP, first thing we can run in production - Start getting experience and feedback from users
   4 Improvements to stabilize and add functionality
 
-- Ways of working, one size doesnt fit all, but should also be following the principles above, for evolving the way of working.
-  - We start lean with processes and ceremonies, we need to get to know eachother, fully get a grasp of what we are going to deliver, get an understanding of what makes people tick and how they work together.
+- Ways of working, one size doesn't fit all, but should also be following the principles above, for evolving the way of working.
+  - We start lean with processes and ceremonies, we need to get to know each other, fully get a grasp of what we are going to deliver, get an understanding of what makes people tick and how they work together.
   - Scrum + Kanban = Dynamic "sprints" where we dont need a firm end date. When an epic is implemented, a cycle is over. Estimation when that epic is implemented depends on what else gets thrown in of necessary work, but even the epic is Lean.
     - Limit work in progress - WIP - Find research - I think ive read something that 3 is the typical WIP limit for the human brain.
   - Extreme Programming - We do pair programming as a type of learning, decision making, review and code validation.
@@ -327,18 +327,18 @@ Many thoughts.
 
 Lets start to create some drafts with these ideas and keep it as a place to co-create on this for now.
 
-The diagram for the agent workflow i like. We should marry it with the software development lifecycle and context development life cycle + DevOps :)
+The diagram for the agent workflow i like. We should marry it with the software development lifecycle and context development lifecycle + DevOps :)
 Maybe use figma to draw it instead of mermaid.
 
 Answers to questions:
 
 - Agent naming style - I linked the role based approach
-- Capture should be the one that looks at an issue and decide if we need to make a action based issue that has a concrete outcome for the provided feedback. Feedback here can also be issues started from failures in the platfrom/application logs.
+- Capture should be the one that looks at an issue and decide if we need to make a action based issue that has a concrete outcome for the provided feedback. Feedback here can also be issues started from failures in the platform/application logs.
 - The plan agent should be deciding this based on its understanding of the work to be done.
 - Extracted docs live in PSModule/docs that is a separate repo, and its published on the web via GitHub pages reachable on <https://psmodule.io/docs>. Agents can have links to the docs, their links should ideally not change, but we can update that if needed.
 - The implement agent should look at the decision on what language, and then reference the docs for guidance on how to write that language. It should also consider the linting rules for the language that is available in the repo, if not apply the same linter rules.
 
---------------------------------------
+---------------------------------------------------------
 
 Read [](file:///c%3A/Repos/github.com/PSModule/Docs)
 
@@ -416,7 +416,7 @@ Created [](file:///c%3A/Repos/github.com/PSModule/Docs/docs/docs/Agents/Standard
 
 Replacing 4 lines with 18 lines in [](file:///c%3A/Repos/github.com/PSModule/Docs/docs/mkdocs.yml)
 
-```
+```text
 
 ```
 
@@ -460,7 +460,7 @@ Plus an updated mkdocs.yml nav so the new section shows up between Solutions and
 2. **Figma diagram** — the Workflow page references it but it doesn't exist yet. Want me to add a placeholder section with TODO, or remove the mention until it's drawn?
 3. **archive** — should I add a README.md inside `archive/` noting deprecation date and which new agent replaced each, to make the eventual cleanup easy?
 4. **GitHub issue type names** — I used `Task`, `PBI`, `Epic`. PSModule's GitHub config may already use specific issue-type names; happy to align once you confirm them.
-5. **Standards coverage** — only PowerShell modules and GitHub Actions migrated so far. Other languages (markdown, JS, etc.) referenced but not yet documented — intentional, per "grow as we go" stance in Standards index.
+5. **Standards coverage** — only PowerShell modules and GitHub Actions migrated so far. Other languages (Markdown, JS, etc.) referenced but not yet documented — intentional, per "grow as we go" stance in Standards index.
 
 Starting: *Define agent roles and responsibilities* (4/5)
 

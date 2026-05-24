@@ -1,5 +1,15 @@
 ﻿# Function to simulate processing each line
 function Test-LineProcessing {
+    <#
+        .SYNOPSIS
+        Simulates processing a single line of text.
+
+        .DESCRIPTION
+        Returns whether the input text has a length greater than zero.
+
+        .PARAMETER InputText
+        The text line to process.
+    #>
     param([string]$InputText)
     # Simulate some work by creating a simple string operation
     $InputText.Length > 0

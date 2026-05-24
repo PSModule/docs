@@ -20,7 +20,7 @@ Before writing or reviewing:
 
 ## Security
 
-### R1 — Pin every `uses:` to a full 40-char SHA with a version comment
+### R1 — Pin every `uses:` to a full 40-char SHA with a patch level version comment
 
 ```yaml
 # ✅ Required

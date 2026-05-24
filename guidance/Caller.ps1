@@ -1,4 +1,8 @@
 ﻿function Invoke-Function4 {
+    <#
+        .SYNOPSIS
+        Demonstrates caller detection using Get-PSCallStack.
+    #>
     [CmdletBinding()]
     param()
     'In: ' + $MyInvocation.InvocationName
@@ -7,6 +11,10 @@
 }
 
 function Invoke-Function3 {
+    <#
+        .SYNOPSIS
+        Demonstrates nested caller detection at depth 3.
+    #>
     [CmdletBinding()]
     param()
     'In: ' + $MyInvocation.InvocationName
@@ -16,6 +24,10 @@ function Invoke-Function3 {
 }
 
 function Invoke-Function2 {
+    <#
+        .SYNOPSIS
+        Demonstrates nested caller detection at depth 2.
+    #>
     [CmdletBinding()]
     param()
     'In: ' + $MyInvocation.InvocationName
@@ -25,6 +37,10 @@ function Invoke-Function2 {
 }
 
 function Invoke-Function1 {
+    <#
+        .SYNOPSIS
+        Entry point demonstrating caller detection through the call stack.
+    #>
     [CmdletBinding()]
     param()
     'In: ' + $MyInvocation.InvocationName
