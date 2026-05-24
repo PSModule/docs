@@ -65,9 +65,6 @@ nav = [
       "Agents/Standards/index.md",
     ]},
   ]},
-  {"About" = [
-    "About/index.md",
-  ]},
 ]
 
 [project.theme]
