@@ -10,8 +10,8 @@ Per-language and per-platform standards referenced by the [Builder](https://gith
 
 ## Available standards
 
-- **[PowerShell Modules](PowerShell-Module.md)** — module layout, naming, parameter design, style, tests.
-- **[GitHub Actions](GitHub-Actions.md)** — workflow security, SHA pinning, permissions, OIDC, the Zizmor checklist.
+- **[PowerShell Modules](../../PowerShell/Modules/Standards.md)** — module layout, naming, parameter design, style, tests.
+- **[GitHub Actions](../../GitHub-Actions/Standards.md)** — workflow security, SHA pinning, permissions, OIDC, the Zizmor checklist.
 
 > More standards will be added as PSModule adopts more languages and platforms. Each new standard follows the same shape: principles → concrete rules → examples.
 

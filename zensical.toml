@@ -16,21 +16,31 @@ extra_javascript = [
 ]
 watch = ["includes"]
 nav = [
-  {"Projects" = [
-    {"PowerShell Modules" = [
-      "PowerShell-Modules/index.md",
-      {"Test-Specification" = "PowerShell-Modules/Test-Specification.md"},
-      {"Versioning" = "PowerShell-Modules/Versioning.md"},
+  {"PowerShell" = [
+    "PowerShell/index.md",
+    {"Modules" = [
+      "PowerShell/Modules/index.md",
+      {"Standards" = "PowerShell/Modules/Standards.md"},
+      {"Test Specification" = "PowerShell/Modules/Test-Specification.md"},
+      {"Versioning" = "PowerShell/Modules/Versioning.md"},
     ]},
-    {"GitHub Actions" = [
-      "GitHub-Actions/index.md",
-      {"Some More" = "GitHub-Actions/Some-More.md"},
-      {"Test Something" = "GitHub-Actions/Test-Something.md"},
-      {"Subtopic" = [
-        "GitHub-Actions/Subtopic/index.md",
-        {"Some More" = "GitHub-Actions/Subtopic/Some-More.md"},
-        {"Test Something" = "GitHub-Actions/Subtopic/Test-Something.md"},
-      ]},
+    {"Scripts" = [
+      "PowerShell/Scripts/index.md",
+      {"Standards" = "PowerShell/Scripts/Standards.md"},
+    ]},
+    {"DSC" = [
+      "PowerShell/DSC/index.md",
+    ]},
+  ]},
+  {"GitHub Actions" = [
+    "GitHub-Actions/index.md",
+    {"Standards" = "GitHub-Actions/Standards.md"},
+    {"Some More" = "GitHub-Actions/Some-More.md"},
+    {"Test Something" = "GitHub-Actions/Test-Something.md"},
+    {"Subtopic" = [
+      "GitHub-Actions/Subtopic/index.md",
+      {"Some More" = "GitHub-Actions/Subtopic/Some-More.md"},
+      {"Test Something" = "GitHub-Actions/Subtopic/Test-Something.md"},
     ]},
   ]},
   {"Solutions" = [
@@ -53,8 +63,6 @@ nav = [
     {"Git Worktrees" = "Agents/Git-Worktrees.md"},
     {"Standards" = [
       "Agents/Standards/index.md",
-      {"PowerShell Module" = "Agents/Standards/PowerShell-Module.md"},
-      {"GitHub Actions" = "Agents/Standards/GitHub-Actions.md"},
     ]},
   ]},
   {"About" = [
