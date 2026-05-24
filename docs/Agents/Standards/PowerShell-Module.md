@@ -87,6 +87,7 @@ Layout rules:
 - Respect caller preferences — don't force `-Verbose:$true` inside the module.
 - Use `try` / `catch` only when adding value (translation, enrichment, cleanup).
 - String emptiness: `-not $Param`, never `[string]::IsNullOrEmpty(...)`.
+- Wildcard detection: `[System.Management.Automation.WildcardPattern]::ContainsWildcardCharacters($Value)`, never `$Value.Contains('*')`. The latter misses `?`, `[`, and `` ` `` — all valid PowerShell wildcard characters.
 
 ## Public function structure
 
