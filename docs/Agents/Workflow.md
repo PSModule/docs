@@ -104,6 +104,7 @@ Borrowed from [Principles → Roadmapping](Principles.md#roadmapping). The plann
 | README-Driven Context           | Implement                          |
 | GTD ("write it down")           | All agents                         |
 | Determinism over intelligence   | Implement                          |
+| Make change easy first          | Implement                          |
 | Git Worktrees (parallel work)   | Implement                          |
 | Dogfooding                      | Run / operate phase                |
 
