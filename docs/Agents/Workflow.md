@@ -30,12 +30,12 @@ See [Issue Format](../Ways-of-Working/Issue-Format.md) and [Issue Hierarchy](../
 Covers the **Build** and **Ship** phases. Takes a planned issue and delivers a merge-ready pull request. Owns the full loop:
 
 1. **Orient** — read the issue, README, contribution guide, and standards.
-2. **Branch and draft PR** — create a [worktree](Git-Worktrees.md) for the issue, push early so CI attaches and progress is visible. Assign to the user. Link to the issue.
+2. **Branch and draft PR** — create a [worktree](../Ways-of-Working/Git-Worktrees.md) for the issue, push early so CI attaches and progress is visible. Assign to the user. Link to the issue.
 3. **Build** — micro-commits, one logical change each. Update the issue as each task completes (not in bulk).
 4. **Respond** — process reviewer feedback and CI failures. One thread at a time.
 5. **Finalize** — update PR title, labels, and description as a user-facing release note.
 
-See [Git Worktrees](Git-Worktrees.md), [PR Format](../Ways-of-Working/PR-Format.md), [Commit Conventions](../Ways-of-Working/Commit-Conventions.md), and [Standards](Standards/index.md).
+See [Git Worktrees](../Ways-of-Working/Git-Worktrees.md), [PR Format](../Ways-of-Working/PR-Format.md), [Commit Conventions](../Ways-of-Working/Commit-Conventions.md), and [Standards](Standards/index.md).
 
 ### Reviewer
 

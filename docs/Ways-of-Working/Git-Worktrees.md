@@ -97,34 +97,3 @@ git -C .bare worktree remove 42-add-pagination
 # Prune if needed (removes stale worktree references)
 git -C .bare worktree prune
 ```
-
-The sync script handles this automatically — worktrees whose branch no longer exists on any remote are removed during the next sync.
-
-## Parallel agents
-
-The worktree model enables multiple agents to work in the same repository at the same time:
-
-- Each agent operates in its own worktree (its own issue folder).
-- No merge conflicts during development — conflicts only surface at PR merge time.
-- The default branch worktree provides a stable reference for all agents to read from.
-- CI runs independently per PR, so agents don't block each other.
-
-```text
-Agent A: working in  42-add-pagination/
-Agent B: working in  43-fix-auth-flow/
-Human:   reviewing in main/ or reading docs
-```
-
-## VS Code integration
-
-- **Open the worktree folder directly** — VS Code's Git extension auto-detects the git context.
-- **Multi-root workspace** — add multiple worktrees to one window (`File → Add Folder to Workspace`) to reference `main/` while coding in another.
-- **Terminal cwd** — ensure the integrated terminal is in the worktree folder, not the bare root.
-
-## Rules
-
-1. **Never commit directly to the default branch worktree.** It exists for reference only.
-2. **One worktree per issue.** The folder name matches the branch name: `<N>-<slug>`.
-3. **Clean up after merge.** Remove the worktree and let the sync script prune stale branches.
-4. **All git config lives in `.bare/`** — it applies to every worktree automatically.
-5. **Only `origin` and `upstream` remotes.** No other remotes. `upstream` only exists for forks.

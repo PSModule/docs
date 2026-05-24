@@ -37,7 +37,7 @@ The full workflow — phases, the loop, and how they connect — is documented i
 ## What lives here
 
 - **[Workflow](Workflow.md)** — How the roles connect, the Context Development Lifecycle, and where it meets DevOps.
-- **[Git Worktrees](Git-Worktrees.md)** — Bare-clone + worktree layout for parallel work with agents.
+- **[Git Worktrees](../Ways-of-Working/Git-Worktrees.md)** — Bare-clone + worktree layout for parallel work with agents.
 - **[Standards](Standards/index.md)** — Per-language and per-platform standards referenced by the agents.
 
 ## Guiding intent

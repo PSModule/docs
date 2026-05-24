@@ -90,7 +90,7 @@ See [Issue Format § Sections 2–3](Issue-Format.md), [Issue Hierarchy](Issue-H
 
 Execute the plan:
 
-1. **Branch** — create a branch (and [worktree](../Agents/Git-Worktrees.md)) for the issue.
+1. **Branch** — create a branch (and [worktree](Git-Worktrees.md)) for the issue.
 2. **Draft PR** — push early and open a draft pull request. Link it to the issue. This makes progress visible and attaches CI from the start.
 3. **Implement** — work through the checklist. One logical change per commit. Update the issue as each task completes.
 4. **Test locally** — don't push known failures to CI. Push work as far inward as it can go.

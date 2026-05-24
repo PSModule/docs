@@ -13,6 +13,7 @@ This section documents the principles, processes, and norms that every contribut
 - **[PR Format](PR-Format.md)** — Pull request title, description, change types, and labels.
 - **[Commit Conventions](Commit-Conventions.md)** — How we write commit messages.
 - **[Review Etiquette](Review-Etiquette.md)** — Tone, scope, severity prefixes, and how to disagree well.
+- **[Git Worktrees](Git-Worktrees.md)** — Bare-clone + worktree layout for parallel, conflict-free development.
 - **[README-Driven Context](Readme-Driven-Context.md)** — Why the README is the front door and the source of truth.
 
 ## Who this is for
