@@ -1,4 +1,8 @@
 ﻿#Requires -Modules GitHub
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+    'PSAvoidLongLines', '',
+    Justification = 'Markdown templates'
+)]
 
 function Show-RepoList {
     <#
@@ -124,10 +128,6 @@ function Update-ActionList {
 
         Regenerates the action table and writes it to docs\GitHub-Actions\index.md.
     #>
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
-        'PSAvoidLongLines', '',
-        Justification = 'Markdown templates'
-    )]
     [CmdletBinding(SupportsShouldProcess)]
     param()
 
@@ -188,10 +188,6 @@ function Update-ModuleList {
 
         Regenerates the module table and writes it to docs\PowerShell\Modules\index.md.
     #>
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
-        'PSAvoidLongLines', '',
-        Justification = 'Markdown templates'
-    )]
     [CmdletBinding(SupportsShouldProcess)]
     param()
 
@@ -247,10 +243,6 @@ function Update-FunctionAppList {
 
         Regenerates the function app table and writes it to docs\PowerShell\FunctionApps\index.md.
     #>
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
-        'PSAvoidLongLines', '',
-        Justification = 'Markdown templates'
-    )]
     [CmdletBinding(SupportsShouldProcess)]
     param()
 
