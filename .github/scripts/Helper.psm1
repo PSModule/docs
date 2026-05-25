@@ -1,8 +1,11 @@
-﻿[Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+﻿#Requires -Modules GitHub
+
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute(
     'PSAvoidLongLines', '',
     Justification = 'Markdown templates'
 )]
-#Requires -Modules GitHub
+[CmdletBinding()]
+param()
 
 function Show-RepoList {
     <#
