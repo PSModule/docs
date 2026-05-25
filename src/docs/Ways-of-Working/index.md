@@ -20,8 +20,24 @@ This section documents the principles, processes, and norms that every contribut
 
 Everyone. If you contribute to a PSModule project — by code, review, issue, or discussion — these are the norms you follow. Agents follow them too; they read these pages as context before acting.
 
-## Guiding intent
+## Core principles
 
-> Make it easy. Enable others to do more, faster.
+> Make it easy, to move faster, in a safe way.
 
 If a guideline gets in the way of that, the guideline is the thing that needs to change.
+See also the [main page](../index.md).
+
+### Easy
+
+Simplicity is a feature. Make the right thing the easy thing — for users, contributors, and agents alike.
+Prefer the obvious and limited over the powerful and confusing. Automate what is mechanical so that human attention is saved for decisions that require judgment, context, and care.
+
+### Faster
+
+Ship early, learn fast, iterate. Work flows in small increments — draft PRs, micro-commits, quick reviews.
+The faster we close the loop between intention and observation, the faster we improve.
+
+### Safe
+
+Every decision should be reversible. Every release should be observable. Every failure should teach.
+Speed requires safety — we can only iterate fast when changes are cheap to undo, easy to monitor, and failures produce learning rather than blame.
