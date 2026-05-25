@@ -162,7 +162,7 @@ Issues use [GitHub Flavored Markdown](https://github.github.com/gfm/) with the f
 
 **Labels:** `Minor`, `Feature`
 
-**Description:**
+**Body:**
 
 ```markdown
 A developer using Get-GitHubRepository to list all repositories in a large organization
@@ -216,7 +216,7 @@ used in `Get-GitHubRelease`.
 
 **Labels:** `Patch`, `Bug`
 
-**Description:**
+**Body:**
 
 ```markdown
 When running `Build-PSModule` in a fresh container where the GitHub context environment
