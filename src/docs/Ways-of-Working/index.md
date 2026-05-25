@@ -22,7 +22,7 @@ Everyone. If you contribute to a PSModule project — by code, review, issue, or
 
 ## Core principles
 
-> Make it easy, to move faster, in a safe way.
+> Make it **easy**, to move **fast**, in a **safe** way.
 
 If a guideline gets in the way of that, the guideline is the thing that needs to change.
 See also the [main page](../index.md).
@@ -32,10 +32,12 @@ See also the [main page](../index.md).
 Simplicity is a feature. Make the right thing the easy thing — for users, contributors, and agents alike.
 Prefer the obvious and limited over the powerful and confusing. Automate what is mechanical so that human attention is saved for decisions that require judgment, context, and care.
 
-### Faster
+The safe and smart choice should be the default choice. Design systems, tools, and workflows so that doing the right thing requires no extra effort — while allowing a deliberate override when necessary.
 
-Ship early, learn fast, iterate. Work flows in small increments — draft PRs, micro-commits, quick reviews.
-The faster we close the loop between intention and observation, the faster we improve.
+### Fast
+
+Shift left, ship early, learn fast, iterate. Work flows in small increments — draft PRs, micro-commits, quick reviews.
+The faster we close the loop between intention and observation, the faster we improve and evolve what we are building.
 
 ### Safe
 
