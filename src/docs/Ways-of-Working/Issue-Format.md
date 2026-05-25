@@ -154,6 +154,109 @@ Issues use [GitHub Flavored Markdown](https://github.github.com/gfm/) with the f
 - `[text](url)` links for all external references.
 - **No hard line breaks within a paragraph.** GitHub renders mid-paragraph newlines as spaces, which creates inconsistent visual spacing.
 
+## Examples
+
+### Feature issue
+
+**Title:** `Add pagination support to Get-GitHubRepository`
+
+**Labels:** `Minor`, `Feature`
+
+**Description:**
+
+```markdown
+A developer using Get-GitHubRepository to list all repositories in a large organization
+receives only the first 30 results. There is no way to request additional pages or
+automatically retrieve all results.
+
+The function should support automatic pagination so that all repositories are returned
+by default, with an optional parameter to limit the number of results.
+
+**Acceptance criteria:**
+
+- Calling `Get-GitHubRepository -Owner 'LargeOrg'` returns all repositories, not just
+  the first page.
+- A `-First` parameter limits the total number of results returned.
+- Pagination follows the `Link` header pattern used by the GitHub REST API.
+
+---
+
+**Pagination strategy:** Follow the `Link` response header. Parse `rel="next"` and
+continue requesting until no next link is present. This matches the approach already
+used in `Get-GitHubRelease`.
+
+**Parameter naming:** Use `-First` (consistent with PowerShell conventions and
+`Select-Object -First`). Considered `-Limit` but it conflicts with API terminology.
+
+**Rate limiting:** No special handling — the existing retry logic in
+`Invoke-GitHubAPI` already respects `retry-after` headers.
+
+---
+
+### Core logic
+
+- [ ] Add `Link` header parsing to `Invoke-GitHubAPI` (return next-page URL).
+- [ ] Update `Get-GitHubRepository` to loop until no next page or `-First` is reached.
+- [ ] Add `-First` parameter with `[int]` type and default of `0` (unlimited).
+
+### Tests
+
+- [ ] Unit test: `Link` header parsing returns correct next URL.
+- [ ] Integration test: paginated request returns more results than a single page.
+- [ ] Integration test: `-First 5` stops after 5 results.
+
+### Documentation
+
+- [ ] Update `Get-GitHubRepository` comment-based help with `-First` parameter.
+```
+
+### Bug fix issue
+
+**Title:** `Fix null reference when Context is not resolved`
+
+**Labels:** `Patch`, `Bug`
+
+**Description:**
+
+```markdown
+When running `Build-PSModule` in a fresh container where the GitHub context environment
+variables are not set, the action fails with:
+
+> InvalidOperation: You cannot call a method on a null-valued expression.
+
+The error occurs on every run in that environment. Expected behaviour is a clear error
+message indicating that context is unavailable, not an unhandled null reference.
+
+**Reproduction steps:**
+
+1. Run `Build-PSModule` locally without setting `GITHUB_CONTEXT`.
+2. Observe the null-reference exception in the `Get-PSModuleSettings` step.
+
+**Environment:** GitHub Actions runner `ubuntu-latest`, PowerShell 7.4.6.
+
+**Acceptance criteria:**
+
+- When `GITHUB_CONTEXT` is not set, the action terminates with a descriptive error:
+  `"GitHub context is not available. Ensure the action runs inside a GitHub Actions workflow."`
+- No unhandled null-reference exception reaches the user.
+
+---
+
+**Guard location:** Add a null check at the top of `src/main.ps1` in Get-PSModuleSettings,
+before any property access on the context object. This keeps the fix close to the source
+and avoids scattering defensive checks throughout the codebase.
+
+**Error style:** Use `throw` with a terminating error rather than `Write-Error`, because
+downstream steps cannot proceed without context.
+
+---
+
+- [ ] Add null check for `$GitHubContext` at line 12 of `src/main.ps1`.
+- [ ] Throw terminating error with descriptive message when null.
+- [ ] Add Pester test: mock empty environment, assert correct error message.
+- [ ] Add Pester test: mock valid environment, assert no error.
+```
+
 ## Labels
 
 Labels categorize. The category is never encoded in the title.

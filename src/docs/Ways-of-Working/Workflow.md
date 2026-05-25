@@ -132,7 +132,7 @@ After merge, the system is live. Monitor, observe, respond to signals. When some
 
 Planning happens at different time horizons and levels of detail:
 
-|            | Now                  | Next          | Later          |
+| Level      | Now                  | Next          | Later          |
 | ---------- | -------------------- | ------------- | -------------- |
 | Conceptual | Vision delivered now | Vision next   | Vision later   |
 | Logical    | Approach now         | Approach next | Approach later |
