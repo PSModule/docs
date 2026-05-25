@@ -3,7 +3,6 @@ name: Update index
 on:
   workflow_call:
   workflow_dispatch:
-  push:
   schedule:
     - cron: '0 * * * *'
 
