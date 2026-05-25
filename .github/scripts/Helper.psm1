@@ -55,14 +55,3 @@
         Set-Content -Path $Path -Value $updatedContent
     }
 }
-
-function Invoke-GitCommit {
-    [CmdletBinding()]
-    param(
-        [Parameter()]
-        [string] $Message = 'Auto-generated changes'
-    )
-    git add .
-    git commit -m $Message
-    git push
-}

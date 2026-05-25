@@ -51,5 +51,3 @@ $actionTableRows</table>
 "@
 #endregion
 Update-MDSection -Path '.\docs\GitHub-Actions\index.md' -Name 'ACTION_LIST' -Content $actionTable
-
-Invoke-GitCommit -Message 'Update Action index'
