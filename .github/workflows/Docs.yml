@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - src/**
+      - .github/scripts/**
       - .github/workflows/Docs.yml
       - .github/workflows/Update-Index.yml
   pull_request:
@@ -55,10 +56,31 @@ jobs:
     name: Update index
     needs: lint
     if: github.event_name != 'pull_request'
-    uses: ./.github/workflows/Update-Index.yml
-    secrets:
-      SCRIBBLER_BOT_CLIENT_ID: ${{ secrets.SCRIBBLER_BOT_CLIENT_ID }}
-      SCRIBBLER_BOT_PRIVATE_KEY: ${{ secrets.SCRIBBLER_BOT_PRIVATE_KEY }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Connect and show repos
+        uses: PSModule/GitHub-Script@1ee97bbc652d19c38ae12f6e1e47e9d9fbd12d0a # v1.8.0
+        with:
+          # Org-level shared secrets used across multiple repositories — no dedicated GitHub Environment needed.
+          ClientID: ${{ secrets.SCRIBBLER_BOT_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
+          PrivateKey: ${{ secrets.SCRIBBLER_BOT_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
+          Script: .github/scripts/Connect-And-Show-Repos.ps1
+
+      - name: Update module index
+        uses: PSModule/GitHub-Script@1ee97bbc652d19c38ae12f6e1e47e9d9fbd12d0a # v1.8.0
+        with:
+          Script: .github/scripts/Update-ModuleIndex.ps1
+
+      - name: Update action index
+        uses: PSModule/GitHub-Script@1ee97bbc652d19c38ae12f6e1e47e9d9fbd12d0a # v1.8.0
+        with:
+          Script: .github/scripts/Update-ActionIndex.ps1
+
+      - name: Update function app index
+        uses: PSModule/GitHub-Script@1ee97bbc652d19c38ae12f6e1e47e9d9fbd12d0a # v1.8.0
+        with:
+          Script: .github/scripts/Update-FunctionAppIndex.ps1
+
 
   build:
     name: Build
