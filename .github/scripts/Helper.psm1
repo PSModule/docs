@@ -62,10 +62,6 @@ function Invoke-GitCommit {
         [Parameter()]
         [string] $Message = 'Auto-generated changes'
     )
-
-    $owner = $env:GITHUB_REPOSITORY_OWNER
-    Connect-GitHubApp -Organization $owner -Default
-
     git add .
     git commit -m $Message
     git push

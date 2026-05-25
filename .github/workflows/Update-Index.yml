@@ -41,8 +41,3 @@ jobs:
         uses: PSModule/GitHub-Script@1ee97bbc652d19c38ae12f6e1e47e9d9fbd12d0a # v1.8.0
         with:
           Script: .github/scripts/Update-FunctionAppIndex.ps1
-
-      - name: Commit changes
-        uses: PSModule/GitHub-Script@1ee97bbc652d19c38ae12f6e1e47e9d9fbd12d0a # v1.8.0
-        with:
-          Script: .github/scripts/Commit-Changes.ps1

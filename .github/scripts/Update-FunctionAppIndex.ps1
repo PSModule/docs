@@ -50,3 +50,5 @@ $functionAppTableRows</table>
 "@
 
 Update-MDSection -Path '.\docs\PowerShell\FunctionApps\index.md' -Name 'FUNCTIONAPP_LIST' -Content $functionAppTable
+
+Invoke-GitCommit -Message 'Update FunctionApp index'

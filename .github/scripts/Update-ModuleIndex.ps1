@@ -45,3 +45,5 @@ $moduleTableRows</table>
 "@
 
 Update-MDSection -Path '.\docs\PowerShell\Modules\index.md' -Name 'MODULE_LIST' -Content $moduleTable
+
+Invoke-GitCommit -Message 'Update Module index'
