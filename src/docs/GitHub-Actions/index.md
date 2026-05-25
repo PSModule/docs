@@ -12,12 +12,4 @@ PSModule actions are built from the [Template-Action](https://github.com/PSModul
 
 <!-- ACTION_LIST_START -->
 
-<table>
-    <tr>
-        <th width="10%">Name</th>
-        <th width="80%">Description</th>
-        <th width="10%">Version</th>
-    </tr>
-</table>
-
 <!-- ACTION_LIST_END -->
