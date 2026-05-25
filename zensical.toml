@@ -56,13 +56,6 @@ nav = [
     {"README-Driven Context" = "Ways-of-Working/Readme-Driven-Context.md"},
     {"Git Worktrees" = "Ways-of-Working/Git-Worktrees.md"},
   ]},
-  {"Agents" = [
-    "Agents/index.md",
-    {"Workflow" = "Agents/Workflow.md"},
-    {"Standards" = [
-      "Agents/Standards/index.md",
-    ]},
-  ]},
   {"Dictionary" = [
     "Dictionary/index.md",
   ]},
