@@ -62,13 +62,13 @@ Answers:
 
 Framing by work type:
 
-| Type           | Framing                                                                |
-| -------------- | ---------------------------------------------------------------------- |
-| Feature        | Desired capability from the user's point of view.                      |
-| Bug / Fix      | What happens vs. What is expected.                                     |
-| Change request | Current experience vs. Desired experience.                             |
-| Maintenance    | User impact — how internal work improves reliability, speed, etc.      |
-| Documentation  | What is confusing or missing — the gap a user runs into.               |
+| Type           | Framing                                                                              |
+| -------------- | ------------------------------------------------------------------------------------ |
+| Feature        | **Desired capability:** The desired capability from the user's point of view.        |
+| Bug / Fix      | **What happens:** / **What is expected:** Observed vs. expected behavior.            |
+| Change request | **Current experience:** / **Desired experience:** The shift from the user's lens.    |
+| Maintenance    | **User impact:** How internal work improves reliability, speed, or correctness.      |
+| Documentation  | **What is confusing or missing:** The gap from a user trying to accomplish a task.   |
 
 Elements per work type:
 
@@ -84,7 +84,88 @@ Elements per work type:
 
 ✓ = present when applicable, ○ = optional
 
-This section **does not contain** file paths, function internals, API endpoints, or implementation patterns. Those belong in Section 2.
+Element definitions:
+
+- **Reproduction steps** — a [minimal reproducible example](https://en.wikipedia.org/wiki/Minimal_reproducible_example): exact steps, inputs, and commands that trigger the problem. Anyone can reproduce the failure without guessing.
+- **Environment / version** — module version, PowerShell version (`$PSVersionTable`), and operating system. Other relevant runtime details (host application, execution context) included as applicable. Omitted only when clearly version-independent.
+- **Regression indicator** — whether this previously worked, and in which version. If unknown, stated explicitly.
+- **Known workarounds** — any mitigation available today, even if ugly or incomplete.
+
+This section contains:
+
+- Context: user story or scenario, background, what the user is trying to accomplish
+- Request: the specific problem, gap, or desired change — as the user experiences it
+- Current vs. desired experience
+- Impact of not addressing this (data loss, confusion, blocked workflows)
+- Acceptance criteria — what "done" looks like from the user's perspective
+- Applicable work-type-specific elements from the table above
+- Links to related issues, PRs, or external references — every external resource is a clickable hyperlink
+
+This section **does not contain** file paths, function internals, API endpoints, or implementation patterns. Those belong in Section 2. The section is understandable by someone who has never read the source code.
+
+**Example (Bug / Fix):**
+
+```markdown
+`Get-GitHubRepository` is used in automation to sync all repositories for an account.
+The script relies on getting the full list so it can detect new or removed repositories.
+
+## Request
+
+When `Get-GitHubRepository` is called on an account with more than 30 repositories, only 30 results are returned.
+There is no indication that results are incomplete, so it appears as though the full list has been retrieved.
+The silent truncation causes scripts to miss repositories, which can go unnoticed for weeks.
+
+### Reproduction steps
+
+1. Create or use an account with more than 30 repositories
+2. Run `Get-GitHubRepository`
+3. Count the returned objects — only 30 are returned regardless of total count
+
+### What is expected
+
+The command should return **all** repositories by default. If there is a way to limit results,
+it should be opt-in — not the default.
+
+### Environment
+
+- **Module version:** 0.14.0
+- **PowerShell:** 7.4.6 (Linux, Ubuntu 22.04)
+
+### Regression
+
+This appears to have been the behavior since the initial release. Not a regression.
+
+### Workaround
+
+Calling the GitHub REST API directly with manual pagination returns all results.
+
+### Acceptance criteria
+
+- All repositories are returned by default, regardless of how many exist
+- Results can be limited with a parameter when only a subset is needed
+- No silent data loss — if something limits results, it should be explicit
+```
+
+**Example (Feature):**
+
+```markdown
+Automation scripts that publish module releases to multiple registries currently call `Publish-PSResource`
+in a loop for each target. There is no built-in way to publish to several registries in a single invocation.
+
+## Request
+
+### Desired capability
+
+A `-Repository` parameter on `Publish-Module` that accepts an array of registry names, publishing
+the module to each in sequence. If any single publish fails, the error should be reported per-registry
+without aborting the remaining targets.
+
+### Acceptance criteria
+
+- `-Repository` accepts one or more registry names
+- Each target is attempted independently — a failure on one does not block the others
+- Output clearly indicates success or failure per registry
+```
 
 ## Section 2 — Technical Decisions
 
@@ -114,6 +195,28 @@ Typical decision areas:
 - Breaking changes and backward compatibility.
 - Test strategy (unit, integration, mocks).
 
+**Example:**
+
+```markdown
+---
+
+## Technical decisions
+
+**Function placement:** New private function goes in `src/functions/private/Utilities/` following the existing
+`Invoke-GitHubRestMethod` pattern. Public function stays in `src/functions/public/Repository/`.
+
+**Pagination approach:** Use link-header-based pagination (`rel="next"`) rather than page-number incrementing.
+The GitHub REST API uses link headers consistently, and this avoids hardcoding page size assumptions.
+
+**Parameter naming:** Use `-First` (consistent with PowerShell convention and `Select-Object -First`) rather than
+`-Limit` or `-MaxResults`.
+
+**Breaking changes:** None. Default behavior changes from returning one page to returning all pages, but since the
+previous behavior was undocumented and returning incomplete data, this is treated as a bugfix rather than a breaking change.
+
+**Test approach:** Unit tests with mocked API responses. One test per scenario: single-page, multi-page, and `-First` limiting.
+```
+
 ## Section 3 — Implementation Plan
 
 The task-level roadmap. Implementers track progress here; reviewers use it to understand scope.
@@ -128,6 +231,31 @@ Structure:
 
 For PBIs and Epics, Section 3 is **a list of links to child issues**, not inline tasks. See [Issue Hierarchy](Issue-Hierarchy.md).
 
+**Example:**
+
+```markdown
+---
+
+## Implementation plan
+
+### Core changes
+
+- [ ] Add `Invoke-GitHubRestMethodPaged` private function in `src/functions/private/Utilities/`
+- [ ] Update `Get-GitHubRepository` to call paged variant in `src/functions/public/Repository/`
+- [ ] Add `-First` parameter with `[int]` type and validation
+
+### Tests
+
+- [ ] Add unit test for single-page response
+- [ ] Add unit test for multi-page response
+- [ ] Add unit test for `-First` parameter limiting results
+
+### Documentation
+
+- [ ] Update function help with new parameter documentation
+- [ ] Add example showing pagination usage
+```
+
 ## Comments
 
 Every description update is accompanied by a comment. Comments preserve the change history so reasoning is not lost when the description is overwritten.
@@ -137,6 +265,17 @@ A comment contains:
 - A brief summary line.
 - Bullet points detailing what was added, changed, or removed.
 - Any gaps or open questions that need input.
+
+**Example:**
+
+```markdown
+Structured the issue description into the standard three-section format.
+
+- Rewrote the context and request to separate user-facing behavior from technical details
+- Added technical decisions section based on codebase research
+- Created implementation plan with 6 tasks covering core changes, tests, and documentation
+- Open question: should `-First` default to unlimited or require explicit opt-in? Marked as open in technical decisions.
+```
 
 ## Formatting
 
@@ -154,107 +293,99 @@ Issues use [GitHub Flavored Markdown](https://github.github.com/gfm/) with the f
 - `[text](url)` links for all external references.
 - **No hard line breaks within a paragraph.** GitHub renders mid-paragraph newlines as spaces, which creates inconsistent visual spacing.
 
-## Examples
+## Complete example
 
-### Feature issue
+A fully structured bug fix issue:
 
-**Title:** `Add pagination support to Get-GitHubRepository`
-
-**Labels:** `Minor`, `Feature`
-
-**Body:**
-
-```markdown
-A developer using Get-GitHubRepository to list all repositories in a large organization
-receives only the first 30 results. There is no way to request additional pages or
-automatically retrieve all results.
-
-The function should support automatic pagination so that all repositories are returned
-by default, with an optional parameter to limit the number of results.
-
-**Acceptance criteria:**
-
-- Calling `Get-GitHubRepository -Owner 'LargeOrg'` returns all repositories, not just
-  the first page.
-- A `-First` parameter limits the total number of results returned.
-- Pagination follows the `Link` header pattern used by the GitHub REST API.
-
----
-
-**Pagination strategy:** Follow the `Link` response header. Parse `rel="next"` and
-continue requesting until no next link is present. This matches the approach already
-used in `Get-GitHubRelease`.
-
-**Parameter naming:** Use `-First` (consistent with PowerShell conventions and
-`Select-Object -First`). Considered `-Limit` but it conflicts with API terminology.
-
-**Rate limiting:** No special handling — the existing retry logic in
-`Invoke-GitHubAPI` already respects `retry-after` headers.
-
----
-
-### Core logic
-
-- [ ] Add `Link` header parsing to `Invoke-GitHubAPI` (return next-page URL).
-- [ ] Update `Get-GitHubRepository` to loop until no next page or `-First` is reached.
-- [ ] Add `-First` parameter with `[int]` type and default of `0` (unlimited).
-
-### Tests
-
-- [ ] Unit test: `Link` header parsing returns correct next URL.
-- [ ] Integration test: paginated request returns more results than a single page.
-- [ ] Integration test: `-First 5` stops after 5 results.
-
-### Documentation
-
-- [ ] Update `Get-GitHubRepository` comment-based help with `-First` parameter.
-```
-
-### Bug fix issue
-
-**Title:** `Fix null reference when Context is not resolved`
+**Title:** `Fix silent truncation of results in Get-GitHubRepository`
 
 **Labels:** `Patch`, `Bug`
 
 **Body:**
 
 ```markdown
-When running `Build-PSModule` in a fresh container where the GitHub context environment
-variables are not set, the action fails with:
+`Get-GitHubRepository` is used in automation to sync all repositories for an account.
+The script relies on getting the full list so it can detect new or removed repositories.
 
-> InvalidOperation: You cannot call a method on a null-valued expression.
+## Request
 
-The error occurs on every run in that environment. Expected behaviour is a clear error
-message indicating that context is unavailable, not an unhandled null reference.
+When `Get-GitHubRepository` is called on an account with more than 30 repositories, only
+30 results are returned. There is no indication that results are incomplete, so it appears
+as though the full list has been retrieved. The silent truncation causes scripts to miss
+repositories, which can go unnoticed for weeks.
 
-**Reproduction steps:**
+### Reproduction steps
 
-1. Run `Build-PSModule` locally without setting `GITHUB_CONTEXT`.
-2. Observe the null-reference exception in the `Get-PSModuleSettings` step.
+1. Create or use an account with more than 30 repositories
+2. Run `Get-GitHubRepository`
+3. Count the returned objects — only 30 are returned regardless of total count
 
-**Environment:** GitHub Actions runner `ubuntu-latest`, PowerShell 7.4.6.
+### What is expected
 
-**Acceptance criteria:**
+The command should return **all** repositories by default. If there is a way to limit
+results, it should be opt-in — not the default.
 
-- When `GITHUB_CONTEXT` is not set, the action terminates with a descriptive error:
-  `"GitHub context is not available. Ensure the action runs inside a GitHub Actions workflow."`
-- No unhandled null-reference exception reaches the user.
+### Environment
+
+- **Module version:** 0.14.0
+- **PowerShell:** 7.4.6 (Linux, Ubuntu 22.04)
+
+### Regression
+
+This appears to have been the behavior since the initial release. Not a regression.
+
+### Workaround
+
+Calling the GitHub REST API directly with manual pagination returns all results.
+
+### Acceptance criteria
+
+- All repositories are returned by default, regardless of how many exist
+- Results can be limited with a parameter when only a subset is needed
+- No silent data loss — if something limits results, it should be explicit
 
 ---
 
-**Guard location:** Add a null check at the top of `src/main.ps1` in Get-PSModuleSettings,
-before any property access on the context object. This keeps the fix close to the source
-and avoids scattering defensive checks throughout the codebase.
+## Technical decisions
 
-**Error style:** Use `throw` with a terminating error rather than `Write-Error`, because
-downstream steps cannot proceed without context.
+**Function placement:** New private function goes in `src/functions/private/Utilities/` following
+the existing `Invoke-GitHubRestMethod` pattern. Public function stays in
+`src/functions/public/Repository/`.
+
+**Pagination approach:** Use link-header-based pagination (`rel="next"`) rather than page-number
+incrementing. The GitHub REST API uses link headers consistently, and this avoids hardcoding page
+size assumptions.
+
+**Parameter naming:** Use `-First` (consistent with PowerShell convention and `Select-Object -First`)
+rather than `-Limit` or `-MaxResults`.
+
+**Breaking changes:** None. Default behavior changes from returning one page to returning all pages,
+but since the previous behavior was undocumented and returning incomplete data, this is treated as a
+bug fix rather than a breaking change.
+
+**Test approach:** Unit tests with mocked API responses. One test per scenario: single-page,
+multi-page, and `-First` limiting.
 
 ---
 
-- [ ] Add null check for `$GitHubContext` at line 12 of `src/main.ps1`.
-- [ ] Throw terminating error with descriptive message when null.
-- [ ] Add Pester test: mock empty environment, assert correct error message.
-- [ ] Add Pester test: mock valid environment, assert no error.
+## Implementation plan
+
+### Core changes
+
+- [ ] Add `Invoke-GitHubRestMethodPaged` private function in `src/functions/private/Utilities/`
+- [ ] Update `Get-GitHubRepository` to call paged variant in `src/functions/public/Repository/`
+- [ ] Add `-First` parameter with `[int]` type and validation
+
+### Tests
+
+- [ ] Add unit test for single-page response
+- [ ] Add unit test for multi-page response
+- [ ] Add unit test for `-First` parameter limiting results
+
+### Documentation
+
+- [ ] Update function help with new parameter documentation
+- [ ] Add example showing pagination usage
 ```
 
 ## Labels
