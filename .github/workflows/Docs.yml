@@ -1,4 +1,4 @@
-name: Publish Docs
+name: Docs
 
 on:
   workflow_dispatch:
@@ -9,39 +9,72 @@ on:
       - src/**
       - .github/workflows/Docs.yml
       - .github/workflows/Update-Index.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - src/**
+      - .github/workflows/Docs.yml
+      - .github/workflows/Update-Index.yml
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
 
 jobs:
-  update_index:
-    name: Update index
-    uses: ./.github/workflows/Update-Index.yml
-    secrets: inherit
-
-  build:
-    name: Build and deploy docs
-    needs: update_index
+  lint:
+    name: Lint
     runs-on: ubuntu-24.04
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     permissions:
       contents: read
-      pages: write # deploy to GitHub Pages
-      id-token: write # OIDC token for actions/deploy-pages
+      packages: read # super-linter: read packages
+      statuses: write # super-linter: report status checks
     steps:
-      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
 
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Lint code base
+        uses: super-linter/super-linter@9e863354e3ff62e0727d37183162c4a88873df41 # v8.6.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          VALIDATE_BIOME_LINT: false
+          VALIDATE_BIOME_FORMAT: false
+          VALIDATE_JSCPD: false
+          VALIDATE_JSON_PRETTIER: false
+          VALIDATE_MARKDOWN_PRETTIER: false
+          VALIDATE_YAML_PRETTIER: false
+          VALIDATE_HTML_PRETTIER: false
+
+  update-index:
+    name: Update index
+    needs: lint
+    if: github.event_name != 'pull_request'
+    uses: ./.github/workflows/Update-Index.yml
+    secrets:
+      SCRIBBLER_BOT_CLIENT_ID: ${{ secrets.SCRIBBLER_BOT_CLIENT_ID }}
+      SCRIBBLER_BOT_PRIVATE_KEY: ${{ secrets.SCRIBBLER_BOT_PRIVATE_KEY }}
+
+  build:
+    name: Build
+    needs: [lint, update-index]
+    if: always() && needs.lint.result == 'success' && (needs.update-index.result == 'success' || needs.update-index.result == 'skipped')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
 
-      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: 3.x
 
@@ -52,9 +85,27 @@ jobs:
         run: zensical build --clean
         working-directory: src
 
-      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: src/site
 
-      - uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+  publish:
+    name: Publish
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write # deploy to GitHub Pages
+      id-token: write # OIDC token for actions/deploy-pages
+    steps:
+      - name: Configure pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
         id: deployment
