@@ -28,7 +28,7 @@ function Show-RepoList {
 
     LogGroup "Connect to organization [$Owner]" {
         Connect-GitHubApp -Organization $Owner -Default
-        Get-GitHubContext | Select * | Format-List | Out-String
+        Get-GitHubContext | Select-Object * | Format-List | Out-String
     }
 
     LogGroup "Get repositories for organization [$Owner]" {
@@ -128,7 +128,7 @@ function Update-ActionList {
         'PSAvoidLongLines', '',
         Justification = 'Markdown templates'
     )]
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param()
 
     $actionTableRowTemplate = @'
@@ -192,7 +192,7 @@ function Update-ModuleList {
         'PSAvoidLongLines', '',
         Justification = 'Markdown templates'
     )]
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param()
 
     $moduleTableRowTemplate = @'
@@ -251,7 +251,7 @@ function Update-FunctionAppList {
         'PSAvoidLongLines', '',
         Justification = 'Markdown templates'
     )]
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param()
 
     $functionAppTableRowTemplate = @'
