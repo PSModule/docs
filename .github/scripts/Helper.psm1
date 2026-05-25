@@ -28,14 +28,16 @@ function Show-RepoList {
 
     LogGroup "Connect to organization [$Owner]" {
         Connect-GitHubApp -Organization $Owner -Default
-        Write-Output "Owner: $Owner"
-        $rawRepos = Get-GitHubRepository -Organization $Owner -AdditionalProperty Description
+        Get-GitHubContext | Select * | Format-List | Out-String
+    }
+
+    LogGroup "Get repositories for organization [$Owner]" {
+        $rawRepos = Get-GitHubRepository -Organization $Owner -AdditionalProperty 'description'
         Write-Output "Found $($rawRepos.Count) repositories"
         $repos = $rawRepos | ForEach-Object {
             $rawRepo = $_
-            $properties = Get-GitHubRepositoryCustomProperty -Owner $Owner -Repo $rawRepo.name
-            $properties | Where-Object { $_.property_name -eq 'Type' } | ForEach-Object {
-                $type = $_.value
+            $rawRepo.CustomProperties | Where-Object { $_.Name -eq 'Type' } | ForEach-Object {
+                $type = $_.Value
                 [pscustomobject]@{
                     Name        = $rawRepo.Name
                     Owner       = $Owner
@@ -46,6 +48,8 @@ function Show-RepoList {
         } | Sort-Object Type, Name
         $repos | Format-Table -AutoSize
     }
+
+    $repos | Group-Object -Property Type
 }
 
 function Update-MDSection {

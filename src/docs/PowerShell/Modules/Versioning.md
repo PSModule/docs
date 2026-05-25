@@ -1,7 +1,9 @@
 # PowerShell Module Semantic Versioning Specification
 
 ## Introduction
+
 This document defines how changes to a PowerShell module’s public interface determine updates to its version number under Semantic Versioning (SemVer). Semantic Versioning uses a three-part version format: **MAJOR.MINOR.PATCH**, where each part is incremented based on the nature of changes:
+
 - **MAJOR** version is incremented for incompatible API changes (breaking changes) ([Semantic Versioning 2.0.0 | Semantic Versioning](https://semver.org/#:~:text=Given%20a%20version%20number%20MAJOR,increment%20the)).
 - **MINOR** version is incremented for added functionality that is backward compatible (new features) ([Semantic Versioning 2.0.0 | Semantic Versioning](https://semver.org/#:~:text=Given%20a%20version%20number%20MAJOR,increment%20the)).
 - **PATCH** version is incremented for backward-compatible bugfixes or minor improvements ([Semantic Versioning 2.0.0 | Semantic Versioning](https://semver.org/#:~:text=Given%20a%20version%20number%20MAJOR,increment%20the)).
@@ -9,6 +11,7 @@ This document defines how changes to a PowerShell module’s public interface de
 In the context of a PowerShell module, the “public API” consists of all exported functions/cmdlets, public variables, classes, and enums that consumers of the module can use. Changes to these exported elements will dictate whether the version bump is major, minor, or patch. Internal changes that do not affect the exported interface are generally not reflected in the version. The following sections categorize changes and the required version update level, ensuring a consistent and predictable versioning strategy.
 
 ## Major Version (X) – Breaking Changes
+
 A **major version bump** signifies a breaking change in the module’s public interface. Any modification that could cause existing scripts or code relying on the module to fail or change behavior in an incompatible way requires incrementing the MAJOR version. These include:
 
 - **Removal or Renaming of Exported Commands or Elements**: Removing an exported function/cmdlet, variable, class, or enum, or renaming any of these, is a breaking change. Consumers referencing the old name will encounter errors because the item no longer exists or has a different name. *(Example: `Get-ItemFoo` was exported in the previous version but is removed or renamed to `Get-FooItem` in the new version. Scripts calling `Get-ItemFoo` will break.)* This kind of change must increment the major version to signal the break.
@@ -44,6 +47,7 @@ A **major version bump** signifies a breaking change in the module’s public in
 **Rationale:** According to Semantic Versioning, introducing changes that are not backward compatible requires a major version increment ([Semantic Versioning 2.0.0 | Semantic Versioning](https://semver.org/#:~:text=Given%20a%20version%20number%20MAJOR,increment%20the)). By increasing the major version, we communicate to users that they may need to adjust their scripts due to breaking changes. This aligns with the principle that *“MAJOR version when you make incompatible API changes”* ([Semantic Versioning 2.0.0 | Semantic Versioning](https://semver.org/#:~:text=Given%20a%20version%20number%20MAJOR,increment%20the)). For example, if a function or parameter that existed in version 1.x is no longer present in version 2.0, that is an incompatible API change. Our versioning policy follows this rule strictly: breaking changes will never be introduced in a minor or patch release, ensuring that patch and minor updates can be safely adopted without fear of script-breaking surprises.
 
 ## Minor Version (Y) – Backward-Compatible Additions
+
 A **minor version bump** is used for new features and additions that are backward compatible with the existing public API. These changes enhance the module’s functionality without breaking any existing usage. In other words, existing scripts will continue to work as before, and new capabilities are introduced. Changes that trigger a MINOR version increase include:
 
 - **Adding New Exported Functions/Cmdlets**: Introducing a new function or cmdlet to the module is a backward-compatible addition. Since it does not remove or change existing functions, nothing breaks; users simply have an additional function available. *Example:* Adding a new cmdlet `New-Report` to the module (where it didn’t exist before) would be a new feature. This warrants a minor version bump because it’s an additive, non-breaking change.
@@ -69,6 +73,7 @@ A **minor version bump** is used for new features and additions that are backwar
 In summary, **any new functionality that does not force existing users to change their usage is a candidate for a minor version increment** ([Semantic Versioning 2.0.0 | Semantic Versioning](https://semver.org/#:~:text=Given%20a%20version%20number%20MAJOR,increment%20the)). Minor releases accumulate enhancements and new features, signalling to users that new capabilities are available, but all existing scripts should continue to work as they did in the previous version. Users can upgrade to the new minor version and gain new functions or options without needing to modify their existing code. This aligns with the SemVer guideline that *“MINOR version [increments] when you add functionality in a backward compatible manner”* ([Semantic Versioning 2.0.0 | Semantic Versioning](https://semver.org/#:~:text=Given%20a%20version%20number%20MAJOR,increment%20the)).
 
 ## Patch Version (Z) – Bugfixes and Improvements
+
 A **patch version bump** is used for changes that do not affect the module's public API or add new features, but rather fix issues or improve internal implementation. Patch updates are meant to be safe, drop-in updates for users, with no risk of breaking functionality or changing how features are used. Scenarios for a PATCH version increment include:
 
 - **Bugfixes**: Correcting any bugs in existing functions or features, provided the fix does not alter the function's signature or expected input/output in a way that would break compatibility. The behavior might change (from incorrect to correct), but since the original behavior was unintended (a bug), this is considered a backward-compatible fix. For example:
@@ -86,6 +91,7 @@ A **patch version bump** is used for changes that do not affect the module's pub
 **Note:** A patch release should not introduce any new public surface area or change the meaning of anything in the public API. It is strictly for fixes and invisible improvements. According to SemVer rules, *"PATCH version when you make backwards-compatible bugfixes"* ([Semantic Versioning 2.0.0 | Semantic Versioning](https://semver.org/#:~:text=Given%20a%20version%20number%20MAJOR,increment%20the)) – this includes fixes and minor tweaks that do not affect compatibility. Users upgrading from one patch version to the next within the same minor series (e.g., 1.2.3 to 1.2.4) should notice no differences except the resolved issues or performance gains. They do not get new features (and thus don't need to learn anything new), and they do not have to worry about breaks.
 
 ## Internal Changes with No Version Impact
+
 Certain changes do not require any version number increase at all, because they have no effect on the module’s outward-facing behavior or interface. In a disciplined development practice, if the only changes in a commit or release are purely internal and produce no difference in functionality or API, the version can remain the same. In practice, such changes are often bundled with other changes or released as patch versions if needed. But as a guideline, **metadata or refactoring changes that do not impact the exported interface should not influence the version number** (they are essentially “no-ops” as far as the user is concerned). Examples:
 
 - **Refactoring without Behavioral Changes**: If the code is refactored (e.g., splitting a large function into smaller private helper functions, renaming internal variables, improving readability) but the exported functions, classes, and variables all behave exactly the same and have the same signatures, then there’s no need for a version change. The module behaves identically from the consumer’s perspective.
@@ -103,6 +109,7 @@ In summary, if a change does **not** modify or add to the public interface and d
 *(Note: In practice, every release must have a unique version. So if you are releasing changes that have no API impact, you might still increment the patch to publish it. But the key is that those internal changes by themselves never escalate the version beyond patch, and if they are truly no-ops, you might choose not to release until there’s a user-facing change.)*
 
 ## Versioning Strategy and Update Expectations
+
 This module follows a **“latest version” support strategy**, meaning that only the most recent release is fully supported and maintained. When a new version is released, it supersedes previous versions. **Older versions are not maintained**, and users are expected to upgrade to the latest version to receive fixes and new features. As stated in Microsoft’s guidance for PowerShell modules: *“Only the latest major version receives full support, including new features, bugfixes, and updates. We strongly recommend upgrading to the latest version…”* ([Versioning, release cadence, and breaking changes - Microsoft Entra PowerShell | Microsoft Learn](https://learn.microsoft.com/en-us/powershell/entra-powershell/entraps-versioning-release-cadence?view=entra-powershell#:~:text=Only%20the%20latest%20major%20version,latest%20improvements%20and%20security%20updates)). In our context, this means:
 
 - We do not create maintenance releases for older major versions. For example, if the module is currently at 2.x, we will not typically release further updates for 1.x; any fixes or enhancements will go into a new 2.x (or later) release. The focus is on moving forward with the latest version of the module.
@@ -119,7 +126,9 @@ This module follows a **“latest version” support strategy**, meaning that on
 By adhering to this strategy, we ensure clarity and consistency. Users who always upgrade to the latest version will benefit from all improvements and will only need to make script changes when a major version increments (which will be clearly indicated by the version number change).
 
 ## Automated Version Bump Determination (Implementation)
+
 To enforce the above rules, we will use custom PowerShell scripts as part of our build/release process to automatically determine the appropriate version bump based on the changes in the module. The automation will compare the module’s exported interface between the current release and the new version under development:
+
 - It will **detect additions** of public elements (functions, parameters, variables, classes, enum values) and **detect removals or changes** to public elements.
 - Based on this comparison, the script will decide the version increment:
   - If new public functions, new optional parameters, or other new exported members are found (and no breaking changes), the script will set the version bump to **Minor** (since new functionality has been added in a backwards-compatible way).
@@ -127,6 +136,7 @@ To enforce the above rules, we will use custom PowerShell scripts as part of our
   - If no differences in the public API are found (meaning no new features and no removed/changed features), then the changes must be purely fixes or internal improvements. In this case, the script will default to a **Patch** bump ([PowerShell: Automatic Module Semantic Versioning](https://powershellexplained.com/2017-10-14-Powershell-module-semantic-version/#:~:text=In%20this%20example%2C%20if%20there,version)).
 
 This approach mirrors the “fingerprint” strategy: generating a list (fingerprint) of all public API elements (e.g., `FunctionName:ParameterName` for each parameter of each function, plus entries for other exported members) for the current and previous version, and comparing them ([PowerShell: Automatic Module Semantic Versioning](https://powershellexplained.com/2017-10-14-Powershell-module-semantic-version/#:~:text=%27Detecting%20new%20features%27%20%24fingerprint%20,)) ([PowerShell: Automatic Module Semantic Versioning](https://powershellexplained.com/2017-10-14-Powershell-module-semantic-version/#:~:text=In%20this%20example%2C%20if%20there,version)).
+
 - If the new fingerprint has entries not present in the old fingerprint, those represent new capabilities (triggering a minor version increase) ([PowerShell: Automatic Module Semantic Versioning](https://powershellexplained.com/2017-10-14-Powershell-module-semantic-version/#:~:text=In%20this%20example%2C%20if%20there,version)).
 - If the old fingerprint has entries not present in the new fingerprint, those represent removed or changed items (triggering a major version increase) ([PowerShell: Automatic Module Semantic Versioning](https://powershellexplained.com/2017-10-14-Powershell-module-semantic-version/#:~:text=In%20this%20example%2C%20if%20there,version)).
 - If neither additions nor removals are detected, only patch-level changes exist ([PowerShell: Automatic Module Semantic Versioning](https://powershellexplained.com/2017-10-14-Powershell-module-semantic-version/#:~:text=In%20this%20example%2C%20if%20there,version)).
@@ -135,6 +145,7 @@ Using automation ensures that our versioning rules are applied consistently on e
 
 **Example of the automated logic in practice:**
 Suppose in version 1.3.0 the module has a function `Get-Data -Path <string>` and in the development code we change this to `Get-Data -Path <string> -Filter <string>`, where `-Filter` is a new optional parameter. The script compares the exported interface:
+
 - Old version fingerprint might include an entry like `Get-Data:Path` for the parameter.
 - New version fingerprint includes `Get-Data:Path` and `Get-Data:Filter`.
 The new fingerprint has an entry not in the old (`Get-Data:Filter`), indicating a new parameter. The old fingerprint has none that the new lacks (we didn’t remove anything; `Path` is still there). So the tool will identify a new feature addition with no removals, resulting in a **Minor** bump (1.4.0). This matches our expectation: adding an optional `-Filter` parameter is a backward-compatible enhancement.
@@ -144,7 +155,9 @@ If instead we had removed `-Path` or renamed `Get-Data` to `Get-ItemData`, the o
 If we only fixed a bug inside `Get-Data` but made no changes to its parameters or outputs, the fingerprints would be identical. The automation would not find any new or removed public element, and thus default to a **Patch** bump (1.3.1). This ensures even unseen internal changes result in at least a patch update if a release is made, but nothing more.
 
 ## Conclusion
+
 This specification provides a clear framework for versioning a PowerShell module in accordance with Semantic Versioning principles, tailored to the specific elements of a PowerShell module’s public interface. By classifying changes into major, minor, or patch categories, we ensure that the module’s version number accurately communicates the impact of changes:
+
 - **Major** versions for breaking changes (removals, renames, incompatible alterations).
 - **Minor** versions for new features and additions that are backward compatible.
 - **Patch** versions for bugfixes and non-breaking improvements.

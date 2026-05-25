@@ -63,4 +63,3 @@ Describe 'Uri' {
 ```
 
 This ensures our tests are structured, maintainable, and adhere to best practices.
-
