@@ -295,7 +295,7 @@ Issues use [GitHub Flavored Markdown](https://github.github.com/gfm/) with the f
 
 ## Complete example
 
-A fully structured bug fix issue:
+A fully structured bugfix issue:
 
 **Title:** `Fix silent truncation of results in Get-GitHubRepository`
 
