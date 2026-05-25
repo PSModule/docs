@@ -73,7 +73,7 @@ function Update-MDSection {
     param(
         # Path to the markdown file where the section should be updated.
         [Parameter()]
-        [string] $Path = 'docs\index.md',
+        [string] $Path = 'src\docs\index.md',
 
         # Name of the section to be updated, used in comment markers.
         [Parameter()]
@@ -166,7 +166,7 @@ function Update-ActionList {
 $actionTableRows</table>
 
 "@
-    Update-MDSection -Path '.\docs\GitHub-Actions\index.md' -Name 'ACTION_LIST' -Content $actionTable
+    Update-MDSection -Path '.\src\docs\GitHub-Actions\index.md' -Name 'ACTION_LIST' -Content $actionTable
 }
 
 function Update-ModuleList {
@@ -226,7 +226,7 @@ $moduleTableRows</table>
 
 "@
 
-    Update-MDSection -Path '.\docs\PowerShell\Modules\index.md' -Name 'MODULE_LIST' -Content $moduleTable
+    Update-MDSection -Path '.\src\docs\PowerShell\Modules\index.md' -Name 'MODULE_LIST' -Content $moduleTable
 }
 
 function Update-FunctionAppList {
@@ -290,5 +290,5 @@ $functionAppTableRows</table>
 
 "@
 
-    Update-MDSection -Path '.\docs\PowerShell\FunctionApps\index.md' -Name 'FUNCTIONAPP_LIST' -Content $functionAppTable
+    Update-MDSection -Path '.\src\docs\PowerShell\FunctionApps\index.md' -Name 'FUNCTIONAPP_LIST' -Content $functionAppTable
 }
