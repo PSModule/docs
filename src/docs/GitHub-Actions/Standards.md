@@ -18,6 +18,44 @@ Before writing or reviewing:
 3. **Check `CODEOWNERS`** for `.github/workflows/` ownership. Recommend if absent (don't edit `CODEOWNERS` unless explicitly asked).
 4. **Resolve SHAs via `gh api`.** Never invent or guess a commit SHA.
 
+## Style
+
+### S1 — Always name jobs and steps
+
+Every job and every step must have a `name:` field. Names should be short, human-readable, and describe what the job or step does — not how.
+
+```yaml
+# ✅ Required
+jobs:
+  build:
+    name: Build module
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@<sha> # vX.Y.Z
+
+# ❌ Anonymous — hard to read in the GitHub UI and logs
+jobs:
+  build:
+    steps:
+      - uses: actions/checkout@<sha> # vX.Y.Z
+```
+
+### S2 — Use quotes sparingly
+
+Only quote scalar values when YAML would misinterpret them without quotes (e.g. values starting with `{`, containing `:`, boolean-like strings such as `true`/`false`, numeric strings). Omit quotes everywhere else.
+
+```yaml
+# ✅ Quotes only where needed
+run-name: Release ${{ github.ref_name }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+# ❌ Unnecessary quotes
+run-name: 'Release ${{ github.ref_name }}'
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref }}'
+```
+
 ## Security
 
 ### R1 — Pin every `uses:` to a full 40-char SHA with a patch level version comment
