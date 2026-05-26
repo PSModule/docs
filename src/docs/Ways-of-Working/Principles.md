@@ -63,7 +63,7 @@ Agent context is delivered through three layers, in priority order:
 
 ### Persona, not swarm
 
-Treat the agent ecosystem as one team mate. Many specialized roles, one cohesive bank of knowledge, one consistent voice. See [the Agents index](../Agents/index.md#why-a-persona-not-a-swarm).
+Treat the agent ecosystem as one team mate. Many specialized roles, one cohesive bank of knowledge, one consistent voice.
 
 ### Augmentation, not replacement
 
