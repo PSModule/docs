@@ -59,7 +59,8 @@ A desire for change enters the system. It can come from anywhere:
 - An observation during a review.
 - A dependency update or platform change.
 
-The goal is to **write it down** — quickly, in a GitHub issue — so it exists outside someone's head. At this stage, precision is less important than existence. The issue captures the current state, the pain or opportunity, and the desired outcome.
+The goal is to **write it down** — quickly, in a GitHub issue — so it exists for the world to see and "remember".
+At this stage, precision is less important than existence. The issue captures the current state, the pain or opportunity, and the desired outcome.
 
 See [Issue Format § Section 1](Issue-Format.md) for structure.
 
@@ -69,10 +70,13 @@ Ground the captured desire in reality. Ask:
 
 - What is the actual problem? (Not the symptom, not the first solution that comes to mind.)
 - Who is affected and how?
-- What does "done" look like from the user's perspective?
+- What does "done" look like from
+  1. the user's perspective?
+  2. the maintainer's perspective?
 - Are there constraints, dependencies, or prior decisions that matter?
 
-This may involve questions in issue comments, interactive discussion, or research. The goal is **shared understanding** — everyone (humans and agents) agrees on what the real problem is and what the outcome should be.
+This may involve questions in issue comments, interactive discussion, or research.
+The goal is **shared understanding** — everyone (humans and agents) agrees on what the real problem is and what the outcome should be.
 
 ### Plan
 
@@ -147,16 +151,4 @@ Detail increases as work moves from Later toward Now.
 - A product backlog item lives between **Now / Logical** and **Next / Detailed**.
 - An epic spans **Now → Next → Later** at **Conceptual / Logical** fidelity.
 
-## Guiding principles in the workflow
-
-| Principle                        | Where it shows up                        |
-| -------------------------------- | ---------------------------------------- |
-| Start with Why (Golden Circle)   | Capture and Refine — grounding the work  |
-| OKRs                             | Capture (especially at Epic level)       |
-| YAGNI / Lean                     | Plan and Build — thinnest viable path    |
-| Test-Driven Development          | Build — define tests with behavior       |
-| DevOps / SRE                     | Operate — continuous loop                |
-| 4-eyes principle                 | Review — every change gets a second look |
-| Everything as Code               | All phases — issues, PRs, docs in source |
-
-See [Principles](Principles.md) for the full set.
+This workflow follows the [Human–agent coexistence](Principles.md#human-agent-coexistence) principle — it is designed for humans first, with agents joining the same process rather than running a parallel one.

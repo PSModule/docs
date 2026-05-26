@@ -49,6 +49,18 @@ Be the first customer of every service we build. But avoid full self-dependency 
 
 ## Agentic development
 
+### Human–agent coexistence
+
+The workflow is designed for humans and agents working side by side. Agents join a good human way of working — they do not replace it or require a parallel system. The operating model is **human-first, agent-augmented**.
+
+Agents are trained to read documentation. That is their natural skill. By keeping standards, conventions, and principles in documentation format we serve both audiences with a single artifact — no separate "agent manual" required.
+
+Agent context is delivered through three layers, in priority order:
+
+1. **Documentation** — the primary source. Published docs at <https://psmodule.io/docs/>, READMEs, and issue bodies are written for humans and naturally consumable by agents.
+2. **Central agent configuration** — organization-wide agent files in `.github-private`. Thin orchestrators built mostly from references to the docs. They define roles, boundaries, and procedural steps — not standards or conventions.
+3. **Local repository files** — `.github/` instruction files and repo-level overrides for what is unique to a single repository.
+
 ### Persona, not swarm
 
 Treat the agent ecosystem as one team mate. Many specialized roles, one cohesive bank of knowledge, one consistent voice. See [the Agents index](../Agents/index.md#why-a-persona-not-a-swarm).
