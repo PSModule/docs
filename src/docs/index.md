@@ -3,7 +3,7 @@ hide:
   - navigation
 ---
 
-> Make it **easy**, to move **fast**, in a **safe** way.
+Make it **easy**, to move **fast**, in a **safe** way.
 
 Every decision — from architecture to commit message — is filtered through those three words.
 [Read more about our Ways of Working](Ways-of-Working/index.md)

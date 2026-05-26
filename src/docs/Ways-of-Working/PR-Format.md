@@ -69,18 +69,7 @@ Ordered, top to bottom.
 
 A concise paragraph describing **what changes for the user**. Present tense, active voice. Never open with implementation language ("Refactored", "Updated class", "Added null checks").
 
-### 2. Issue links
-
-```markdown
-- Fixes #123
-- Fixes #124
-```
-
-One bullet per linked issue. Use `Fixes` (closes the issue on merge) unless the relationship is partial — then `Refs #N` and explain in the technical details.
-
-If no issue is linked: **stop**. PRs without issues break the workflow. Route back to the [Ideator](https://github.com/PSModule/.github-private/blob/main/agents/ideator.md) or proceed only on explicit user confirmation. The Shipper enforces this.
-
-### 3. User-facing changes — sections with headers
+### 2. User-facing changes — sections with headers
 
 Organize by **what the user experiences**, not by what was changed internally.
 
@@ -97,7 +86,7 @@ Under each header:
 
 Do **not** mention internal function names, class names, private APIs, or refactoring decisions here.
 
-### 4. Technical details (optional)
+### 3. Technical details (optional)
 
 ```markdown
 ## Technical Details
@@ -112,6 +101,24 @@ For reviewers and maintainers. Not part of the release note. Include:
 
 Omit the section entirely if there's nothing noteworthy.
 
+### 4. Related issues
+
+A collapsible `<details>` block at the very end of the description containing issue links. Always use fully qualified references (`Owner/Repo#N`) so links work across repositories.
+
+```markdown
+<details>
+<summary>Related issues</summary>
+
+- Fixes PSModule/GitHub#123
+- PSModule/Process-PSModule#124
+
+</details>
+```
+
+One bullet per linked issue. Use a [closing keyword](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue) (`Fixes`, `Closes`, `Resolves`) when the PR fully addresses the issue. Otherwise, list the reference without a keyword to indicate a relationship without auto-closing.
+
+If no issue is linked: **stop**. PRs without issues break the workflow. Route back to the [Ideator](https://github.com/PSModule/.github-private/blob/main/agents/ideator.md) or proceed only on explicit user confirmation. The Shipper enforces this.
+
 ## Formatting
 
 - Paragraphs are written as a **single unbroken line**. GitHub renders mid-paragraph newlines as spaces.
@@ -122,9 +129,6 @@ Omit the section entirely if there's nothing noteworthy.
 
 ````markdown
 Repository objects now include custom properties directly — no separate API call needed. Queries that encounter missing or inaccessible resources now return partial results with warnings instead of failing entirely.
-
-- Fixes #218
-- Fixes #219
 
 ## New: Custom properties on repository objects
 
@@ -147,6 +151,14 @@ Commands that query a specific repository, enterprise, or release by name now re
 - `Invoke-GitHubGraphQLQuery`: error handling split into partial-success (data + errors → warnings) and full-failure (errors only → terminating error) branches.
 - Null guards added to `Get-GitHubRepositoryByName`, `Get-GitHubMyRepositoryByName`, and related functions.
 - Implementation plan progress: tasks 1–3 in #218 completed; task 4 (integration tests) remains.
+
+<details>
+<summary>Related issues</summary>
+
+- Fixes PSModule/GitHub#218
+- PSModule/GitHub#219
+
+</details>
 ````
 
 ## Drafts and readiness
