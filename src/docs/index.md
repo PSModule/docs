@@ -3,12 +3,12 @@ hide:
   - navigation
 ---
 
-Make it **easy**, to move **fast**, in a **safe** way.
+# Make it **easy**, to move **fast**, in a **safe** way
 
 Every decision — from architecture to commit message — is filtered through those three words.
 [Read more about our Ways of Working](Ways-of-Working/index.md)
 
-# A GitHub & PowerShell development framework
+## A GitHub & PowerShell development framework
 
 We empower PowerShell-savvy developers to effortlessly transform their ideas into impactful solutions.
 Our approach centers around a development framework that allows developers to focus on delivering value through their code.
