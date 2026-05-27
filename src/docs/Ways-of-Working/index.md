@@ -20,10 +20,3 @@ This section documents the principles, processes, and norms that every contribut
 ## Who this is for
 
 Everyone. If you contribute to a PSModule project — by code, review, issue, or discussion — these are the norms you follow. Agents follow them too; they read these pages as context before acting.
-
-## Core principles
-
-> Make it **easy**, to move **fast**, in a **safe** way.
-
-If a guideline gets in the way of that, the guideline is the thing that needs to change.
-See the [main page](../index.md) for what each word means.
