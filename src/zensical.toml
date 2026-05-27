@@ -61,6 +61,7 @@ nav = [
     "Ways-of-Working/index.md",
     {"Workflow" = "Ways-of-Working/Workflow.md"},
     {"Principles" = "Ways-of-Working/Principles.md"},
+    {"Goal-Setting Framework" = "Ways-of-Working/Goal-Setting.md"},
     {"Issue Format" = "Ways-of-Working/Issue-Format.md"},
     {"Issue Hierarchy" = "Ways-of-Working/Issue-Hierarchy.md"},
     {"PR Format" = "Ways-of-Working/PR-Format.md"},

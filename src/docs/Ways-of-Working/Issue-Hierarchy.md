@@ -1,8 +1,23 @@
 # Issue Hierarchy
 
-Work in PSModule is tracked at three levels. The level reflects **scope and aggregation**, not priority or complexity. We use **GitHub issue types** for the segmentation — not labels — so the relationships are first-class in the platform.
+Work in PSModule is tracked using GitHub sub-issues to form a connected hierarchy from Epic down to individual deliverables. The level reflects **scope and aggregation**, not priority or complexity. We use **GitHub issue types** for the segmentation — not labels — so the relationships are first-class in the platform.
 
-## The three levels
+Epics originate from Initiatives in the [Goal-Setting Framework](Goal-Setting.md).
+
+## Full hierarchy
+
+```text
+Epic (initiative from an OKR, repo-level)
+├── PBI (body of work, multiple PRs)
+│   ├── Task (one PR-sized deliverable)
+│   └── Task
+└── PBI
+    └── Task
+```
+
+GitHub supports up to **8 levels** of nested sub-issues and **100 sub-issues per parent**, which comfortably fits this model with room to spare.
+
+## The three operational levels
 
 | Level                    | Issue type   | Scope                                              | Output                                                     |
 | ------------------------ | ------------ | -------------------------------------------------- | ---------------------------------------------------------- |

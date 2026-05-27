@@ -14,25 +14,6 @@ Every piece of work — at every level — should be groundable in three concent
 
 When an issue is being written, the **Why** belongs in the Context part of Section 1. The **How** belongs in Section 2 (Technical Decisions). The **What** belongs in Section 3 (Implementation Plan).
 
-### Vision, mission, OKRs
-
-#### Vision
-
-> Make it easy. Enable others to do more, faster.
-
-#### Mission
-
-PSModule's mission is to **infuse GitHub with PowerShell**, and to **bring more to the PowerShell ecosystem** by using the GitHub platform to its fullest extent.
-
-#### OKRs
-
-We aim for OKRs — not KPIs. The difference matters:
-
-- **Objectives** are qualitative, aspirational, and from outside in. They describe a state of the world we want to see.
-- **Key Results** are measurements that tell us the Objective is being met. They drive incentive in the right direction without prescribing the path.
-
-A good OKR is one that anyone — contributor, user, or agent — can read and immediately have ideas about how to contribute.
-
 ### Product / service mindset
 
 We are building something for people who should **want** to use it. Without users, we are nothing. Every decision is filtered through: does this make the product more wanted, or less?
@@ -48,6 +29,19 @@ We build for engineers using the latest tools and platforms. We do not support d
 ### Dogfooding
 
 Be the first customer of every service we build. But avoid full self-dependency on a service before it is proven — explore and use it in non-critical contexts first, then promote it as confidence grows.
+
+### Least-privilege
+
+Every identity — human, agent, or workflow — gets only the permissions it needs to complete its specific task, and nothing more. This applies to GitHub tokens, workflow permissions, API scopes, and agent capabilities.
+
+Concretely:
+
+- Workflow jobs declare `permissions` explicitly and as narrowly as possible. A job that only reads should never have write access.
+- Agents are scoped to the actions they are authorised to take. An agent that reviews code should not be able to merge.
+- Secrets and tokens are never passed wider than the step or job that needs them.
+- When a required scope expands, that expansion is a deliberate, reviewed decision — not a default or a shortcut.
+
+The goal is to limit blast radius. If an agent, token, or job is compromised or behaves unexpectedly, least-privilege ensures the damage is contained.
 
 ## AI-first development
 
