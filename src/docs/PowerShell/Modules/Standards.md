@@ -1,6 +1,8 @@
-# PowerShell Module Standard
+# PowerShell module standard
 
 Standards for implementing and reviewing PowerShell modules in the PSModule organization. These rules apply to modules built with the [PSModule framework](https://github.com/PSModule/PSModule).
+
+For general PowerShell coding standards (naming, style, function structure, documentation, readability, error handling), see [PowerShell Standards](../Standard/index.md). This page covers only module-specific conventions.
 
 > **Repo-local config wins.** Repo-level `PSScriptAnalyzerSettings.psd1`, `.github/linters/.powershell-psscriptanalyzer.psd1`, and equivalent local rules override anything below. This standard fills the gap.
 
@@ -41,110 +43,18 @@ Layout rules:
 - **Declare dependencies where they are used.** Use `#Requires -Modules <Name>` at the top of each function file that needs an external module. Do not add `RequiredModules` to `src/manifest.psd1` — the build collects all `#Requires` declarations automatically and writes them into the compiled manifest. Entries in `src/manifest.psd1` are silently ignored for this purpose.
 - **Group documentation pages with source.** Place a `<Group>.md` file alongside the function files in each `src/functions/public/<Group>/` folder to provide a category overview in generated documentation.
 
-## Naming
+## Module naming
 
-### Functions and filters
-
-- Use approved PowerShell verbs (`Get-Verb`).
-- Use singular PascalCase nouns prefixed with the module's term of art.
-- Name commands after objects, not lookup mechanisms. `Get-ContosoProject -ID 42`, not `Get-ContosoProjectByID`.
+- Prefix public nouns with the module's term of art: `ContosoProject`, not `Project`.
 - Public aliases only when they preserve compatibility or bridge terminology. Private functions and parameters have no aliases.
-- Use `filter` only for pure pipeline transforms. Use `function` with `begin` / `process` / `end` when setup or cleanup is needed.
-
-### Parameters
-
-- PascalCase, full words.
-- Convert external `snake_case` to PascalCase.
-- Avoid repeating the noun: `-ID` not `-ProjectID` in `Get-ContosoProject`.
-- Same parameter name for the same concept across the module.
-- Positive switches: `-Force`, `-Recurse`, `-PassThru`.
-
-### Variables
-
-- camelCase for locals, PascalCase for parameters.
-- Full names: `$projectResponse`, `$requestBody`, `$normalizedPath`, `$apiUri`.
-- No Hungarian prefixes (`$strName`, `$intCount`).
-- No `$temp`, `$data`, `$result`, `$obj` as final names.
-- Splats named after the call they feed: `$getProjectSplat`, `$invokeApiSplat`.
-
-### Classes and enums
-
-- PascalCase + module prefix: `ContosoProject`, `ContosoProjectState`.
-- Singular enums.
-- PascalCase properties. Boolean properties start with `Is`, `Has`, or `Can`.
-- Sizes in bytes in a property named `Size`.
-- Optional timestamps use `[System.Nullable[datetime]]`.
-
-### Files
-
-- Filename equals symbol name plus extension: `Get-ContosoProject.ps1`, `ContosoProject.ps1`, `ContosoProject.Types.ps1xml`.
-- Casing matches the declared symbol.
-
-## Style
-
-- **Lowercase keywords:** `function`, `filter`, `param`, `begin`, `process`, `end`, `if`, `else`, `elseif`, `switch`, `foreach`, `for`, `while`, `do`, `return`, `throw`, `try`, `catch`, `finally`.
-- **One True Brace Style.** Opening brace on the same line; closing brace on its own line; `else` / `elseif` / `catch` / `finally` on the line with the preceding closing brace.
-- **4-space indentation, no tabs.**
-- **Line length** — max 150 characters (PSScriptAnalyzer `PSAvoidLongLines`).
-- **Always include `param()`**, even when empty.
-- **Type every parameter and class property.**
-- `[CmdletBinding()]` on functions. `[CmdletBinding(SupportsShouldProcess)]` only on commands that mutate state (create, update, remove, copy, install, publish). **Never** on `Get-`, `Test-`, `Resolve-`, `ConvertTo-`, `ConvertFrom-`.
-- `[OutputType()]` on public functions, with the most specific type.
-- `begin` / `process` / `end` blocks on public commands.
-- Suppress output with `$null = <expression>`, not `| Out-Null`.
-- No `Write-Host` in module code. Use `Write-Verbose`, `Write-Debug`, `Write-Information`.
-- Never pass `-Verbose` to commands inside module code — this overrides caller preference. The only permitted exception is `-Verbose:$false` to explicitly silence a call.
-- Use `[System.Environment]::ProcessorCount` instead of `$env:NUMBER_OF_PROCESSORS`. The environment variable is only available on Windows and is not reliable cross-platform.
-- No ternary operators (`condition ? a : b`). Ternaries are not available in PowerShell 5.1; use `if` / `else` instead to maintain compatibility.
-- Use `try` / `catch` only when adding value (translation, enrichment, cleanup).
-- String emptiness: `-not $Param`, never `[string]::IsNullOrEmpty(...)`.
-- Wildcard detection: `[System.Management.Automation.WildcardPattern]::ContainsWildcardCharacters($Value)`, never `$Value.Contains('*')`. The latter misses `?`, `[`, and `` ` `` — all valid PowerShell wildcard characters.
-
-## Public function structure
-
-1. Comment-based help (see below).
-2. `[OutputType([T])]`.
-3. `[CmdletBinding(...)]` with `DefaultParameterSetName` when multiple sets exist.
-4. Documented, typed, attribute-ordered `param()` block.
-5. `begin` — initialize shared state, resolve context, validate.
-6. `process` — process pipeline input, call private helpers.
-7. `end` — cleanup.
-
-Parameter attribute order (each on its own line):
-
-1. `[Parameter(...)]` — one per parameter set.
-2. Validation attributes — `[ValidateNotNullOrEmpty()]`, `[ValidateSet()]`, `[ValidateRange()]`, etc.
-3. `[ArgumentCompleter(...)]`.
-4. `[Alias(...)]`.
-5. Typed declaration: `[string] $Name`.
-
-Parameter sets:
-
-- Single mode → no named set, no `DefaultParameterSetName`.
-- Multiple modes → every set has an intent-revealing name (`'List projects'`, `'Get a project by name'`). Never `'Default'`, `'ByID'`, `'__AllParameterSets'`.
-- Set `DefaultParameterSetName` to the most common user intent.
 
 ## Private functions
 
-- Mandatory `[GitHubContext] $Context` (or equivalent for the module).
+- Mandatory context parameter (e.g., `[GitHubContext] $Context`) or equivalent for the module.
 - No aliases.
 - No pipeline input.
 - No defaulting from context — public callers resolve before calling.
 - Required inputs declared as mandatory.
-
-## Comment-based help
-
-Required public help, in order:
-
-1. `.SYNOPSIS` — one sentence in imperative mood.
-2. `.DESCRIPTION` — one short paragraph per behaviour or parameter set.
-3. `.EXAMPLE` — at least one per public behaviour or parameter set.
-4. `.INPUTS` — pipeline input type names.
-5. `.OUTPUTS` — matches `[OutputType()]`.
-6. `.NOTES` — implementation, permissions, upstream reference notes.
-7. `.LINK` — generated repository docs page first, then upstream references. URL pattern: `https://psmodule.io/<RepoName>/Functions/<Group>/<Command>/`.
-
-Parameter descriptions are **one-line `#` comments above each parameter** inside `param()`, not `.PARAMETER` blocks.
 
 ## SOLID applied
 

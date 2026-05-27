@@ -18,6 +18,19 @@ watch = ["includes"]
 nav = [
   {"PowerShell" = [
     "PowerShell/index.md",
+    {"Standard" = [
+      "PowerShell/Standard/index.md",
+      {"Code Layout" = "PowerShell/Standard/Code-Layout.md"},
+      {"Naming" = "PowerShell/Standard/Naming.md"},
+      {"Function Structure" = "PowerShell/Standard/Function-Structure.md"},
+      {"Documentation" = "PowerShell/Standard/Documentation.md"},
+      {"Readability" = "PowerShell/Standard/Readability.md"},
+      {"Control Flow" = "PowerShell/Standard/Control-Flow.md"},
+      {"Output and Errors" = "PowerShell/Standard/Output-and-Errors.md"},
+      {"Performance" = "PowerShell/Standard/Performance.md"},
+      {"Testing" = "PowerShell/Standard/Testing.md"},
+      {"Security" = "PowerShell/Standard/Security.md"},
+    ]},
     {"Modules" = [
       "PowerShell/Modules/index.md",
       {"Standards" = "PowerShell/Modules/Standards.md"},
