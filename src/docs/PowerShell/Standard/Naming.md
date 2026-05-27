@@ -53,18 +53,22 @@ gci $root
 
 **Why:** Explicit parameters make scripts self-documenting and resilient to future parameter-set changes. Readers unfamiliar with the command immediately understand what each argument means (*Clean Code*, *Human–agent coexistence*).
 
+Enforced by PSScriptAnalyzer rule: `PSAvoidUsingPositionalParameters`.
+
 **How:**
 
 ```powershell
 # Good
 Get-Process -Name Explorer
 Get-Content -Path $file -TotalCount 10
+Join-Path -Path $PSScriptRoot -ChildPath 'config.json'
 ```
 
 ```powershell
 # Bad
 Get-Process Explorer              # Positional — unclear which parameter
 Get-Content $file -Tot 10         # Abbreviated — fragile if params change
+Join-Path $PSScriptRoot 'config.json'   # Positional — flagged by PSAvoidUsingPositionalParameters
 ```
 
 ## Parameters and variables
