@@ -133,6 +133,15 @@ Every change benefits from a second perspective. With AI in the loop, that can b
 
 The goal is the same: catch what one perspective misses.
 
+### Code review as shared practice
+
+Pull request reviews are not just a quality gate — they are a cultural practice. Reviewing serves multiple purposes beyond catching defects:
+
+- **Learning and awareness.** Reviews spread knowledge across the team. A reviewer learns how a new area works; an author learns alternative approaches. Over time, the entire team develops a broader understanding of the codebase.
+- **Shared responsibility.** Both author and reviewer share ownership of the changes that land. The author is responsible for proposing a sound change; the reviewer is responsible for validating it meets the team's standards. Once merged, the change belongs to both — neither can disclaim it.
+
+This means reviews are not adversarial. They are collaborative. A reviewer who approves a change is co-signing it. An author who receives feedback is gaining a perspective they didn't have alone. Treat both roles with the seriousness they deserve.
+
 ## Software design
 
 ### SOLID — in plain language
