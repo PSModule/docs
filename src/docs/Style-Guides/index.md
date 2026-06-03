@@ -3,7 +3,7 @@ title: Style Guides
 description: Coding style guidelines for PSModule repositories.
 ---
 
-# Style guides
+## Style guides
 
 These style guides define the coding conventions that keep PSModule repositories consistent, readable, and easy to maintain. They are the single source of truth for how we write code and documentation, and they back the editor instructions and review automation used across the organization.
 

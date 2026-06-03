@@ -3,7 +3,7 @@ title: Markdown
 description: Markdown style guidelines for consistency across documentation.
 ---
 
-# Markdown style guidelines
+## Markdown style guidelines
 
 This document defines the Markdown style guidelines for all Markdown files in this repository. These rules follow common Markdown linter best practices and ensure consistency across documentation.
 

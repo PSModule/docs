@@ -3,7 +3,7 @@ title: GitHub Actions
 description: GitHub Actions style guidelines for consistency and security across workflows and composite actions.
 ---
 
-# GitHub Actions style guidelines
+## GitHub Actions style guidelines
 
 This document defines the GitHub Actions style guidelines for all workflow files (`.github/workflows/*.yml`), composite actions (`action.yml`), and reusable workflows in PSModule repositories. These rules follow GitHub Actions best practices and the security guidance enforced by [zizmor](https://github.com/woodruffw/zizmor).
 

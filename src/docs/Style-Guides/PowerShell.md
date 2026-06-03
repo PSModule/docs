@@ -3,7 +3,7 @@ title: PowerShell
 description: PowerShell style guidelines for consistency across scripts and modules.
 ---
 
-# PowerShell style guidelines
+## PowerShell style guidelines
 
 This document defines the PowerShell style guidelines for all PowerShell files in this repository. These rules follow PowerShell best practices, the One True Brace Style (OTBS), and community standards.
 
