@@ -22,11 +22,11 @@ function Get-Example {
 ```powershell
 # Bad
 function Get-Example
-{                                          # Brace must be on same line
+{                                  # Brace must be on same line
 }
 
 if ($condition)
-    Write-Output 'Missing braces'          # Always use braces
+    Write-Output 'Missing braces'  # Always use braces
 ```
 
 ## Indentation and whitespace

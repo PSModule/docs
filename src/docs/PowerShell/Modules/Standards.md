@@ -1,10 +1,10 @@
 # PowerShell module standard
 
-Standards for implementing and reviewing PowerShell modules in the PSModule organization. These rules apply to modules built with the [PSModule framework](https://github.com/PSModule/PSModule).
+Standards for implementing and reviewing PowerShell modules in the PSModule organization. These rules apply to modules built with the [PSModule framework](https://github.com/PSModule/Process-PSModule).
 
 For general PowerShell coding standards (naming, style, function structure, documentation, readability, error handling), see [PowerShell Standards](../Standard/index.md). This page covers only module-specific conventions.
 
-> **Repo-local config wins.** Repo-level `PSScriptAnalyzerSettings.psd1`, `.github/linters/.powershell-psscriptanalyzer.psd1`, and equivalent local rules override anything below. This standard fills the gap.
+> **Repo-local config wins.** Repo-level `.github/linters/.powershell-psscriptanalyzer.psd1` and `.github/PSModule.yml` override anything below. This standard fills the gap.
 
 ## Repository layout
 
@@ -13,7 +13,7 @@ The framework treats `src/` as the source for the compiled module. Place code in
 | Folder or file                                | Purpose                                                                   | Do not put here                                          |
 | --------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `src/header.ps1`                              | Single comment block at the top of the compiled module                    | Runtime code                                             |
-| `src/manifest.psd1`                           | Intentional manifest overrides                                            | Generated values (functions, types, version, GUID, etc.) |
+| `src/manifest.psd1`                           | Intentional manifest overrides (e.g., `Author`)                           | Generated values (functions, types, version, GUID, etc.) |
 | `src/data/*.psd1`                             | Static read-only configuration                                            | Mutable state, secrets, computed values                  |
 | `src/init/*.ps1`                              | Code that runs once at import (module-scope init, completer registration) | Per-call logic, network calls, slow work                 |
 | `src/classes/private/*.ps1`                   | Internal classes                                                          | Public pipeline output types                             |
@@ -34,6 +34,8 @@ The framework treats `src/` as the source for the compiled module. Place code in
 | `tests/`                                      | Pester tests and test data                                                | Generated test results or build output                   |
 | `tests/BeforeAll.ps1`                         | Shared setup script executed once before the test matrix                  | Per-test setup                                           |
 | `tests/AfterAll.ps1`                          | Shared teardown script executed once after the test matrix                | Per-test teardown                                        |
+| `.github/PSModule.yml`                        | Workflow configuration (build, test, publish, linter settings)            | Source code or runtime config                            |
+| `tools/*.ps1`                                 | Build-time helper scripts (numbered for execution order)                  | Runtime module code                                      |
 
 Layout rules:
 
@@ -110,12 +112,180 @@ The release process treats each merged PR as a release on a single linear ancest
 
 For large work, open a release branch and target it from feature branches. Apply the `Prerelease` label on the release branch PR to publish preview versions before the final merge to `main`.
 
+## CI/CD pipeline
+
+The [Process-PSModule](https://github.com/PSModule/Process-PSModule) workflow orchestrates the full lifecycle. Every PR triggers a **Plan** job that resolves configuration and version, then conditionally runs build, test, lint, and publish stages.
+
+### Pipeline stages
+
+```mermaid
+graph LR
+    Plan --> Lint-Repository
+    Plan --> Build-Module
+    Plan --> Test-SourceCode
+    Plan --> Lint-SourceCode
+    Build-Module --> Test-Module
+    Build-Module --> BeforeAll-ModuleLocal
+    BeforeAll-ModuleLocal --> Test-ModuleLocal
+    Test-ModuleLocal --> AfterAll-ModuleLocal
+    Test-SourceCode --> Get-TestResults
+    Test-Module --> Get-TestResults
+    Test-ModuleLocal --> Get-TestResults
+    Test-Module --> Get-CodeCoverage
+    Test-ModuleLocal --> Get-CodeCoverage
+    Get-TestResults --> Publish-Module
+    Get-CodeCoverage --> Publish-Module
+    Build-Module --> Build-Docs
+    Build-Docs --> Build-Site
+    Build-Site --> Publish-Site
+```
+
+| Stage | Runs on | Purpose |
+| ----- | ------- | ------- |
+| **Plan** | All events | Loads `.github/PSModule.yml`, resolves version from PR labels, produces the Settings JSON |
+| **Lint-Repository** | Open/Updated PR | Runs super-linter on the full repo (markdown, YAML, etc.) |
+| **Lint-SourceCode** | Open/Updated PR, Merged PR, Manual | Runs PSScriptAnalyzer against `src/` |
+| **Build-Module** | Open/Updated PR, Merged PR, Manual | Compiles source into a versioned module artifact |
+| **Test-SourceCode** | Open/Updated PR, Merged PR, Manual | Framework tests on raw source files |
+| **Test-Module** | Open/Updated PR, Merged PR, Manual | Pester tests against the built module artifact |
+| **BeforeAll-ModuleLocal** | Open/Updated PR, Merged PR, Manual | Runs `tests/BeforeAll.ps1` once before the local test matrix |
+| **Test-ModuleLocal** | Open/Updated PR, Merged PR, Manual | Pester tests with the module installed locally (cross-OS matrix) |
+| **AfterAll-ModuleLocal** | Always (if tests started) | Runs `tests/AfterAll.ps1` for cleanup |
+| **Get-TestResults** | Always (if Plan succeeded) | Aggregates and reports test results |
+| **Get-CodeCoverage** | Always (if Plan succeeded) | Calculates and reports code coverage |
+| **Publish-Module** | Merged PR (or Prerelease label) | Publishes to PowerShell Gallery and creates a GitHub Release |
+| **Build-Docs / Build-Site** | Open/Updated PR, Merged PR, Manual | Generates documentation site from source |
+| **Publish-Site** | Merged PR | Deploys documentation site to GitHub Pages |
+
+### Important file patterns
+
+The workflow only triggers build, test, and publish stages when changed files match the `ImportantFilePatterns` setting. The default patterns are:
+
+```text
+^src/
+^README\.md$
+```
+
+Changes that do not match any pattern result in `ReleaseType: None` — the pipeline skips build, test, and publish entirely. Override in `.github/PSModule.yml`:
+
+```yaml
+ImportantFilePatterns:
+  - '^src/'
+  - '^README\.md$'
+  - '^\.github/workflows/'
+```
+
+### Version resolution
+
+The **Plan** job resolves the next version before any build occurs. This means the tested artifact carries the exact version that will be published — no re-stamping happens at publish time.
+
+**Flow:**
+
+1. `Get-PSModuleSettings` loads `.github/PSModule.yml` and determines `ReleaseType` from PR labels
+2. `Resolve-PSModuleVersion` calculates the next semantic version from the latest Git tag
+3. `Build-PSModule` stamps the resolved version into the compiled manifest
+4. `Publish-PSModule` reads the version from the manifest (read-only) and publishes
+
+**PR label to version bump mapping:**
+
+| Labels (configurable) | Bump type | Default label values |
+| --------------------- | --------- | -------------------- |
+| Major | Major (`X.0.0`) | `major`, `breaking` |
+| Minor | Minor (`x.Y.0`) | `minor`, `feature` |
+| Patch | Patch (`x.y.Z`) | `patch`, `fix` |
+| Ignore | No release | `NoRelease` |
+| None of the above | Patch (when `AutoPatching: true`) | — |
+
+**Prerelease versions:** Adding a `Prerelease` label to the PR produces a prerelease tag (e.g., `1.2.3-preview0001`). The format is controlled by `IncrementalPrerelease` (sequential numbering) or `DatePrereleaseFormat` (.NET DateTime format string).
+
+**Tag format:** Releases are tagged with a configurable prefix (default `v`) — e.g., `v1.2.3`.
+
+### Configuration (`.github/PSModule.yml`)
+
+All settings have sensible defaults. An empty or missing file uses the defaults below:
+
+```yaml
+Name: null                      # Defaults to the repository name
+
+ImportantFilePatterns:
+  - '^src/'
+  - '^README\.md$'
+
+Build:
+  Skip: false
+  Module:
+    Skip: false
+  Docs:
+    Skip: false
+  Site:
+    Skip: false
+
+Test:
+  Skip: false
+  Linux:
+    Skip: false
+  MacOS:
+    Skip: false
+  Windows:
+    Skip: false
+  SourceCode:
+    Skip: false
+  PSModule:
+    Skip: false
+  Module:
+    Skip: false
+  TestResults:
+    Skip: false
+  CodeCoverage:
+    Skip: false
+    PercentTarget: 0
+
+Publish:
+  Module:
+    Skip: false
+    AutoCleanup: true           # Delete prerelease tags after stable release
+    AutoPatching: true           # Unlabeled PRs default to patch bump
+    IncrementalPrerelease: true  # Sequential prerelease numbering
+    DatePrereleaseFormat: ''     # Alternative: .NET DateTime format for prerelease
+    VersionPrefix: 'v'          # Git tag prefix
+    MajorLabels: 'major, breaking'
+    MinorLabels: 'minor, feature'
+    PatchLabels: 'patch, fix'
+    IgnoreLabels: 'NoRelease'
+    UsePRTitleAsReleaseName: false
+    UsePRBodyAsReleaseNotes: true
+    UsePRTitleAsNotesHeading: true
+
+Linter:
+  Skip: false
+  env: {}                       # Additional env vars passed to super-linter
+```
+
+### Publishing
+
+The `Publish-Module` stage:
+
+1. Downloads the pre-built module artifact (identical to what was tested)
+2. Reads the version from the compiled manifest (no recalculation)
+3. Publishes to the PowerShell Gallery
+4. Creates a GitHub Release with the module attached as a zip artifact
+5. Comments on the PR with links to the Gallery package and GitHub Release
+6. Cleans up old prerelease tags when publishing a stable release (if `AutoCleanup: true`)
+
+The publish step only runs when:
+
+- All tests and code coverage pass (or are skipped)
+- The PR is merged to the default branch (stable release), or
+- The PR carries the `Prerelease` label (prerelease from the feature/release branch)
+
+On abandoned (closed without merge) PRs, the pipeline cleans up any prerelease tags created for that branch.
+
 ## Tests
 
 - Pester tests under `tests/`.
 - Filenames: `<ModuleName>.Tests.ps1` or `<Function>.Tests.ps1`.
 - One test file per public command for unit tests; integration tests grouped by scenario.
-- Tests run against the dot-sourced source files, not against an installed module — see [PSModule Test Specification](https://psmodule.io/docs/PowerShell-Modules/Test-Specification/).
+- Tests run against the built module artifact installed locally, across a multi-OS matrix (Linux, macOS, Windows).
 
 ### Shared test infrastructure
 
@@ -156,3 +326,14 @@ To skip a specific rule for one file only, add a comment at the very top of that
 ```
 
 Use skip comments sparingly and always include a meaningful reason. Prefer refactoring to comply over skipping.
+
+### PSScriptAnalyzer linting
+
+Source code is linted with PSScriptAnalyzer using the repo-level settings at `.github/linters/.powershell-psscriptanalyzer.psd1`. Key enforced rules include:
+
+- `PSAlignAssignmentStatement` — aligned assignment operators in hashtables
+- `PSAvoidLongLines` — maximum 150 characters per line
+- `PSAvoidSemicolonsAsLineTerminators` — no trailing semicolons
+- `PSPlaceOpenBrace` / `PSPlaceCloseBrace` — OTBS brace style
+- `PSUseConsistentIndentation` — 4-space indentation
+- `PSUseConsistentWhitespace` — consistent spacing around operators, pipes, and separators

@@ -11,41 +11,35 @@ Two things run side by side, continuously:
 
 Each feeds the other. Software produces signals that require context maintenance. Refined context unblocks the next round of software work. The loop never stops.
 
-```text
-        ┌───────────────────────────────────────────────────────┐
-        │              Context maintenance                       │
-        │                                                       │
-        │              Capture → Refine → Plan                  │
-        │                       │                               │
-        │        ┌──────────────┼──────────────┐                │
-        │        ▼              ▼              ▼                │
-        │   simple task    sub-issues     checklist             │
-        │                                                       │
-        └───────────────────────┼───────────────────────────────┘
-                                │
-                                ▼
-        ┌───────────────────────┼───────────────────────────────┐
-        │                       │                               │
-        │              Software delivery                        │
-        │                                                       │
-        │       Branch → Draft PR → Build → Finalize            │
-        │                       │                               │
-        │                       ▼                               │
-        │                    Review                             │
-        │                       │                               │
-        │              fixes needed? → respond                  │
-        │                                                       │
-        └───────────────────────────────────────────────────────┘
-                                │
-                                ▼
-                        Run and operate
-                       (DevOps + SRE loop)
-                                │
-                                ▼
-                   Signals, errors, feedback
-                                │
-                                ▼
-                         Capture (again)
+```mermaid
+flowchart TD
+    Usr(["👤 Users\n(wishes, bug reports)"])
+    Ext(["🌐 External solutions\n(new APIs, dependency updates,\nplatform changes)"])
+
+    Usr -->|request| Cap
+    Ext -->|monitor & detect| Cap
+
+    subgraph CM["Context maintenance"]
+        Cap[Capture] --> Ref[Refine] --> Pl[Plan]
+        Pl --> T[simple task]
+        Pl --> S[sub-issues]
+        Pl --> CL[checklist]
+    end
+
+    subgraph SD["Software delivery"]
+        Bld["Branch → Draft PR → Build → Finalize"]
+        Bld --> Rev[Review]
+        Rev -->|fixes needed| Rsp[respond]
+        Rsp --> Rev
+    end
+
+    T --> Bld
+    S --> Bld
+    CL --> Bld
+    Rev --> Ops["Run and operate (DevOps + SRE loop)"]
+    Ops --> Sig["Signals, errors, feedback"]
+    Sig --> Cap
+    Ops -->|new release observed| Ext
 ```
 
 ## Phases

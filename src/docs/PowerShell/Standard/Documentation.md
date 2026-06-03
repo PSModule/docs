@@ -11,28 +11,28 @@
 ```powershell
 # Good
 function New-UserAccount {
-<#
-    .SYNOPSIS
-    Create a new user account.
+    <#
+        .SYNOPSIS
+        Create a new user account.
 
-    .DESCRIPTION
-    Creates a new user account with the specified username and email.
+        .DESCRIPTION
+        Creates a new user account with the specified username and email.
 
-    .EXAMPLE
-    New-UserAccount -UserName 'jdoe' -Email 'jdoe@example.com'
+        .EXAMPLE
+        New-UserAccount -UserName 'jdoe' -Email 'jdoe@example.com'
 
-    .INPUTS
-    None.
+        .INPUTS
+        None.
 
-    .OUTPUTS
-    [PSCustomObject]
+        .OUTPUTS
+        [PSCustomObject]
 
-    .NOTES
-    Requires admin permissions on the target tenant.
+        .NOTES
+        Requires admin permissions on the target tenant.
 
-    .LINK
-    https://psmodule.io/MyModule/Functions/Users/New-UserAccount/
-#>
+        .LINK
+        https://psmodule.io/MyModule/Functions/Users/New-UserAccount/
+    #>
     [CmdletBinding()]
     param(
         # The username for the new account.

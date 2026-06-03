@@ -14,25 +14,6 @@ Every piece of work — at every level — should be groundable in three concent
 
 When an issue is being written, the **Why** belongs in the Context part of Section 1. The **How** belongs in Section 2 (Technical Decisions). The **What** belongs in Section 3 (Implementation Plan).
 
-### Vision, mission, OKRs
-
-#### Vision
-
-> Make it easy. Enable others to do more, faster.
-
-#### Mission
-
-PSModule's mission is to **infuse GitHub with PowerShell**, and to **bring more to the PowerShell ecosystem** by using the GitHub platform to its fullest extent.
-
-#### OKRs
-
-We aim for OKRs — not KPIs. The difference matters:
-
-- **Objectives** are qualitative, aspirational, and from outside in. They describe a state of the world we want to see.
-- **Key Results** are measurements that tell us the Objective is being met. They drive incentive in the right direction without prescribing the path.
-
-A good OKR is one that anyone — contributor, user, or agent — can read and immediately have ideas about how to contribute.
-
 ### Product / service mindset
 
 We are building something for people who should **want** to use it. Without users, we are nothing. Every decision is filtered through: does this make the product more wanted, or less?
@@ -48,6 +29,19 @@ We build for engineers using the latest tools and platforms. We do not support d
 ### Dogfooding
 
 Be the first customer of every service we build. But avoid full self-dependency on a service before it is proven — explore and use it in non-critical contexts first, then promote it as confidence grows.
+
+### Least-privilege
+
+Every identity — human, agent, or workflow — gets only the permissions it needs to complete its specific task, and nothing more. This applies to GitHub tokens, workflow permissions, API scopes, and agent capabilities.
+
+Concretely:
+
+- Workflow jobs declare `permissions` explicitly and as narrowly as possible. A job that only reads should never have write access.
+- Agents are scoped to the actions they are authorised to take. An agent that reviews code should not be able to merge.
+- Secrets and tokens are never passed wider than the step or job that needs them.
+- When a required scope expands, that expansion is a deliberate, reviewed decision — not a default or a shortcut.
+
+The goal is to limit blast radius. If an agent, token, or job is compromised or behaves unexpectedly, least-privilege ensures the damage is contained.
 
 ## AI-first development
 
@@ -67,6 +61,7 @@ Practices:
 - Use AI to generate the deterministic tool, then discard the AI from the runtime path.
 - Reserve AI for tasks that genuinely require reasoning, judgment, or natural language understanding.
 - Audit existing AI-powered workflows: can any step be replaced by a deterministic function?
+- AI is excellent for ad-hoc alignment work — "do X across all repos" — but the end goal is always to codify the result into repeatable, deterministic automation.
 
 ### Human–agent coexistence
 
@@ -138,6 +133,15 @@ Every change benefits from a second perspective. With AI in the loop, that can b
 - Multiple agents reviewing each other's output against the same standards.
 
 The goal is the same: catch what one perspective misses.
+
+### Code review as shared practice
+
+Pull request reviews are not just a quality gate — they are a cultural practice. Reviewing serves multiple purposes beyond catching defects:
+
+- **Learning and awareness.** Reviews spread knowledge across the team. A reviewer learns how a new area works; an author learns alternative approaches. Over time, the entire team develops a broader understanding of the codebase.
+- **Shared responsibility.** Both author and reviewer share ownership of the changes that land. The author is responsible for proposing a sound change; the reviewer is responsible for validating it meets the team's standards. Once merged, the change belongs to both — neither can disclaim it.
+
+This means reviews are not adversarial. They are collaborative. A reviewer who approves a change is co-signing it. An author who receives feedback is gaining a perspective they didn't have alone. Treat both roles with the seriousness they deserve.
 
 ## Software design
 
