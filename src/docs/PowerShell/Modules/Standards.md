@@ -143,7 +143,7 @@ graph LR
 | Stage | Runs on | Purpose |
 | ----- | ------- | ------- |
 | **Plan** | All events | Loads `.github/PSModule.yml`, resolves version from PR labels, produces the Settings JSON |
-| **Lint-Repository** | Open/Updated PR | Runs super-linter on the full repo (markdown, YAML, etc.) |
+| **Lint-Repository** | Open/Updated PR | Runs super-linter on the full repo (Markdown, YAML, etc.) |
 | **Lint-SourceCode** | Open/Updated PR, Merged PR, Manual | Runs PSScriptAnalyzer against `src/` |
 | **Build-Module** | Open/Updated PR, Merged PR, Manual | Compiles source into a versioned module artifact |
 | **Test-SourceCode** | Open/Updated PR, Merged PR, Manual | Framework tests on raw source files |
@@ -268,7 +268,7 @@ The `Publish-Module` stage:
 1. Downloads the pre-built module artifact (identical to what was tested)
 2. Reads the version from the compiled manifest (no recalculation)
 3. Publishes to the PowerShell Gallery
-4. Creates a GitHub Release with the module attached as a zip artifact
+4. Creates a GitHub Release with the module attached as a ZIP artifact
 5. Comments on the PR with links to the Gallery package and GitHub Release
 6. Cleans up old prerelease tags when publishing a stable release (if `AutoCleanup: true`)
 
