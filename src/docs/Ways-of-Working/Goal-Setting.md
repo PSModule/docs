@@ -4,10 +4,10 @@ PSModule uses a lightweight OKR-based framework to connect strategic direction t
 
 ## Layers
 
-| Layer           | Lives in                                                                | Purpose                                                     |
-| --------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------- |
-| **Mission**     | [`PSModule/.github` #68](https://github.com/PSModule/.github/issues/68) | The org's reason to exist — *infuse GitHub with PowerShell* |
-| **OKR**         | Sub-issues of the Mission                                               | Qualitative objectives + measurable key results             |
+| Layer           | Lives in                                                                | Purpose                                                         |
+| --------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------- |
+| **Mission**     | [`PSModule/.github` #68](https://github.com/PSModule/.github/issues/68) | The org's reason to exist — *infuse GitHub with PowerShell*     |
+| **OKR**         | Sub-issues of the Mission                                               | Qualitative objectives + measurable key results                 |
 | **Initiative**  | Sub-issues of an OKR                                                    | A concrete bet to move a Key Result — becomes an Epic in a repo |
 
 ## Why OKRs and not KPIs

@@ -61,6 +61,7 @@ Practices:
 - Use AI to generate the deterministic tool, then discard the AI from the runtime path.
 - Reserve AI for tasks that genuinely require reasoning, judgment, or natural language understanding.
 - Audit existing AI-powered workflows: can any step be replaced by a deterministic function?
+- AI is excellent for ad-hoc alignment work — "do X across all repos" — but the end goal is always to codify the result into repeatable, deterministic automation.
 
 ### Human–agent coexistence
 
