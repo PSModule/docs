@@ -103,13 +103,13 @@ Omit the section entirely if there's nothing noteworthy.
 
 ### 4. Related issues
 
-A collapsible `<details>` block at the very end of the description containing issue links. Always use fully qualified references (`Owner/Repo#N`, for example `PSModule/GitHub#123`) — never the bare `#123` shorthand — so links resolve unambiguously across repositories and in release notes. When a reference appears outside GitHub (release announcements, Jira, Slack, external docs), use the full URL (`https://github.com/PSModule/GitHub/issues/123`).
+A collapsible `<details>` block at the very end of the description containing issue links. Use the `#123` shorthand for issues in the same repository and the fully qualified `Owner/Repo#123` form for issues in another repository so links resolve to the right place. When a reference appears outside GitHub (release announcements, Jira, Slack, external docs), use the full URL (`https://github.com/Owner/Repo/issues/123`).
 
 ```markdown
 <details>
 <summary>Related issues</summary>
 
-- Fixes PSModule/GitHub#123
+- Fixes #123
 - PSModule/Process-PSModule#124
 
 </details>
@@ -150,13 +150,13 @@ Commands that query a specific repository, enterprise, or release by name now re
 - `GitHubRepository` class: `CustomProperties` property changed from `[PSCustomObject]` to `[GitHubCustomProperty[]]`.
 - `Invoke-GitHubGraphQLQuery`: error handling split into partial-success (data + errors → warnings) and full-failure (errors only → terminating error) branches.
 - Null guards added to `Get-GitHubRepositoryByName`, `Get-GitHubMyRepositoryByName`, and related functions.
-- Implementation plan progress: tasks 1–3 in PSModule/GitHub#218 completed; task 4 (integration tests) remains.
+- Implementation plan progress: tasks 1–3 in #218 completed; task 4 (integration tests) remains.
 
 <details>
 <summary>Related issues</summary>
 
-- Fixes PSModule/GitHub#218
-- PSModule/GitHub#219
+- Fixes #218
+- #219
 
 </details>
 ````
