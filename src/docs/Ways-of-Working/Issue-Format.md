@@ -13,6 +13,7 @@ Every issue in the PSModule organization follows the same structure. The format 
 - **Comments record change history only.** Each description update is accompanied by a comment summarizing what changed and why.
 - **Tone is impersonal.** No first-person ("I", "my") or second-person ("you", "your") language. Neutral references like "the user", "the developer", or passive constructions.
 - **External references are hyperlinks.** Every mention of an API, RFC, library, doc, or tool is a clickable `[text](url)` link. No bare URLs.
+- **Issue and PR references are scoped to their target.** Use the `#123` shorthand for an issue or pull request in the same repository, and the fully qualified `Owner/Repo#123` form for one in another repository so the link resolves to the right place. Outside GitHub — Jira, Confluence, Slack, or any surface without GitHub autolinking — use the full URL (`https://github.com/Owner/Repo/issues/123`).
 - **No duplicates.** Existing issues are searched before creating or restructuring. Duplicates are consolidated or cross-linked.
 
 ## Title

@@ -103,13 +103,13 @@ Omit the section entirely if there's nothing noteworthy.
 
 ### 4. Related issues
 
-A collapsible `<details>` block at the very end of the description containing issue links. Always use fully qualified references (`Owner/Repo#N`) so links work across repositories.
+A collapsible `<details>` block at the very end of the description containing issue links. Use the `#123` shorthand for issues in the same repository and the fully qualified `Owner/Repo#123` form for issues in another repository so links resolve to the right place. When a reference appears outside GitHub (release announcements, Jira, Slack, external docs), use the full URL (`https://github.com/Owner/Repo/issues/123`).
 
 ```markdown
 <details>
 <summary>Related issues</summary>
 
-- Fixes PSModule/GitHub#123
+- Fixes #123
 - PSModule/Process-PSModule#124
 
 </details>
@@ -155,8 +155,8 @@ Commands that query a specific repository, enterprise, or release by name now re
 <details>
 <summary>Related issues</summary>
 
-- Fixes PSModule/GitHub#218
-- PSModule/GitHub#219
+- Fixes #218
+- #219
 
 </details>
 ````
