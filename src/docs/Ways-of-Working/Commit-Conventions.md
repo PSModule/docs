@@ -8,7 +8,7 @@ Commit messages serve two audiences: the engineer reading `git log` six months f
 2. **No conventional-commit prefixes.** No `fix:`, `feat:`, `docs:`, `chore:`, `refactor:`, etc. The change type is captured at the PR level — repeating it on every commit adds noise without information.
 3. **No generic messages.** `Update for PR`, `WIP`, `fixes`, `more changes` — all forbidden. They erase traceability.
 4. **One logical change per commit.** Micro-iterative discipline. If a change touches three unrelated concerns, that's three commits.
-5. **Reference issues scoped to their target when natural** — the `#123` shorthand for the same repository, the fully qualified `Owner/Repo#123` form for another repository. Don't force it; a closing keyword such as `Fixes #123` belongs in the PR description, not every commit message.
+5. **Keep issue and pull request references out of commit messages.** Cross-references to issues and pull requests belong in the PR description and in issues — not in commit history. The pull request links the work to its issue (via a closing keyword such as `Fixes #123`); commits describe the change itself.
 
 ## Examples
 
