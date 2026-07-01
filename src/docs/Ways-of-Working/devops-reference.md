@@ -9,7 +9,7 @@ A curated synthesis of authoritative sources, frameworks, and practices.
 ### The Canon (Books)
 
 | # | Title | Author(s) | Year | Why it matters |
-|---|-------|-----------|------|----------------|
+| --- | ------- | ----------- | ------ | ---------------- |
 | 1 | **The Phoenix Project** | Gene Kim, Kevin Behr, George Spafford | 2013 | The novel that introduced DevOps to mainstream. Source of the Three Ways. [itrevolution.com/product/the-phoenix-project](https://itrevolution.com/product/the-phoenix-project/) |
 | 2 | **The Unicorn Project** | Gene Kim | 2019 | Sequel from the developer's perspective; flow state, psychological safety, Five Ideals. |
 | 3 | **The DevOps Handbook** (2nd ed.) | Gene Kim, Jez Humble, Patrick Debois, John Willis | 2016/2021 | Practical companion to Phoenix Project. The reference implementation guide. |
@@ -57,7 +57,7 @@ All available at **[sre.google/books](https://sre.google/books/)**
 The evidence-based standard for DevOps performance. Source: Forsgren/Humble/Kim research, now part of Google Cloud.
 
 | Metric | What it measures | Elite performance |
-|--------|------------------|-------------------|
+| -------- | ------------------ | ------------------- |
 | **Deployment Frequency** | How often you deploy to prod | Multiple per day / on-demand |
 | **Lead Time for Changes** | Commit → production | < 1 hour |
 | **Change Failure Rate** | % of deploys causing problems | 0–15% |
