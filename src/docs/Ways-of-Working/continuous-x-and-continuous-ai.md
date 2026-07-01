@@ -7,7 +7,7 @@
 The cleanest authoritative taxonomy. From [DevOps Dojo White Belt Foundation](https://learn.microsoft.com/en-us/training/paths/devops-dojo-white-belt-foundation/):
 
 | # | Practice | What it covers |
-|---|----------|----------------|
+| --- | ---------- | ---------------- |
 | 1 | Continuous Planning | Lean product, hypothesis-driven dev, backlog management, OKRs |
 | 2 | Continuous Integration | Trunk-based dev, automated build & test on every commit |
 | 3 | Continuous Delivery | Every commit potentially releasable; automated pipeline to prod |
@@ -20,7 +20,7 @@ The cleanest authoritative taxonomy. From [DevOps Dojo White Belt Foundation](ht
 ### Full inventory with provenance
 
 | Practice | Origin / canonical source |
-|----------|--------------------------|
+| ---------- | -------------------------- |
 | **Continuous Integration** | Coined in Grady Booch's 1991 method; popularised by XP and [Martin Fowler's 2006 article](https://martinfowler.com/articles/continuousIntegration.html). |
 | **Continuous Delivery** | Jez Humble & David Farley, [*Continuous Delivery*](https://continuousdelivery.com/), 2010. |
 | **Continuous Deployment** | Every passing build deploys to prod with no human gate (vs. CD which only makes it *deployable*). |
@@ -73,7 +73,7 @@ Continuous AI tasks are: **automatable, repetitive, collaborative, integrated, a
 ### Continuous AI vs. its cousins
 
 | Term | What it is |
-|------|-----------|
+| ------ | ----------- |
 | **Continuous AI** | AI participating *in* the SDLC continuously (review, docs, triage, fault analysis). The AI is the actor. |
 | **MLOps** | CI/CD/CT *for* ML models — training, evaluation, deployment, monitoring. The model is the product. |
 | **LLMOps** | MLOps specialised for LLM apps: prompt versioning, evals, retrieval, guardrails, cost/latency monitoring. |
@@ -82,7 +82,7 @@ Continuous AI tasks are: **automatable, repetitive, collaborative, integrated, a
 ### How Continuous AI augments each Continuous X practice
 
 | Traditional practice | Continuous-AI augmentation | Example tools (2025) |
-|---------------------|---------------------------|----------------------|
+| --------------------- | --------------------------- | ---------------------- |
 | Continuous Integration | AI summarises broken builds; suggests fixes | GitHub Copilot Workspace, Sweep |
 | Continuous Delivery | Agents drive multi-step deploys; AI-authored release notes | GitHub Copilot agents, Devin |
 | Continuous Testing | Test generation, flaky-test detection, auto-repair | Diffblue, Qodo (CodiumAI), Meta TestGen-LLM |
