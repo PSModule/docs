@@ -52,6 +52,12 @@ nav = [
     "GitHub-Actions/index.md",
     {"Standards" = "GitHub-Actions/Standards.md"},
   ]},
+  {"Style Guides" = [
+    "Style-Guides/index.md",
+    {"GitHub Actions" = "Style-Guides/GitHub-Actions.md"},
+    {"Markdown" = "Style-Guides/Markdown.md"},
+    {"PowerShell" = "Style-Guides/PowerShell.md"},
+  ]},
   {"Solutions" = [
     "Solutions/index.md",
     {"GitHub Copilot Customization" = "Solutions/GitHub-Copilot-Customization-Architecture.md"},
