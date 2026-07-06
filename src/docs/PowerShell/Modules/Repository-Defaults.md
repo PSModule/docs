@@ -1,8 +1,8 @@
 # PowerShell module repository defaults
 
-This page defines the default repository contract for PowerShell module repositories in the PSModule organization. It describes what a newly created or maintained module repository should look like before module-specific code, tests, and documentation are considered.
+This page defines the default repository contract for PowerShell module repositories in the PSModule organization. It describes what a newly created or maintained module repository should look like before module-specific code, tests, documentation, and managed repository files are considered.
 
-The implementation standard still lives in [PowerShell module standard](Standards.md). This page covers repository defaults: files, metadata, README shape, release integration, and placeholder handling.
+The implementation standard still lives in [PowerShell module standard](Standards.md). This page covers repository defaults: files, metadata, README shape, release integration, placeholder handling, shared community files, and managed-file distribution.
 
 ## Scope
 
@@ -26,8 +26,9 @@ After creating the repository:
 1. Replace template tokens such as `{{ NAME }}` and `{{ DESCRIPTION }}`.
 2. Remove scaffold functions, tests, and examples that do not represent the module.
 3. Set repository metadata and custom properties.
-4. Confirm the README reflects the module's actual status.
-5. Confirm `.github/PSModule.yml` only overrides defaults when the module needs different behavior.
+4. Confirm the README reflects the module's actual status and uses `Install-PSResource` for installation.
+5. Confirm required common files are present.
+6. Confirm `.github/PSModule.yml` only overrides defaults when the module needs different behavior.
 
 ## Required repository metadata
 
@@ -60,8 +61,18 @@ Module repositories use the PSModule framework layout:
 | Path | Default purpose |
 | ---- | --------------- |
 | `README.md` | Concise landing page for the repository. |
+| `LICENSE` | Repository license. PSModule module repositories default to MIT unless a different license is explicitly decided. |
+| `CONTRIBUTING.md` | Contribution workflow or a repository-level pointer to the organization contribution guide. |
+| `SECURITY.md` | Security support policy and private vulnerability reporting instructions. |
+| `SUPPORT.md` | Support expectations and where users ask for help. |
+| `CODE_OF_CONDUCT.md` | Community conduct expectations. |
 | `.github/PSModule.yml` | Module workflow configuration overrides. |
 | `.github/workflows/workflow.yml` | Reusable Process-PSModule workflow entry point. |
+| `.github/dependabot.yml` | Dependency and supply-chain update configuration. |
+| `.github/CODEOWNERS` | Ownership routing for reviews and protected areas. |
+| `.github/pull_request_template.md` | PR Manager-compatible pull request template. |
+| `.gitattributes` | Git line-ending and file handling defaults. |
+| `.gitignore` | Shared ignore rules. |
 | `src/` | Module source compiled into the shipped artifact. |
 | `src/functions/public/` | Exported commands, grouped by domain. |
 | `src/functions/private/` | Internal helper commands, grouped by domain. |
@@ -74,9 +85,98 @@ Module repositories use the PSModule framework layout:
 
 Detailed source layout rules live in [PowerShell module standard](Standards.md#repository-layout).
 
+## Required common files
+
+Every module repository must carry the same baseline community, governance, and automation files. GitHub's organization-level `.github` community-file fallback is useful for display defaults, but it is not enough as the long-term PSModule standard because:
+
+- agents and humans need the files in the repository they are changing, not only inherited through GitHub UI behavior;
+- tools such as Dependabot, linters, CODEOWNERS, and release automation read repository-local files;
+- reviews need diffs against the actual managed file in the target repository;
+- repository-local files make the standard portable to other initiatives such as MSXOrg, where each initiative should define its own standards and managed files;
+- central fallback files in `PSModule/.github` do not provide a reliable enforcement or update workflow across all repositories.
+
+Required baseline files for module repositories:
+
+| File | Why it is required |
+| ---- | ------------------ |
+| `README.md` | Repository landing page and evergreen context for humans and agents. |
+| `LICENSE` | Clear legal terms for reuse, packaging, and redistribution. |
+| `CONTRIBUTING.md` | Shared contribution workflow and expectations. |
+| `SECURITY.md` | Private vulnerability reporting and latest-version support policy. |
+| `SUPPORT.md` | Support channel and issue-routing expectations. |
+| `CODE_OF_CONDUCT.md` | Community participation rules. |
+| `.github/dependabot.yml` | Supply-chain maintenance for GitHub Actions and PowerShell dependencies. |
+| `.github/CODEOWNERS` | Review routing for source, docs, and GitHub workflow files. |
+| `.github/pull_request_template.md` | Consistent PR Manager-style PR descriptions and change classification. |
+| `.github/release.yml` | Release-note and changelog categorization where the repository creates GitHub releases. |
+| `.github/PSModule.yml` | Module workflow defaults and overrides. |
+| `.github/linters/.markdown-lint.yml` | Markdown linting defaults. |
+| `.github/linters/.powershell-psscriptanalyzer.psd1` | PSScriptAnalyzer defaults. |
+| `.gitattributes` | Git attribute defaults. |
+| `.gitignore` | Shared ignore rules. |
+
+Repositories can add local files, but they should not remove these baseline files unless the repository is explicitly outside the module standard.
+
+## Managed file distribution
+
+Shared files should be treated as managed files. The current distribution service is [`PSModule/Distributor`](https://github.com/PSModule/Distributor). It keeps source file sets under `Repos/{Type}/{Selection}/` and syncs those files into repositories through pull requests.
+
+The current Distributor model is subscription-based:
+
+- `Type` is an organization repository custom property that maps a repository to a type folder such as `Module` or `Action`.
+- `SubscribeTo` is an organization repository custom property that selects file sets such as `dependabot.yml`, `Linter Settings`, `PSModule Settings`, `CODEOWNERS`, `License`, `.gitattributes`, and `.gitignore`.
+- Sync changes are delivered through a `managed-files/update` branch and a `⚙️ [Maintenance]: Sync managed files` pull request.
+- Managed files are overwritten by the source file set. Local edits to managed files should be made in Distributor, not directly in the receiving repository.
+- Removing a file from a Distributor file set does not delete the previously distributed file from target repositories; cleanup is explicit.
+
+Two follow-up Distributor capabilities define the desired direction:
+
+- **Global file sets** should allow common file sets such as `.gitattributes`, `.gitignore`, and `License` to be defined once and made available to all repository types while still requiring subscription.
+- **Mandatory file sets** should allow organization-critical files such as `SECURITY.md`, `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, and supply-chain configuration to be pushed to applicable repositories without each repository having to subscribe manually.
+
+Until mandatory file sets exist, repository owners are still responsible for ensuring the required common files exist. Distributor is the preferred implementation mechanism; this document is the standard that says what must exist and why.
+
+## Supply-chain defaults
+
+Every module repository must include `.github/dependabot.yml`. Dependabot is part of the repository supply-chain control, not an optional convenience.
+
+Module repositories should configure at least:
+
+```yaml
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "github-actions"
+
+  - package-ecosystem: "powershell"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "powershell"
+```
+
+The GitHub Actions ecosystem keeps pinned actions current. The PowerShell ecosystem keeps PowerShell dependency declarations current where Dependabot supports them. Repositories with additional package ecosystems should add them explicitly rather than replacing these defaults.
+
+Dependabot PRs still go through normal review. Automated dependency updates are not a substitute for reviewing release notes, changed permissions, pinned SHAs, or generated lock files.
+
 ## README default
 
 A module README is a landing page, not the command reference. It should help a user identify the module, install it, and find generated documentation.
+
+Module installation examples must use PSResourceGet:
+
+```powershell
+Install-PSResource -Name <ModuleName>
+```
+
+Do not use `Install-Module` in new module repository documentation. `Install-Module` belongs only in legacy/historical context where changing it would misrepresent the referenced system.
 
 For implemented modules, use this shape:
 
