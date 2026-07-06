@@ -20,6 +20,7 @@ The template ships with placeholder files to illustrate the expected layout — 
 
 Version increments are driven by PR labels (`Major`, `Minor`, `Patch`, `Prerelease`), and the `RepoType: Module` custom property integrates each repository with organization-wide tooling.
 
+- **[Repository Defaults](Repository-Defaults.md)** — Required repository defaults for PSModule PowerShell module repos, including README shape, placeholder handling, metadata, and documentation ownership.
 - **[Standards](Standards.md)** — Repository layout, naming, style, parameter design, comment-based help, and SOLID applied to PowerShell modules.
 - **[Test Specification](Test-Specification.md)** — How we write Pester tests: structure, hierarchy, and naming conventions.
 - **[Versioning](Versioning.md)** — How changes to the public interface determine the SemVer version bump.
