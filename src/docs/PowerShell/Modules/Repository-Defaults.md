@@ -215,10 +215,6 @@ Use PowerShell help and command discovery for module details:
 Get-Command -Module <ModuleName>
 Get-Help -Name 'CommandName' -Examples
 ```
-
-## Contributing
-
-Issues and pull requests are welcome. Please use the repository issue tracker to report bugs, request features, or discuss improvements.
 ````
 
 README pages may include a short capabilities or usage showcase before the documentation link. Keep that section focused on discovery and marketing: show representative outcomes, not every command, parameter, or edge case.
@@ -243,10 +239,6 @@ This repository is currently a placeholder. The module source still contains sca
 ## Documentation
 
 When this module is implemented, command details should live in PowerShell help and generated documentation rather than being duplicated in this README.
-
-## Contributing
-
-Issues and pull requests are welcome when implementation work begins.
 ````
 
 Use the same pattern for in-progress modules with stub commands, but name the stub honestly:
