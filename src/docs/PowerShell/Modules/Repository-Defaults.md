@@ -26,7 +26,7 @@ After creating the repository:
 1. Replace template tokens such as `{{ NAME }}` and `{{ DESCRIPTION }}`.
 2. Remove scaffold functions, tests, and examples that do not represent the module.
 3. Set repository metadata and custom properties.
-4. Confirm the README reflects the module's actual status and uses `Install-PSResource` for installation.
+4. Confirm the README answers the start-page questions and uses `Install-PSResource` for installation.
 5. Confirm required common files are present.
 6. Confirm `.github/PSModule.yml` only overrides defaults when the module needs different behavior.
 
@@ -60,7 +60,7 @@ Module repositories use the PSModule framework layout:
 
 | Path | Default purpose |
 | ---- | --------------- |
-| `README.md` | Concise landing page for the repository. |
+| `README.md` | Concise start page for the module. |
 | `LICENSE` | Repository license. PSModule module repositories default to MIT unless a different license is explicitly decided. |
 | `CONTRIBUTING.md` | Contribution workflow or a repository-level pointer to the organization contribution guide. |
 | `SECURITY.md` | Security support policy and private vulnerability reporting instructions. |
@@ -80,6 +80,7 @@ Module repositories use the PSModule framework layout:
 | `src/classes/private/` | Internal implementation classes. |
 | `src/data/` | Static module data that ships with the module. |
 | `examples/` | Realistic user scenarios, not copies of command help. |
+| `docs/` | Product documentation source when the module needs documentation beyond generated command help. |
 | `tests/` | Pester tests and test data. |
 | `icon/` | Module icon assets. |
 
@@ -168,7 +169,17 @@ Dependabot PRs still go through normal review. Automated dependency updates are 
 
 ## README default
 
-A module README is a landing page, not the command reference. It should help a user identify the module, install it, see what it can do, and then find generated documentation.
+A module README is a start page, not the command reference or full manual. It brings a reader in, answers the first questions, and sends them to the right documentation surface.
+
+The README answers these questions, in this order:
+
+| Question | Module README responsibility |
+| --- | --- |
+| What is it? | Name the module and define its scope in one short paragraph. |
+| Why should I care? | State the value or kind of task the module makes easier. |
+| How do I get it? | Show the PowerShell Gallery install and import commands. |
+| How does it work? | Show one to three representative capabilities or usage examples. |
+| How do I get more info? | Link to generated module documentation and PowerShell help. |
 
 Module installation examples must use PSResourceGet:
 
@@ -183,7 +194,7 @@ For implemented modules, use this shape:
 ````markdown
 # <ModuleName>
 
-<One short paragraph describing the module from the user's perspective.>
+<One short paragraph describing what the module is and why it is useful.>
 
 ## Installation
 
@@ -196,7 +207,7 @@ Import-Module -Name <ModuleName>
 
 ## Capabilities
 
-Use this section as a short showcase. Show the most important things the module makes possible with one to three realistic examples.
+Use this section as a short showcase and introduction to how the module works. Show the most important things the module makes possible with one to three realistic examples.
 
 The goal is discovery and marketing, not exhaustive command documentation. A reader should understand why the module exists and what kind of tasks it helps with.
 
@@ -217,9 +228,11 @@ Get-Help -Name 'CommandName' -Examples
 ```
 ````
 
-README pages may include a short capabilities or usage showcase before the documentation link. Keep that section focused on discovery and marketing: show representative outcomes, not every command, parameter, or edge case.
+README pages should include a short capabilities or usage showcase before the documentation link when the module has working capabilities. Keep that section focused on discovery and marketing: show representative outcomes, not every command, parameter, or edge case.
 
 README pages should not duplicate generated command documentation. Do not add full command inventories, parameter tables, or long reference sections when those details are already produced from comment-based help.
+
+Do not add a community-file or policy link section by default. Readers can find standard repository files such as `LICENSE`, `CONTRIBUTING.md`, `SECURITY.md`, and `CODE_OF_CONDUCT.md` through GitHub conventions and the repository file tree. Link them only when the module has an unusual rule the user must know before using it.
 
 ## Placeholder and in-progress repositories
 
@@ -269,6 +282,7 @@ Use these defaults:
 - Command synopsis, parameters, examples, links, and outputs live in comment-based help.
 - Group overview pages live next to public command groups in `src/functions/public/<Group>/<Group>.md`.
 - Realistic end-to-end scenarios live in `examples/`.
+- Product docs beyond generated command help live under `docs/` and publish through GitHub Pages or the initiative's module documentation site.
 - README capability examples are short, representative, and user-facing.
 - README pages stay short and stable.
 
