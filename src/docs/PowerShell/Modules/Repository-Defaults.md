@@ -168,7 +168,7 @@ Dependabot PRs still go through normal review. Automated dependency updates are 
 
 ## README default
 
-A module README is a landing page, not the command reference. It should help a user identify the module, install it, and find generated documentation.
+A module README is a landing page, not the command reference. It should help a user identify the module, install it, see what it can do, and then find generated documentation.
 
 Module installation examples must use PSResourceGet:
 
@@ -194,6 +194,17 @@ Install-PSResource -Name <ModuleName>
 Import-Module -Name <ModuleName>
 ```
 
+## Capabilities
+
+Use this section as a short showcase. Show the most important things the module makes possible with one to three realistic examples.
+
+The goal is discovery and marketing, not exhaustive command documentation. A reader should understand why the module exists and what kind of tasks it helps with.
+
+```powershell
+# Replace this with a real example that demonstrates the module's value.
+Get-Command -Module <ModuleName>
+```
+
 ## Documentation
 
 Documentation is published at [psmodule.io/<ModuleName>](https://psmodule.io/<ModuleName>/).
@@ -210,7 +221,9 @@ Get-Help -Name 'CommandName' -Examples
 Issues and pull requests are welcome. Please use the repository issue tracker to report bugs, request features, or discuss improvements.
 ````
 
-README pages should not duplicate generated command documentation. Do not add full command inventories, parameter tables, or long usage sections when those details are already produced from comment-based help.
+README pages may include a short capabilities or usage showcase before the documentation link. Keep that section focused on discovery and marketing: show representative outcomes, not every command, parameter, or edge case.
+
+README pages should not duplicate generated command documentation. Do not add full command inventories, parameter tables, or long reference sections when those details are already produced from comment-based help.
 
 ## Placeholder and in-progress repositories
 
@@ -249,7 +262,7 @@ Before opening a README-only PR, check that the README follows the default and d
 ```powershell
 Select-String -Path README.md -SimpleMatch -Pattern 'Greet-Entity', 'PSModuleTemplate', 'YourModuleName'
 Select-String -Path README.md -SimpleMatch -Pattern '{{ NAME }}', '{{ DESCRIPTION }}'
-Select-String -Path README.md -Pattern '^## (Usage|Commands|Examples)$'
+Select-String -Path README.md -Pattern '^## Commands$'
 git diff --check -- README.md
 ```
 
@@ -257,13 +270,14 @@ git diff --check -- README.md
 
 ## Documentation ownership
 
-Command details belong in comment-based help and generated documentation. The README points to those sources instead of re-stating them.
+Command details belong in comment-based help and generated documentation. The README can showcase capability, then points to those sources for reference detail.
 
 Use these defaults:
 
 - Command synopsis, parameters, examples, links, and outputs live in comment-based help.
 - Group overview pages live next to public command groups in `src/functions/public/<Group>/<Group>.md`.
 - Realistic end-to-end scenarios live in `examples/`.
+- README capability examples are short, representative, and user-facing.
 - README pages stay short and stable.
 
 This keeps the repository landing page readable and prevents drift between README content, PowerShell help, and generated documentation.
