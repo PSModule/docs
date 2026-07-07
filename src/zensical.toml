@@ -60,6 +60,7 @@ nav = [
   ]},
   {"Solutions" = [
     "Solutions/index.md",
+    {"Infusing GitHub with PowerShell" = "Solutions/Infusing-GitHub-with-PowerShell.md"},
     {"GitHub Copilot Customization" = "Solutions/GitHub-Copilot-Customization-Architecture.md"},
     {"Self-Service System" = "Solutions/Self-service-system.md"},
   ]},
