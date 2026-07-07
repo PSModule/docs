@@ -4,6 +4,18 @@
 
 This document defines the structure and guidelines for writing Pester tests for PowerShell functions. The goal is to ensure consistency and comprehensive test coverage while maintaining clarity.
 
+## Pester version
+
+Lock the test framework to a **major version** so a new Pester major cannot be adopted silently and break every suite at once. Declare it as the first line of each `*.Tests.ps1` file:
+
+```powershell
+#Requires -Modules @{ ModuleName = 'Pester'; ModuleVersion = '6.0.0'; MaximumVersion = '6.999.999'; GUID = 'a699dea5-2c73-4616-a270-1f7abb777e71' }
+```
+
+- `ModuleVersion` + `MaximumVersion` accept any Pester `6.x`, so routine minor and patch updates flow in without a change here — only a new major requires a deliberate, reviewed bump.
+- The `GUID` pins module identity (a name alone can be squatted). PowerShell enforces both the version range and the GUID at discovery time.
+- The [Invoke-Pester](https://github.com/PSModule/Invoke-Pester) action installs a matching `6.x`, so the requirement and the installed version stay aligned.
+
 ## Test Structure
 
 Each function is tested within a structured Pester `Describe` block that follows this hierarchy:
