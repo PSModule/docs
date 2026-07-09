@@ -31,7 +31,7 @@ The framework is two things in one: a collection of reusable PowerShell modules,
 
 We empower PowerShell-savvy developers to effortlessly transform their ideas into impactful solutions, automating the repetitive tasks so developers — whether consumers or contributors — can concentrate on coding without distractions.
 
-Where we are headed is tracked as [objectives and initiatives](Ways-of-Working/Goal-Setting.md).
+Where we are headed is tracked as [objectives and initiatives](https://msxorg.github.io/docs/Ways-of-Working/Goal-Setting/).
 
 ## Products and projects we focus on
 
