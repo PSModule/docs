@@ -1,7 +1,7 @@
 # PowerShell standards
 
 These standards apply to all PowerShell files across PSModule repositories. They implement the
-engineering principles defined in [Principles](../../Ways-of-Working/Principles.md) — specifically
+engineering principles defined in [Principles](https://msxorg.github.io/docs/Ways-of-Working/Principles/) — specifically
 *Clean Code*, *Make change easy*, *Shift Left*, and *Build for the modern engineer*.
 
 Each standard states the practice, why it matters to us, and how to apply it.

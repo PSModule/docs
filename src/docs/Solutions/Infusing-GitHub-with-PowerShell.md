@@ -1,6 +1,6 @@
 # Infusing GitHub with PowerShell
 
-*Infuse GitHub with PowerShell* is the [mission](../Ways-of-Working/Goal-Setting.md) of the PSModule organization. GitHub gives mainstream languages — JavaScript, Python, .NET, Go — a rich, built-in developer experience: dependency updates, security scanning, package registries, setup actions, and a first-party API client. PowerShell is a first-class automation language, but on the GitHub platform it is treated as a second-class citizen. This initiative closes that gap.
+*Infuse GitHub with PowerShell* is the [mission](https://msxorg.github.io/docs/Ways-of-Working/Goal-Setting/) of the PSModule organization. GitHub gives mainstream languages — JavaScript, Python, .NET, Go — a rich, built-in developer experience: dependency updates, security scanning, package registries, setup actions, and a first-party API client. PowerShell is a first-class automation language, but on the GitHub platform it is treated as a second-class citizen. This initiative closes that gap.
 
 We do it two ways: by **building** the PowerShell-native tooling the ecosystem is missing, and by **advocating** for the platform to support PowerShell where only the vendor can. This page describes the collection we have built and the capabilities we still want to make PowerShell-native.
 
@@ -108,4 +108,4 @@ The gaps split into two kinds of work, matching how we operate:
 - **Build it.** Where a public API exists, we close the gap ourselves with a module or action: SARIF upload from PSScriptAnalyzer, dependency submission for module manifests, module caching for `Install-PowerShell`, and attestations on published modules.
 - **Advocate for it.** Where only the vendor can deliver — a native Dependabot ecosystem, a PowerShell Gallery entry in the Advisory Database, CodeQL support, OIDC trusted publishing, and a first-class package registry — we raise it with GitHub, Microsoft, and the Gallery, and ship a working interim in the meantime.
 
-New parity gaps and concrete bets are tracked as [initiatives](../Ways-of-Working/Goal-Setting.md) under the mission.
+New parity gaps and concrete bets are tracked as [initiatives](https://msxorg.github.io/docs/Ways-of-Working/Goal-Setting/) under the mission.
