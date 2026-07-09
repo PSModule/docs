@@ -171,7 +171,7 @@ Dependabot PRs still go through normal review. Automated dependency updates are 
 
 A module README is a start page, not the command reference or full manual. It brings a reader in, answers the first questions, and sends them to the right documentation surface.
 
-Making the README shorter must not delete unique information. The README is often the only place that carries certain content: prerequisites, platform and dependency notes, authentication and setup guidance, operational behavior such as caching, state, or update and versioning semantics, and upstream attribution. None of that is generated from comment-based help, so trimming the README must preserve it — keep it on the landing page when it belongs there, or relocate it to `docs/`, `examples/`, or comment-based help. Only remove content that is genuinely duplicated by generated command documentation.
+Making the README shorter must not delete unique information. The README is published as the module's landing page on the documentation site (for example `psmodule.io/<ModuleName>`); the per-command reference is generated separately from comment-based help. So the README is often the only published home for prerequisites, platform and dependency notes, authentication and setup guidance, operational behavior such as caching, state, or update and versioning semantics, and upstream attribution. Trimming the README must preserve that content: keep it on the landing page, or move it only to another surface that also publishes (a command group's overview page under `src/functions/public/<Group>/<Group>.md`, or comment-based help). Only remove content that is genuinely duplicated by the generated command reference.
 
 The README answers these questions, in this order:
 
@@ -238,7 +238,7 @@ Keep, trim, or relocate content — do not delete it:
 
 - **Keep on the landing page:** the overview, prerequisites and requirements (PowerShell version, supported platforms, module or native dependencies), installation, the capabilities showcase, and the short operational notes a reader needs before first use.
 - **Trim:** exhaustive command inventories, parameter tables, and repetitive examples that differ only by a parameter. These come from comment-based help — point to `Get-Help` and the documentation site instead of restating them.
-- **Relocate, never drop:** long-form guides and unique conceptual content that is too detailed for a landing page, such as authentication and setup walkthroughs, deep operational detail, and end-to-end scenarios. Move them to `docs/` or `examples/`, or into comment-based help, and link to them. If there is no other home for the content yet, keep a condensed version in the README rather than deleting it.
+- **Relocate only to a published home — never drop:** long-form guides and unique conceptual content (authentication and setup walkthroughs, deep operational detail, end-to-end scenarios) may move out of the README only into a surface that is actually published: a command group's overview page under `src/functions/public/<Group>/<Group>.md`, or comment-based help. A bare top-level `docs/` folder is not published by the current docs build, so moving content there drops it from the site. When there is no published home for it yet, keep the full content in the README. A longer landing page is acceptable and expected for feature-rich modules; do not shorten by deleting.
 
 Retain upstream attribution and licensing context. Credit, acknowledgements, donation notes, and third-party license notices for wrapped or bundled work must stay in the README, or move to a clearly linked place. The rule below about community and policy sections does not apply to attribution the project is expected to carry.
 
@@ -299,7 +299,7 @@ Use these defaults:
 - Realistic end-to-end scenarios live in `examples/`.
 - Product docs beyond generated command help live under `docs/` and publish through GitHub Pages or the initiative's module documentation site.
 - README capability examples are short, representative, and user-facing.
-- README pages stay short and stable.
+- README pages stay focused and stable, and keep the narrative content that has no other published home.
 
 This keeps the repository landing page readable and prevents drift between README content, PowerShell help, and generated documentation.
 
