@@ -35,6 +35,7 @@ nav = [
       "PowerShell/Modules/index.md",
       {"Repository Defaults" = "PowerShell/Modules/Repository-Defaults.md"},
       {"Standards" = "PowerShell/Modules/Standards.md"},
+      {"Module types" = "PowerShell/Modules/Module-Types.md"},
       {"Test Specification" = "PowerShell/Modules/Test-Specification.md"},
       {"Versioning" = "PowerShell/Modules/Versioning.md"},
     ]},

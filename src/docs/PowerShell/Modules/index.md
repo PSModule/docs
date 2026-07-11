@@ -22,6 +22,7 @@ Version increments are driven by PR labels (`Major`, `Minor`, `Patch`, `Prerelea
 
 - **[Repository Defaults](Repository-Defaults.md)** — Required repository defaults for PSModule PowerShell module repos, including README shape, placeholder handling, metadata, and documentation ownership.
 - **[Standards](Standards.md)** — Repository layout, naming, style, parameter design, comment-based help, and SOLID applied to PowerShell modules.
+- **[Module types](Module-Types.md)** — Type-specific conventions for integration (API) modules and data modules, including function-to-REST naming and using Context for user and module settings.
 - **[Test Specification](Test-Specification.md)** — How we write Pester tests: structure, hierarchy, and naming conventions.
 - **[Versioning](Versioning.md)** — How changes to the public interface determine the SemVer version bump.
 

@@ -25,6 +25,49 @@ function Get-Users { }                # Plural noun
 function Get-ContosoProjectByID { }   # Named after lookup mechanism
 ```
 
+## Data conversion and I/O verbs
+
+**Practice:** In data modules, use a fixed verb vocabulary. `ConvertFrom-<Format>` turns a format-specific representation into a neutral `[PSCustomObject]`/`[hashtable]`; `ConvertTo-<Format>` does the reverse. Use `Import-`/`Export-` for file or store round-trips, `Format-` for a normalized rendering, and `Merge-`, `Compare-`, `Test-`, or `Remove-…Entry` to manipulate a structure. Always provide both `ConvertTo-` and `ConvertFrom-` so data round-trips.
+
+**Why:** `ConvertTo`/`ConvertFrom` around the neutral PowerShell object model let any format interoperate with any other through a common pivot — the object — instead of N×N direct converters. A predictable verb set makes a data module's surface obvious to humans and agents.
+
+**How:**
+
+```powershell
+# Good — the Hashtable module is the reference shape
+ConvertFrom-Hashtable   # hashtable  -> PSCustomObject
+ConvertTo-Hashtable     # object     -> hashtable
+Import-Hashtable        # file       -> hashtable
+Export-Hashtable        # hashtable  -> file
+Format-Hashtable        # normalized rendering
+Merge-Hashtable / Remove-HashtableEntry
+```
+
+See [Module types](../Modules/Module-Types.md#data-modules).
+
+## Integration commands and REST methods
+
+**Practice:** In API/integration modules, name commands after the resource and intent using approved verbs — never after the HTTP method or endpoint path. Map REST methods to verbs: `GET` → `Get-`, `POST` (create) → `New-`/`Add-`, `PUT`/`PATCH` → `Set-`/`Update-`, `DELETE` → `Remove-`, and non-CRUD actions → the approved verb that matches the intent (`Invoke-`, `Start-`, `Stop-`, …).
+
+**Why:** Users think in resources, not routes. `Get-GitHubRepository` is discoverable; a transport-shaped name like `Invoke-GitHubReposGet` is not. Approved verbs keep the surface consistent across every integration module.
+
+**How:**
+
+```powershell
+# Good
+Get-GitHubRepository -Owner PSModule -Name docs    # GET    .../repos/PSModule/docs
+New-GitHubRepository -Name docs                     # POST   .../repos
+Remove-GitHubRepository -Owner PSModule -Name docs  # DELETE .../repos/PSModule/docs
+```
+
+```powershell
+# Bad
+Invoke-GitHubReposGet        # named after the route + HTTP verb
+Get-GitHubReposByName        # named after the lookup mechanism
+```
+
+See [Module types](../Modules/Module-Types.md#integration-api-modules).
+
 ## Use full command names
 
 **Practice:** Always use the full `Verb-Noun` command name. Never use aliases in scripts or shared code.
