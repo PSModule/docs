@@ -15,8 +15,8 @@ Apply each relevant section.
 
 ## Integration (API) modules
 
-Integration modules are the PowerShell face of an external service. `GitHub`, and the
-service-client modules such as `Anthropic`, `OpenAI`, `Bluesky`, and `Domeneshop`, are integration
+Integration modules are the PowerShell face of an external service. `GitHub` and the
+service-client modules such as `Anthropic`, `OpenAI`, `Bluesky`, and `Domeneshop` are integration
 modules.
 
 ### Command naming maps to the resource, not the HTTP method
