@@ -68,7 +68,7 @@ format-specific representation *into* an object; `ConvertTo-<Format>` renders an
 format. Converting through the object as a common pivot means any format interoperates with any
 other, instead of writing a direct converter for every pair.
 
-Always ship **both** directions so data round-trips.
+Always ship **both** directions so data can round-trip between the format and the object model.
 
 ### Verb vocabulary
 

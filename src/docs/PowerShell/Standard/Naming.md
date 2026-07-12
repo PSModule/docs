@@ -27,7 +27,7 @@ function Get-ContosoProjectByID { }   # Named after lookup mechanism
 
 ## Data conversion and I/O verbs
 
-**Practice:** In data modules, use a fixed verb vocabulary. `ConvertFrom-<Format>` turns a format-specific representation into a neutral `[PSCustomObject]`/`[hashtable]`; `ConvertTo-<Format>` does the reverse. Use `Import-`/`Export-` for file or store round-trips, `Format-` for a normalized rendering, and `Merge-`, `Compare-`, `Test-`, or `Remove-…Entry` to manipulate a structure. Always provide both `ConvertTo-` and `ConvertFrom-` so data round-trips.
+**Practice:** In data modules, use a fixed verb vocabulary. `ConvertFrom-<Format>` turns a format-specific representation into a neutral `[PSCustomObject]`/`[hashtable]`; `ConvertTo-<Format>` does the reverse. Use `Import-`/`Export-` for file or store round-trips, `Format-` for a normalized rendering, and `Merge-`, `Compare-`, `Test-`, or `Remove-…Entry` to manipulate a structure. Always provide both `ConvertTo-` and `ConvertFrom-` so data can round-trip between the format and the object model.
 
 **Why:** `ConvertTo`/`ConvertFrom` around the neutral PowerShell object model let any format interoperate with any other through a common pivot — the object — instead of N×N direct converters. A predictable verb set makes a data module's surface obvious to humans and agents.
 

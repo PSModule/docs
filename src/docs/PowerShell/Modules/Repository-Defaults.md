@@ -307,7 +307,7 @@ git diff --check -- README.md
 
 `Template-PSModule` is the exception: it intentionally keeps `{{ NAME }}` and `{{ DESCRIPTION }}` tokens because those are template inputs.
 
-For an implemented module, also confirm the README keeps a `## Usage` showcase and that any unique content removed from the previous version — prerequisites, setup or authentication guidance, operational notes, or upstream attribution — was relocated to a published surface (`src/functions/public/<Group>/<Group>.md`, `examples/`, or comment-based help) rather than deleted.
+For an implemented module, also confirm the README keeps a `## Usage` showcase and that any unique content removed from the previous version — prerequisites, setup or authentication guidance, operational notes, or upstream attribution — was kept on the landing page or relocated to a published home (`src/functions/public/<Group>/<Group>.md` or comment-based help) rather than deleted. Repository-only locations such as `examples/` are not published on their own, so content moved there must still be linked from the README.
 
 ## Documentation ownership
 
