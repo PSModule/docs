@@ -15,6 +15,8 @@ They do not apply directly to:
 - Template repositories other than `Template-PSModule`.
 - Test, archive, service, or infrastructure repositories that are not published as module artifacts.
 
+Two baseline expectations still apply to every PSModule repository, including the types listed above. Each repository stands on its own — it carries its own governance and community files instead of relying on the organization `.github` fallback — and each repository ships the [agent onboarding files](#agent-onboarding-files) so an agent can work in it without prior context. What differs by type is the concrete file set and layout: the required files, README shape, and framework wiring on the rest of this page are module defaults, and non-module repositories keep only the equivalent baseline appropriate to their own type. This repository, `PSModule/docs`, follows those two baseline expectations itself.
+
 Each initiative should keep its own repository standards in its central documentation repository. For the PSModule organization, this repository is the source of truth.
 
 ## Repository creation
