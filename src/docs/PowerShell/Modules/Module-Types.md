@@ -15,8 +15,8 @@ Apply each relevant section.
 
 ## Integration (API) modules
 
-Integration modules are the PowerShell face of an external service. `GitHub` and the
-service-client modules such as `Anthropic`, `OpenAI`, `Bluesky`, and `Domeneshop` are integration
+Integration modules are the PowerShell face of an external service. `GitHub`, and the
+service-client modules such as `Anthropic`, `OpenAI`, `Bluesky`, and `Domeneshop`, are integration
 modules.
 
 ### Command naming maps to the resource, not the HTTP method
@@ -76,7 +76,7 @@ Always ship **both** directions so data can round-trip between the format and th
 | ------------ | ------- |
 | `ConvertFrom-<Format>` | Format-specific text/representation → `[PSCustomObject]` / `[hashtable]` |
 | `ConvertTo-<Format>` | Object → format-specific text/representation |
-| `Import-<Noun>` | Read objects from a file or store |
+| `Import-<Noun>` | Read from a file or store into objects |
 | `Export-<Noun>` | Write objects to a file or store |
 | `Format-<Noun>` | Produce a normalized or pretty rendering |
 | `Merge-<Noun>` | Combine two structures |

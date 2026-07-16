@@ -299,7 +299,7 @@ Before opening a README-only PR, check that the README follows the default and d
 ```powershell
 Select-String -Path README.md -SimpleMatch -Pattern 'Greet-Entity', 'PSModuleTemplate', 'YourModuleName'
 Select-String -Path README.md -SimpleMatch -Pattern '{{ NAME }}', '{{ DESCRIPTION }}'
-Select-String -Path README.md -SimpleMatch -Pattern '<Command>', '<CommandName>', "-Name 'CommandName'"
+Select-String -Path README.md -SimpleMatch -Pattern "-Name 'CommandName'", '<CommandName>'
 Select-String -Path README.md -Pattern '^## (Commands|Capabilities)$'
 Select-String -Path README.md -Pattern '^Install-Module\b'
 git diff --check -- README.md
