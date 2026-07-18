@@ -114,31 +114,76 @@ For large work, open a release branch and target it from feature branches. Apply
 
 ## CI/CD pipeline
 
-The [Process-PSModule](https://github.com/PSModule/Process-PSModule) workflow orchestrates the full lifecycle. Every PR triggers a **Plan** job that resolves configuration and version, then conditionally runs build, test, lint, and publish stages.
-
-### Pipeline stages
+The [Process-PSModule](https://github.com/PSModule/Process-PSModule) workflow orchestrates the full lifecycle. The repository entry workflow starts the **Plan** job, `Plan` loads `.github/PSModule.yml`, and `Plan` then conditionally starts the build, test, lint, docs, and publish sub-jobs.
 
 ```mermaid
 graph LR
-    Plan --> Lint-Repository
-    Plan --> Build-Module
-    Plan --> Test-SourceCode
-    Plan --> Lint-SourceCode
-    Build-Module --> Test-Module
-    Build-Module --> BeforeAll-ModuleLocal
-    BeforeAll-ModuleLocal --> Test-ModuleLocal
-    Test-ModuleLocal --> AfterAll-ModuleLocal
-    Test-SourceCode --> Get-TestResults
-    Test-Module --> Get-TestResults
-    Test-ModuleLocal --> Get-TestResults
-    Test-Module --> Get-CodeCoverage
-    Test-ModuleLocal --> Get-CodeCoverage
-    Get-TestResults --> Publish-Module
-    Get-CodeCoverage --> Publish-Module
-    Build-Module --> Build-Docs
-    Build-Docs --> Build-Site
-    Build-Site --> Publish-Site
+  subgraph Inputs
+    Workflow[workflow.yml]
+    PSModule[.github/PSModule.yml]
+  end
+
+  subgraph Planning
+    Plan
+  end
+
+  subgraph Validation
+    Lint-Repository
+    Build-Module
+    Test-SourceCode
+    Lint-SourceCode
+    Test-Module
+    BeforeAll-ModuleLocal
+    Test-ModuleLocal
+    AfterAll-ModuleLocal
+    Get-TestResults
+    Get-CodeCoverage
+  end
+
+  subgraph Documentation
+    Build-Docs
+    Build-Site
+    Publish-Site
+  end
+
+  subgraph Release
+    Publish-Module
+  end
+
+  Workflow --> Plan
+  PSModule --> Plan
+  Plan --> Lint-Repository
+  Plan --> Build-Module
+  Plan --> Test-SourceCode
+  Plan --> Lint-SourceCode
+  Build-Module --> Test-Module
+  Build-Module --> BeforeAll-ModuleLocal
+  BeforeAll-ModuleLocal --> Test-ModuleLocal
+  Test-ModuleLocal --> AfterAll-ModuleLocal
+  Test-SourceCode --> Get-TestResults
+  Test-Module --> Get-TestResults
+  Test-ModuleLocal --> Get-TestResults
+  Test-Module --> Get-CodeCoverage
+  Test-ModuleLocal --> Get-CodeCoverage
+  Get-TestResults --> Publish-Module
+  Get-CodeCoverage --> Publish-Module
+  Build-Module --> Build-Docs
+  Build-Docs --> Build-Site
+  Build-Site --> Publish-Site
 ```
+
+Read the workflow as one flow from left to right:
+
+1. **The entry workflow and module settings feed Plan first.** `workflow.yml` invokes the Process-PSModule workflow, `Plan` loads `.github/PSModule.yml`, evaluates changed files against `ImportantFilePatterns`, determines `ReleaseType` from PR labels, and resolves the next semantic version before any child job starts.
+2. **Non-impacting changes stop here.** If no changed file matches the important patterns, the workflow resolves `ReleaseType: None` and skips build, test, and publish work.
+3. **Repository lint runs for PR hygiene.** `Lint-Repository` checks the repo-level files such as Markdown, YAML, and other non-module assets.
+4. **Module build creates the release candidate artifact.** `Build-Module` compiles the module and stamps the resolved version into the manifest so the artifact under test is the same version that would later be published.
+5. **Source and module tests fan out from the build plan.** `Test-SourceCode` validates raw source files, `Test-Module` validates the built artifact, and the local test path runs `BeforeAll-ModuleLocal`, `Test-ModuleLocal`, and `AfterAll-ModuleLocal` across the OS matrix.
+6. **Lint and reporting run alongside tests.** `Lint-SourceCode` analyzes `src/`, `Get-TestResults` aggregates all test output, and `Get-CodeCoverage` calculates coverage from the module test stages.
+7. **Docs build from the same change set.** `Build-Docs` generates command and doc content, `Build-Site` prepares the static site, and `Publish-Site` deploys it for merged PRs.
+8. **Publish only happens after a releasable merge.** `Publish-Module` runs for merged PRs, or for preview builds when the PR carries `Prerelease`, and reads the already-stamped manifest version rather than recalculating it.
+
+Stage reference:
 
 | Stage | Runs on | Purpose |
 | ----- | ------- | ------- |
@@ -157,16 +202,14 @@ graph LR
 | **Build-Docs / Build-Site** | Open/Updated PR, Merged PR, Manual | Generates documentation site from source |
 | **Publish-Site** | Merged PR | Deploys documentation site to GitHub Pages |
 
-### Important file patterns
-
-The workflow only triggers build, test, and publish stages when changed files match the `ImportantFilePatterns` setting. The default patterns are:
+Default important file patterns:
 
 ```text
 ^src/
 ^README\.md$
 ```
 
-Changes that do not match any pattern result in `ReleaseType: None` — the pipeline skips build, test, and publish entirely. Override in `.github/PSModule.yml`:
+Override them in `.github/PSModule.yml` when other files should trigger the full module lifecycle:
 
 ```yaml
 ImportantFilePatterns:
