@@ -21,6 +21,7 @@ nav = [
     "Modules/index.md",
     {"Repository Defaults" = "Modules/Repository-Defaults.md"},
     {"Standards" = "Modules/Standards.md"},
+    {"Module types" = "Modules/Module-Types.md"},
     {"Test Specification" = "Modules/Test-Specification.md"},
     {"Versioning" = "Modules/Versioning.md"},
     {"Catalog" = [

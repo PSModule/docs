@@ -2,7 +2,7 @@
 
 This page defines the default repository contract for PowerShell module repositories in the PSModule organization. It describes what a newly created or maintained module repository should look like before module-specific code, tests, documentation, and managed repository files are considered.
 
-The implementation standard still lives in [PowerShell module standard](Standards.md). This page covers repository defaults: files, metadata, README shape, release integration, placeholder handling, shared community files, and managed-file distribution.
+The implementation standard still lives in [PowerShell module standard](Standards.md). Type-specific conventions for integration (API) and data modules live in [Module types](Module-Types.md). This page covers repository defaults: files, metadata, README shape, release integration, placeholder handling, shared community files, and managed-file distribution.
 
 ## Scope
 
@@ -14,6 +14,8 @@ They do not apply directly to:
 - Documentation repositories such as `PSModule/docs`.
 - Template repositories other than `Template-PSModule`.
 - Test, archive, service, or infrastructure repositories that are not published as module artifacts.
+
+Two baseline expectations still apply to every PSModule repository, including the types listed above. Each repository stands on its own: it carries its own governance and community files instead of relying on the organization `.github` fallback, and each repository ships the [agent onboarding files](#agent-onboarding-files) so an agent can work in it without prior context. What differs by type is the concrete file set and layout: the required files, README shape, and framework wiring on the rest of this page are module defaults, and non-module repositories keep only the equivalent baseline appropriate to their own type. This repository, `PSModule/docs`, follows those two baseline expectations itself.
 
 Each initiative should keep its own repository standards in its central documentation repository. For the PSModule organization, this repository is the source of truth.
 
@@ -62,10 +64,13 @@ Module repositories use the PSModule framework layout:
 | ---- | --------------- |
 | `README.md` | Concise start page for the module. |
 | `LICENSE` | Repository license. PSModule module repositories default to MIT unless a different license is explicitly decided. |
-| `CONTRIBUTING.md` | Contribution workflow or a repository-level pointer to the organization contribution guide. |
+| `CONTRIBUTING.md` | Self-contained contribution workflow for this repository. Does not rely on an organization-level fallback. |
 | `SECURITY.md` | Security support policy and private vulnerability reporting instructions. |
 | `SUPPORT.md` | Support expectations and where users ask for help. |
 | `CODE_OF_CONDUCT.md` | Community conduct expectations. |
+| `AGENTS.md` | Agent onboarding entry point. Points agents to the canonical guidance in `PSModule/docs`. |
+| `CLAUDE.md` | Claude Code entry point. Imports `AGENTS.md` so Claude reads the same instructions. |
+| `.github/copilot-instructions.md` | VS Code and GitHub Copilot repository instructions. Points to the same documentation. |
 | `.github/PSModule.yml` | Module workflow configuration overrides. |
 | `.github/workflows/workflow.yml` | Reusable Process-PSModule workflow entry point. |
 | `.github/dependabot.yml` | Dependency and supply-chain update configuration. |
@@ -102,10 +107,13 @@ Required baseline files for module repositories:
 | ---- | ------------------ |
 | `README.md` | Repository landing page and evergreen context for humans and agents. |
 | `LICENSE` | Clear legal terms for reuse, packaging, and redistribution. |
-| `CONTRIBUTING.md` | Shared contribution workflow and expectations. |
+| `CONTRIBUTING.md` | Self-contained contribution workflow and expectations for this repository. |
 | `SECURITY.md` | Private vulnerability reporting and latest-version support policy. |
 | `SUPPORT.md` | Support channel and issue-routing expectations. |
 | `CODE_OF_CONDUCT.md` | Community participation rules. |
+| `AGENTS.md` | Cross-tool agent instructions pointing to the canonical guidance in `PSModule/docs`. |
+| `CLAUDE.md` | Claude Code entry point that imports `AGENTS.md`. |
+| `.github/copilot-instructions.md` | VS Code and GitHub Copilot repository instructions pointing to the documentation. |
 | `.github/dependabot.yml` | Supply-chain maintenance for GitHub Actions and PowerShell dependencies. |
 | `.github/CODEOWNERS` | Review routing for source, docs, and GitHub workflow files. |
 | `.github/pull_request_template.md` | Consistent PR Manager-style PR descriptions and change classification. |
@@ -118,24 +126,44 @@ Required baseline files for module repositories:
 
 Repositories can add local files, but they should not remove these baseline files unless the repository is explicitly outside the module standard.
 
+Each repository must stand on its own. It carries its own copy of every file above and does not depend on the organization `.github` fallback: that fallback is only surfaced in GitHub's web UI, and agents, linters, and local tooling do not read it.
+
+## Agent onboarding files
+
+Every repository must be usable by an agent that has never seen it before, without special configuration. Each repository carries its own agent entry points that point to the authoritative documentation instead of restating it:
+
+- `AGENTS.md`: the cross-tool entry point, read by the GitHub Copilot coding agent, VS Code, and other AGENTS.md-aware tools. It names what the repository is in a line or two and points to the canonical agent guidance in [`PSModule/docs`](https://github.com/PSModule/docs).
+- `CLAUDE.md`: a thin file that imports `AGENTS.md` with `@AGENTS.md` so Claude Code reads the same instructions. Claude-specific notes, if any, go below the import.
+- `.github/copilot-instructions.md`: repository instructions for VS Code and GitHub Copilot that point to the same documentation.
+
+These files are the agent equivalent of the README: pointers, not copies. Keep them short so the linked documentation stays the single source of truth. Like the other governance files, they live in the repository itself so it can stand on its own.
+
 ## Managed file distribution
 
-Shared files should be treated as managed files. The current distribution service is [`PSModule/Distributor`](https://github.com/PSModule/Distributor). It keeps source file sets under `Repos/{Type}/{Selection}/` and syncs those files into repositories through pull requests.
+Shared repository files are managed through [`PSModule/Distributor`](https://github.com/PSModule/Distributor). Distributor is the source of truth for managed file content and file-set membership.
 
-The current Distributor model is subscription-based:
+Managed-file distribution follows this contract:
 
-- `Type` is an organization repository custom property that maps a repository to a type folder such as `Module` or `Action`.
-- `SubscribeTo` is an organization repository custom property that selects file sets such as `dependabot.yml`, `Linter Settings`, `PSModule Settings`, `CODEOWNERS`, `License`, `.gitattributes`, and `.gitignore`.
-- Sync changes are delivered through a `managed-files/update` branch and a `⚙️ [Maintenance]: Sync managed files` pull request.
-- Managed files are overwritten by the source file set. Local edits to managed files should be made in Distributor, not directly in the receiving repository.
-- Removing a file from a Distributor file set does not delete the previously distributed file from target repositories; cleanup is explicit.
+- `Type` maps a repository to its file-set root (for example `Module` or `Action`).
+- `SubscribeTo` declares which optional managed file sets the repository receives.
+- Organization-wide mandatory file sets define non-optional governance and supply-chain files for each applicable repository type.
+- Distributor delivers changes through a `managed-files/update` branch and a `⚙️ [Maintenance]: Sync managed files` pull request.
+- Receiving repositories treat managed files as generated artifacts from Distributor. Local edits in the receiving repository are replaced on the next sync and must be made in Distributor instead.
+- Removing a file from a file set does not implicitly delete previously synced copies; deletion is an explicit managed change.
 
-Two follow-up Distributor capabilities define the desired direction:
+This page defines what files must exist in repositories. Distributor defines how those files are distributed and kept aligned.
 
-- **Global file sets** should allow common file sets such as `.gitattributes`, `.gitignore`, and `License` to be defined once and made available to all repository types while still requiring subscription.
-- **Mandatory file sets** should allow organization-critical files such as `SECURITY.md`, `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, and supply-chain configuration to be pushed to applicable repositories without each repository having to subscribe manually.
+### Migration for existing repositories
 
-Until mandatory file sets exist, repository owners are still responsible for ensuring the required common files exist. Distributor is the preferred implementation mechanism; this document is the standard that says what must exist and why.
+Repositories that still reflect older distribution behavior should be aligned to this contract:
+
+1. Set or correct repository `Type` and `SubscribeTo` properties.
+2. Ensure mandatory governance and supply-chain files from this standard exist in the repository.
+3. Move any intended local edits in managed files into Distributor source file sets.
+4. Sync from Distributor and merge the `managed-files/update` pull request.
+5. Remove unmanaged duplicates or stale files explicitly when they are no longer part of an active file set.
+
+After migration, the repository keeps the required files from this standard, and managed-file content changes are made through Distributor-first updates.
 
 ## Supply-chain defaults
 

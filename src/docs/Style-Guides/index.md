@@ -5,7 +5,7 @@ description: Coding style guidelines for PSModule repositories.
 
 # Style Guides (Moved)
 
-Style-guide content is now canonical in MSXOrg/docs.
+Style guide content is now canonical in MSXOrg/docs.
 
 Use:
 
