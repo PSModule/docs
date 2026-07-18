@@ -63,7 +63,7 @@ separate MSXOrg PR.
   needs 1–3 real examples using its actual commands (proposed per repo below). Use the heading
   `## Usage` (not `Capabilities`). Not applicable to the 20 genuine placeholders.
 - **U2 — Fix the copy/paste-hostile help line.** Replace `Get-Help <CommandName> -Examples` /
-  `'CommandName'` with a real exported command. Affected: **Ast, Base64, Dns,
+  `'CommandName'` with a real exported command. Affected: **Ast, base64, Dns,
   Fonts, Json, Jwt, Lua, Markdown, MemoryMappedFile, Net, Object, PowerShellGallery, PublicIP,
   Retry, Uri, Utilities**. (AzureDevOps skipped — see below.)
 - **U3 — `Install-Module` → `Install-PSResource`.** Standard mandates PSResourceGet. Affected:
@@ -129,12 +129,12 @@ previously had real usage docs. They must become implemented landing pages.
   Terraform locals, parse `.tfvars`, convert object→HCL).
   - **Action:** replace the placeholder notice with the implemented shape.
   - **RESTORE / CAPABILITIES:** showcase parsing a Terraform `locals` block and `ConvertTo-Hcl`.
-  - DESC ok ("for working with HCL language").
+  - DESC OK ("for working with HCL language").
 - **Toml #10** — cmd `ConvertFrom-Toml` (real; note: no `ConvertTo-Toml` yet).
   - **Action:** replace placeholder with landing page; CAPABILITIES: `ConvertFrom-Toml` example.
     If a `ConvertTo-Toml` is planned, the "in-progress" wording is acceptable, but there is a
     working command today, so prefer the implemented shape.
-  - DESC ok.
+  - DESC OK.
 
 ### Category C — Landing pages that over-deleted unique content — restore (23)
 
@@ -259,7 +259,7 @@ modules already match the `Hashtable` shape, so re-review surfaced no README cha
 code-level follow-ups (tracked as issues, not part of the README PRs):
 
 - **Data modules already conforming** (`ConvertTo`/`ConvertFrom` + `Format`/`Import`/`Export`):
-  Hashtable (reference), Base64, Lua, Hcl, Sodium, Uri, CasingStyle, TimeSpan (`Format-TimeSpan`),
+  Hashtable (reference), base64, Lua, Hcl, Sodium, Uri, CasingStyle, TimeSpan (`Format-TimeSpan`),
   PSSemVer (`ConvertTo-PSSemVer`). `Json` intentionally omits `ConvertFrom/To-Json` (PowerShell
   built-ins cover it) and adds `Import`/`Export`/`Format-Json` — acceptable.
 - **Gaps (→ issue, code change, out of README scope):** `Toml` ships only `ConvertFrom-Toml` (no
@@ -289,7 +289,7 @@ None are missing. Flagged as "not in line with intent":
   placeholders Anthropic, Bluesky, Claude, Context7, CurseForge, DeepSeek, Discord, Domeneshop,
   Gemini, GraphQL, LinkedIn, OpenAI, Twitch). Acceptable if you intend them as "purpose" text;
   flagging so you're aware they overstate current state.
-- **Minor wording only:** Tls ("A module…" — not "A PowerShell module…"), Uri ("powershell"
+- **Minor wording only:** Tls ("A module…" — not "A PowerShell module…"), Uri ("PowerShell"
   lowercase), Bluesky ("BlueSky" casing), GraphQL ("a GraphQL APIs"), Net/Object/Dns
   (description broader than the single implemented command).
 

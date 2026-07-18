@@ -23,7 +23,7 @@
 - **Has `## Contributing` (remove; ship `CONTRIBUTING.md`):** 55 (all 55).
 - **Has `## Capabilities`:** 0 — good, none; `## Usage` just needs adding, no rename on the PRs.
 - **Uses `Install-Module` (-> `Install-PSResource`):** 5 — Admin, AzureDevOps, DynamicParams, ElvUI, PSSemVer.
-- **Ships `<CommandName>` placeholder:** 17 — Ast, AzureDevOps, Base64, Dns, Fonts, Json, Jwt, Lua, Markdown, MemoryMappedFile, Net, Object, PowerShellGallery, PublicIP, Retry, Uri, Utilities.
+- **Ships `<CommandName>` placeholder:** 17 — Ast, AzureDevOps, base64, Dns, Fonts, Json, Jwt, Lua, Markdown, MemoryMappedFile, Net, Object, PowerShellGallery, PublicIP, Retry, Uri, Utilities.
 - **Unfilled `{{ NAME }}`/`{{ DESCRIPTION }}`:** 0 — good, all filled.
 - **Wrongly marked placeholder (real commands):** Hcl, Toml.
 - **Needs over-deleted content RESTORED:** 23 (see review log for specifics).
