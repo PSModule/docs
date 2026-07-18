@@ -13,6 +13,7 @@ This section is the local source of truth for:
 
 - [Repository Defaults](Repository-Defaults.md)
 - [Standards](Standards.md)
+- [Module types](Module-Types.md)
 - [Test Specification](Test-Specification.md)
 - [Versioning](Versioning.md)
 - [Catalog](Catalog/index.md)
