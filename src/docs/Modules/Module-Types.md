@@ -52,7 +52,8 @@ Choose the strategy that best serves your module's audience.
 ### Use Context for user and module settings
 
 Integration modules persist state with the [`Context`](https://github.com/PSModule/Context) module
-rather than inventing bespoke storage. Two kinds of state are both standard:
+rather than inventing bespoke storage. Context provides on-disk storage for user data and secrets,
+organized by context and environment. Two kinds of state are both standard:
 
 - **User settings and secrets**: accounts, tokens, sessions, and per-user configuration. Store these
   in a per-user context. `Context` encrypts secrets at rest (via `Sodium`), so a user can resume work
@@ -60,8 +61,11 @@ rather than inventing bespoke storage. Two kinds of state are both standard:
 - **Module settings**: module-wide defaults, endpoints, and feature flags that are not tied to a
   single user. Store these in a module-scoped context.
 
-Persisting both through `Context` gives every integration module the same, discoverable settings
-model, and keeps secrets out of source, logs, and plain files.
+Your module must expose functions and object types so users can target specific contexts and
+environments. Users need to be able to read from, write to, and manage contexts programmatically,
+selecting which environment or context their functions operate against. Persisting both through
+`Context` gives every integration module the same, discoverable settings model and keeps secrets
+out of source, logs, and plain files.
 
 ## Data modules
 
