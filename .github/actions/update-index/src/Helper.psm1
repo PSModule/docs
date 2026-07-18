@@ -92,22 +92,51 @@ function Update-MDSection {
 
         # The new content to insert between the section markers.
         [Parameter()]
-        [string] $Content
+        [string] $Content,
+
+        # Skip update when the target file or section markers are missing.
+        [Parameter()]
+        [switch] $SkipIfMissing
     )
 
     $startSegment = "<!-- $Name`_START -->"
     $endSegment = "<!-- $Name`_END -->"
+
+    if (-not (Test-Path -Path $Path)) {
+        if ($SkipIfMissing) {
+            Write-Warning "[$Name] Skipping update because target file was not found: $Path"
+            return
+        }
+
+        throw "[$Name] Target file was not found: $Path"
+    }
+
     $currentContent = Get-Content -Path $Path
     $startIndex = $currentContent.IndexOf($startSegment)
     $endIndex = $currentContent.IndexOf($endSegment)
 
     if ($startIndex -lt 0) {
+        if ($SkipIfMissing) {
+            Write-Warning "[$Name] Skipping update because the start marker was not found in: $Path"
+            return
+        }
+
         throw "[$Name] The start comment segment was not found in the file."
     }
     if ($endIndex -lt 0) {
+        if ($SkipIfMissing) {
+            Write-Warning "[$Name] Skipping update because the end marker was not found in: $Path"
+            return
+        }
+
         throw "[$Name] The end comment segment was not found in the file."
     }
     if ($endIndex -lt $startIndex) {
+        if ($SkipIfMissing) {
+            Write-Warning "[$Name] Skipping update because marker order is invalid in: $Path"
+            return
+        }
+
         throw "[$Name] The end comment segment was found before the start comment segment."
     }
 
@@ -173,7 +202,7 @@ function Update-ActionList {
 $actionTableRows</table>
 
 "@
-    Update-MDSection -Path '.\src\docs\GitHub-Actions\index.md' -Name 'ACTION_LIST' -Content $actionTable
+    Update-MDSection -Path '.\src\docs\GitHub-Actions\index.md' -Name 'ACTION_LIST' -Content $actionTable -SkipIfMissing
 }
 
 function Update-ModuleList {
@@ -229,7 +258,7 @@ $moduleTableRows</table>
 
 "@
 
-    Update-MDSection -Path '.\src\docs\PowerShell\Modules\index.md' -Name 'MODULE_LIST' -Content $moduleTable
+    Update-MDSection -Path '.\src\docs\PowerShell\Modules\index.md' -Name 'MODULE_LIST' -Content $moduleTable -SkipIfMissing
 }
 
 function Update-FunctionAppList {
@@ -289,5 +318,5 @@ $functionAppTableRows</table>
 
 "@
 
-    Update-MDSection -Path '.\src\docs\PowerShell\FunctionApps\index.md' -Name 'FUNCTIONAPP_LIST' -Content $functionAppTable
+    Update-MDSection -Path '.\src\docs\PowerShell\FunctionApps\index.md' -Name 'FUNCTIONAPP_LIST' -Content $functionAppTable -SkipIfMissing
 }
