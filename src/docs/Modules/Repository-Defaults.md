@@ -199,6 +199,8 @@ Dependabot PRs still go through normal review. Automated dependency updates are 
 
 A module README is a start page, not the command reference or full manual. It brings a reader in, answers the first questions, and sends them to the right documentation surface.
 
+Making the README shorter must not delete unique information. The README is published as the module's landing page on the documentation site (for example `psmodule.io/<ModuleName>`); the per-command reference is generated separately from comment-based help. So the README is often the only published home for prerequisites, platform and dependency notes, authentication and setup guidance, operational behavior such as caching, state, or update and versioning semantics, and upstream attribution. Trimming the README must preserve that content: keep it on the landing page, or move it only to another surface that also publishes (a command group's overview page under `src/functions/public/<Group>/<Group>.md`, or comment-based help). Only remove content that is genuinely duplicated by the generated command reference.
+
 The README answers these questions, in this order:
 
 | Question | Module README responsibility |
@@ -252,15 +254,25 @@ Use PowerShell help and command discovery for module details:
 
 ```powershell
 Get-Command -Module <ModuleName>
-Get-Help -Name 'CommandName' -Examples
+Get-Help -Name <Command> -Examples
 ```
 ````
 
-README pages should include a short capabilities or usage showcase before the documentation link when the module has working capabilities. Keep that section focused on discovery and marketing: show representative outcomes, not every command, parameter, or edge case.
+In the documentation examples, replace `<Command>` with a real command exported by the module, for example `Get-Help -Name Get-GitHubRepository -Examples`, so the snippet runs as written. Do not ship placeholder tokens such as `'CommandName'` or `<CommandName>` as if they were runnable commands.
+
+Implemented modules must include the capabilities or usage showcase before the documentation link. Keep it focused on discovery: show one to three representative outcomes, not every command, parameter, or edge case. A landing page with only an installation snippet and a documentation link is not enough for a module that has working commands.
+
+Keep, trim, or relocate content — do not delete it:
+
+- **Keep on the landing page:** the overview, prerequisites and requirements (PowerShell version, supported platforms, module or native dependencies), installation, the capabilities showcase, and the short operational notes a reader needs before first use.
+- **Trim:** exhaustive command inventories, parameter tables, and repetitive examples that differ only by a parameter. These come from comment-based help — point to `Get-Help` and the documentation site instead of restating them.
+- **Relocate only to a published home — never drop:** long-form guides and unique conceptual content (authentication and setup walkthroughs, deep operational detail, end-to-end scenarios) may move out of the README only into a surface that is actually published: a command group's overview page under `src/functions/public/<Group>/<Group>.md`, or comment-based help. A bare top-level `docs/` folder is not published by the current docs build, so moving content there drops it from the site. When there is no published home for it yet, keep the full content in the README. A longer landing page is acceptable and expected for feature-rich modules; do not shorten by deleting.
+
+Retain upstream attribution and licensing context. Credit, acknowledgements, donation notes, and third-party license notices for wrapped or bundled work must stay in the README, or move to a clearly linked place. The rule below about community and policy sections does not apply to attribution the project is expected to carry.
 
 README pages should not duplicate generated command documentation. Do not add full command inventories, parameter tables, or long reference sections when those details are already produced from comment-based help.
 
-Do not add a community-file or policy link section by default. Readers can find standard repository files such as `LICENSE`, `CONTRIBUTING.md`, `SECURITY.md`, and `CODE_OF_CONDUCT.md` through GitHub conventions and the repository file tree. Link them only when the module has an unusual rule the user must know before using it.
+Do not add a community-file or policy link section by default. Readers can find standard repository files such as `LICENSE`, `CONTRIBUTING.md`, `SECURITY.md`, and `CODE_OF_CONDUCT.md` through GitHub conventions and the repository file tree. Link them only when the module has an unusual rule the user must know before using it, or when it carries required upstream attribution.
 
 ## Placeholder and in-progress repositories
 
@@ -295,11 +307,15 @@ Before opening a README-only PR, check that the README follows the default and d
 ```powershell
 Select-String -Path README.md -SimpleMatch -Pattern 'Greet-Entity', 'PSModuleTemplate', 'YourModuleName'
 Select-String -Path README.md -SimpleMatch -Pattern '{{ NAME }}', '{{ DESCRIPTION }}'
-Select-String -Path README.md -Pattern '^## Commands$'
+Select-String -Path README.md -SimpleMatch -Pattern '<Command>', '<CommandName>', "-Name 'CommandName'"
+Select-String -Path README.md -Pattern '^## (Commands|Capabilities)$'
+Select-String -Path README.md -Pattern '^Install-Module\b'
 git diff --check -- README.md
 ```
 
 `Template-PSModule` is the exception: it intentionally keeps `{{ NAME }}` and `{{ DESCRIPTION }}` tokens because those are template inputs.
+
+For an implemented module, also confirm the README keeps a capabilities or usage showcase and that any unique content removed from the previous version — prerequisites, setup or authentication guidance, operational notes, or upstream attribution — was relocated to `docs/`, `examples/`, or comment-based help rather than deleted.
 
 ## Documentation ownership
 
@@ -312,7 +328,7 @@ Use these defaults:
 - Realistic end-to-end scenarios live in `examples/`.
 - Product docs beyond generated command help live under `docs/` and publish through GitHub Pages or the initiative's module documentation site.
 - README capability examples are short, representative, and user-facing.
-- README pages stay short and stable.
+- README pages stay focused and stable, and keep the narrative content that has no other published home.
 
 This keeps the repository landing page readable and prevents drift between README content, PowerShell help, and generated documentation.
 
