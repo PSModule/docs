@@ -68,7 +68,7 @@ Module repositories use the PSModule framework layout:
 | `SECURITY.md` | Security support policy and private vulnerability reporting instructions. |
 | `SUPPORT.md` | Support expectations and where users ask for help. |
 | `CODE_OF_CONDUCT.md` | Community conduct expectations. |
-| `AGENTS.md` | Agent onboarding entry point. Points agents to the canonical guidance in `PSModule/docs`. |
+| `AGENTS.md` | Agent onboarding entry point. Points agents to the PSModule and MSX documentation for the why, how, and what. |
 | `CLAUDE.md` | Claude Code entry point. Imports `AGENTS.md` so Claude reads the same instructions. |
 | `.github/copilot-instructions.md` | VS Code and GitHub Copilot repository instructions. Points to the same documentation. |
 | `.github/PSModule.yml` | Module workflow configuration overrides. |
@@ -111,7 +111,7 @@ Required baseline files for module repositories:
 | `SECURITY.md` | Private vulnerability reporting and latest-version support policy. |
 | `SUPPORT.md` | Support channel and issue-routing expectations. |
 | `CODE_OF_CONDUCT.md` | Community participation rules. |
-| `AGENTS.md` | Cross-tool agent instructions pointing to the canonical guidance in `PSModule/docs`. |
+| `AGENTS.md` | Cross-tool agent instructions pointing to the PSModule and MSX documentation. |
 | `CLAUDE.md` | Claude Code entry point that imports `AGENTS.md`. |
 | `.github/copilot-instructions.md` | VS Code and GitHub Copilot repository instructions pointing to the documentation. |
 | `.github/dependabot.yml` | Supply-chain maintenance for GitHub Actions and PowerShell dependencies. |
@@ -130,11 +130,11 @@ Each repository must stand on its own. It carries its own copy of every file abo
 
 ## Agent onboarding files
 
-Every repository must be usable by an agent that has never seen it before, without special configuration. Each repository carries its own agent entry points that point to the authoritative documentation instead of restating it:
+Every repository must be usable by an agent that has never seen it before, without special configuration. Each repository carries its own agent entry points that *point to* the authoritative documentation instead of restating it:
 
-- `AGENTS.md`: the cross-tool entry point, read by the GitHub Copilot coding agent, VS Code, and other AGENTS.md-aware tools. It names what the repository is in a line or two and points to the canonical agent guidance in [`PSModule/docs`](https://github.com/PSModule/docs).
-- `CLAUDE.md`: a thin file that imports `AGENTS.md` with `@AGENTS.md` so Claude Code reads the same instructions. Claude-specific notes, if any, go below the import.
-- `.github/copilot-instructions.md`: repository instructions for VS Code and GitHub Copilot that point to the same documentation.
+- `AGENTS.md` — the cross-tool entry point, read by the GitHub Copilot coding agent, VS Code, and other AGENTS.md-aware tools. It names what the repository is in a line or two and points to the PSModule documentation (`https://psmodule.io`, source in [`PSModule/docs`](https://github.com/PSModule/docs)) for the module's why/how/what, and to the MSX documentation (`https://msxorg.github.io/docs`, source in [`MSXOrg/docs`](https://github.com/MSXOrg/docs)) for organization-level principles and ways of working.
+- `CLAUDE.md` — a thin file that imports `AGENTS.md` with `@AGENTS.md` so Claude Code reads the same instructions. Claude-specific notes, if any, go below the import.
+- `.github/copilot-instructions.md` — repository instructions for VS Code and GitHub Copilot that point to the same documentation.
 
 These files are the agent equivalent of the README: pointers, not copies. Keep them short so the linked documentation stays the single source of truth. Like the other governance files, they live in the repository itself so it can stand on its own.
 
@@ -199,7 +199,7 @@ Dependabot PRs still go through normal review. Automated dependency updates are 
 
 A module README is a start page, not the command reference or full manual. It brings a reader in, answers the first questions, and sends them to the right documentation surface.
 
-Making the README shorter must not delete unique information. The README is published as the module's landing page on the documentation site (for example `psmodule.io/<ModuleName>`); the per-command reference is generated separately from comment-based help. So the README is often the only published home for prerequisites, platform and dependency notes, authentication and setup guidance, operational behavior such as caching, state, or update and versioning semantics, and upstream attribution. Trimming the README must preserve that content: keep it on the landing page, or move it only to another surface that also publishes (a command group's overview page under `src/functions/public/<Group>/<Group>.md`, comment-based help, or published documentation in `docs/`). Only remove content that is genuinely duplicated by the generated command reference.
+Making the README shorter must not delete unique information. The README is published as the module's landing page on the documentation site (for example `psmodule.io/<ModuleName>`); the per-command reference is generated separately from comment-based help. So the README is often the only published home for prerequisites, platform and dependency notes, authentication and setup guidance, operational behavior such as caching, state, or update and versioning semantics, and upstream attribution. Trimming the README must preserve that content: keep it on the landing page, or move it only to another surface that also publishes (a command group's overview page under `src/functions/public/<Group>/<Group>.md`, or comment-based help). Only remove content that is genuinely duplicated by the generated command reference.
 
 The README answers these questions, in this order:
 
@@ -208,7 +208,7 @@ The README answers these questions, in this order:
 | What is it? | Name the module and define its scope in one short paragraph. |
 | Why should I care? | State the value or kind of task the module makes easier. |
 | How do I get it? | Show the PowerShell Gallery install and import commands. |
-| How does it work? | Show one to three representative capabilities or usage examples. |
+| How does it work? | Show one to three representative usage examples. |
 | How do I get more info? | Link to generated module documentation and PowerShell help. |
 
 Module installation examples must use PSResourceGet:
@@ -235,11 +235,11 @@ Install-PSResource -Name <ModuleName>
 Import-Module -Name <ModuleName>
 ```
 
-## Capabilities
+## Usage
 
-Use this section as a short showcase and introduction to how the module works. Show the most important things the module makes possible with one to three realistic examples.
+Use this section as a short showcase and introduction to how the module works. Show the most important things the module makes possible with one to three realistic examples; `### Example: <scenario>` subsections are fine when you have more than one.
 
-The goal is discovery and marketing, not exhaustive command documentation. A reader should understand why the module exists and what kind of tasks it helps with.
+The goal is discovery, not exhaustive command documentation. A reader should understand why the module exists and what kind of tasks it helps with.
 
 ```powershell
 # Replace this with a real example that demonstrates the module's value.
@@ -260,19 +260,19 @@ Get-Help -Name <Command> -Examples
 
 In the documentation examples, replace `<Command>` with a real command exported by the module, for example `Get-Help -Name Get-GitHubRepository -Examples`, so the snippet runs as written. Do not ship placeholder tokens such as `'CommandName'` or `<CommandName>` as if they were runnable commands.
 
-Implemented modules must include the capabilities or usage showcase before the documentation link. Keep it focused on discovery: show one to three representative outcomes, not every command, parameter, or edge case. A landing page with only an installation snippet and a documentation link is not enough for a module that has working commands.
+Implemented modules must include the `## Usage` showcase before the documentation link. Keep it focused on discovery: show one to three representative outcomes, not every command, parameter, or edge case. A landing page with only an installation snippet and a documentation link is not enough for a module that has working commands. Do not title this section `## Capabilities`; use `## Usage` (or `## Examples`).
 
 Keep, trim, or relocate content — do not delete it:
 
-- **Keep on the landing page:** the overview, prerequisites and requirements (PowerShell version, supported platforms, module or native dependencies), installation, the capabilities showcase, and the short operational notes a reader needs before first use.
+- **Keep on the landing page:** the overview, prerequisites and requirements (PowerShell version, supported platforms, module or native dependencies), installation, the usage showcase, and the short operational notes a reader needs before first use.
 - **Trim:** exhaustive command inventories, parameter tables, and repetitive examples that differ only by a parameter. These come from comment-based help — point to `Get-Help` and the documentation site instead of restating them.
-- **Relocate only to a published home — never drop:** long-form guides and unique conceptual content (authentication and setup walkthroughs, deep operational detail, end-to-end scenarios) may move out of the README only into a surface that is actually published: a command group's overview page under `src/functions/public/<Group>/<Group>.md`, comment-based help, or published documentation in `docs/` or `examples/`. Only relocate to unpublished areas if there is no published home for it yet; keep the full content in the README to ensure it reaches users. A longer landing page is acceptable and expected for feature-rich modules; do not shorten by deleting.
+- **Relocate only to a published home — never drop:** long-form guides and unique conceptual content (authentication and setup walkthroughs, deep operational detail, end-to-end scenarios) may move out of the README only into a surface that is actually published: a command group's overview page under `src/functions/public/<Group>/<Group>.md`, or comment-based help. A bare top-level `docs/` folder is not published by the current docs build, so moving content there drops it from the site. When there is no published home for it yet, keep the full content in the README. A longer landing page is acceptable and expected for feature-rich modules; do not shorten by deleting.
 
 Retain upstream attribution and licensing context. Credit, acknowledgements, donation notes, and third-party license notices for wrapped or bundled work must stay in the README, or move to a clearly linked place. The rule below about community and policy sections does not apply to attribution the project is expected to carry.
 
 README pages should not duplicate generated command documentation. Do not add full command inventories, parameter tables, or long reference sections when those details are already produced from comment-based help.
 
-Do not add a community-file or policy link section by default. Readers can find standard repository files such as `LICENSE`, `CONTRIBUTING.md`, `SECURITY.md`, and `CODE_OF_CONDUCT.md` through GitHub conventions and the repository file tree. Link them only when the module has an unusual rule the user must know before using it, or when it carries required upstream attribution.
+Do not add a community-file, policy, or Contributing link section to the README by default, and do not add a `## Contributing` section. Each repository carries its own `CONTRIBUTING.md`, `SECURITY.md`, `SUPPORT.md`, and `CODE_OF_CONDUCT.md`; readers and tools find them through the repository file tree and GitHub renders them in its UI. The README links or restates them only when the module has an unusual rule the user must know before using it, or when it carries required upstream attribution.
 
 ## Placeholder and in-progress repositories
 
@@ -307,7 +307,7 @@ Before opening a README-only PR, check that the README follows the default and d
 ```powershell
 Select-String -Path README.md -SimpleMatch -Pattern 'Greet-Entity', 'PSModuleTemplate', 'YourModuleName'
 Select-String -Path README.md -SimpleMatch -Pattern '{{ NAME }}', '{{ DESCRIPTION }}'
-Select-String -Path README.md -SimpleMatch -Pattern '<Command>', '<CommandName>', "-Name 'CommandName'"
+Select-String -Path README.md -SimpleMatch -Pattern "-Name 'CommandName'", '<CommandName>'
 Select-String -Path README.md -Pattern '^## (Commands|Capabilities)$'
 Select-String -Path README.md -Pattern '^Install-Module\b'
 git diff --check -- README.md
@@ -315,7 +315,7 @@ git diff --check -- README.md
 
 `Template-PSModule` is the exception: it intentionally keeps `{{ NAME }}` and `{{ DESCRIPTION }}` tokens because those are template inputs.
 
-For an implemented module, also confirm the README keeps a capabilities or usage showcase and that any unique content removed from the previous version — prerequisites, setup or authentication guidance, operational notes, or upstream attribution — was relocated to `docs/`, `examples/`, or comment-based help rather than deleted.
+For an implemented module, also confirm the README keeps a `## Usage` showcase and that any unique content removed from the previous version — prerequisites, setup or authentication guidance, operational notes, or upstream attribution — was kept on the landing page or relocated to a published home (`src/functions/public/<Group>/<Group>.md` or comment-based help) rather than deleted. Repository-only locations such as `examples/` are not published on their own, so content moved there must still be linked from the README.
 
 ## Documentation ownership
 
