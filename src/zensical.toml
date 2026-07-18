@@ -13,57 +13,30 @@ extra_css = ["assets/stylesheets/extra.css"]
 extra_javascript = [
   "https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js",
   "assets/javascripts/tablesort.js",
+  "assets/javascripts/abbreviation-preview.js",
 ]
 watch = ["includes"]
 nav = [
-  {"PowerShell" = [
-    "PowerShell/index.md",
-    {"Standard" = [
-      "PowerShell/Standard/index.md",
-      {"Code Layout" = "PowerShell/Standard/Code-Layout.md"},
-      {"Naming" = "PowerShell/Standard/Naming.md"},
-      {"Function Structure" = "PowerShell/Standard/Function-Structure.md"},
-      {"Documentation" = "PowerShell/Standard/Documentation.md"},
-      {"Readability" = "PowerShell/Standard/Readability.md"},
-      {"Control Flow" = "PowerShell/Standard/Control-Flow.md"},
-      {"Output and Errors" = "PowerShell/Standard/Output-and-Errors.md"},
-      {"Performance" = "PowerShell/Standard/Performance.md"},
-      {"Testing" = "PowerShell/Standard/Testing.md"},
-      {"Security" = "PowerShell/Standard/Security.md"},
+  {"Modules" = [
+    "Modules/index.md",
+    {"Repository Defaults" = "Modules/Repository-Defaults.md"},
+    {"Standards" = "Modules/Standards.md"},
+    {"Test Specification" = "Modules/Test-Specification.md"},
+    {"Versioning" = "Modules/Versioning.md"},
+    {"Catalog" = [
+      "Modules/Catalog/index.md",
     ]},
-    {"Modules" = [
-      "PowerShell/Modules/index.md",
-      {"Repository Defaults" = "PowerShell/Modules/Repository-Defaults.md"},
-      {"Standards" = "PowerShell/Modules/Standards.md"},
-      {"Test Specification" = "PowerShell/Modules/Test-Specification.md"},
-      {"Versioning" = "PowerShell/Modules/Versioning.md"},
+    {"Process-PSModule" = [
+      "Modules/Process-PSModule/index.md",
+      {"Repository Structure" = "Modules/Process-PSModule/repository-structure.md"},
+      {"Module Anatomy" = "Modules/Process-PSModule/module-anatomy.md"},
+      {"Build, Test, Pack, Publish" = "Modules/Process-PSModule/build-test-pack-publish.md"},
+      {"Template Quickstart" = "Modules/Process-PSModule/template-quickstart.md"},
     ]},
-    {"Scripts" = [
-      "PowerShell/Scripts/index.md",
-      {"Standards" = "PowerShell/Scripts/Standards.md"},
+    {"Dashboard Extension" = [
+      "Modules/Dashboard-Extension/index.md",
+      {"Spec" = "Modules/Dashboard-Extension/spec.md"},
     ]},
-    {"DSC" = [
-      "PowerShell/DSC/index.md",
-    ]},
-    {"Function Apps" = [
-      "PowerShell/FunctionApps/index.md",
-    ]},
-  ]},
-  {"GitHub Actions" = [
-    "GitHub-Actions/index.md",
-    {"Standards" = "GitHub-Actions/Standards.md"},
-  ]},
-  {"Style Guides" = [
-    "Style-Guides/index.md",
-    {"GitHub Actions" = "Style-Guides/GitHub-Actions.md"},
-    {"Markdown" = "Style-Guides/Markdown.md"},
-    {"PowerShell" = "Style-Guides/PowerShell.md"},
-  ]},
-  {"Solutions" = [
-    "Solutions/index.md",
-    {"Infusing GitHub with PowerShell" = "Solutions/Infusing-GitHub-with-PowerShell.md"},
-    {"GitHub Copilot Customization" = "Solutions/GitHub-Copilot-Customization-Architecture.md"},
-    {"Self-Service System" = "Solutions/Self-service-system.md"},
   ]},
   {"Dictionary" = [
     "Dictionary/index.md",

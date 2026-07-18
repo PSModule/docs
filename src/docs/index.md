@@ -33,9 +33,19 @@ We empower PowerShell-savvy developers to effortlessly transform their ideas int
 
 Where we are headed is tracked as [objectives and initiatives](https://msxorg.github.io/docs/Ways-of-Working/Goal-Setting/).
 
-## Products and projects we focus on
+## What this docs site now owns
 
-- [PowerShell Modules](PowerShell/Modules/index.md)
-- [PowerShell Scripts](PowerShell/Scripts/index.md)
-- [Function Apps](PowerShell/FunctionApps/index.md)
-- [GitHub Actions](GitHubActions/index.md)
+This site is now focused on PSModule-org specific documentation:
+
+- [Modules](Modules/index.md): module catalog and module-specific standards
+- [Process-PSModule](Modules/Process-PSModule/index.md): how modules are structured and built
+- [Template onboarding](Modules/Process-PSModule/template-quickstart.md): how to start from the template
+- [Dashboard extension](Modules/Dashboard-Extension/index.md): module telemetry documentation spec
+
+## Cross-org guidance has moved
+
+Cross-org standards and reusable solution documentation are now canonical in [MSXOrg/docs](https://msxorg.github.io/docs/):
+
+- [Coding Standards](https://msxorg.github.io/docs/Coding-Standards/)
+- [Capabilities](https://msxorg.github.io/docs/Capabilities/)
+- [Frameworks](https://msxorg.github.io/docs/Frameworks/)

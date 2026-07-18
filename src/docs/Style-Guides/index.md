@@ -3,14 +3,12 @@ title: Style Guides
 description: Coding style guidelines for PSModule repositories.
 ---
 
-## Style guides
+# Style Guides (Moved)
 
-These style guides define the coding conventions that keep PSModule repositories consistent, readable, and easy to maintain. They are the single source of truth for how we write code and documentation, and they back the editor instructions and review automation used across the organization.
+Style-guide content is now canonical in MSXOrg/docs.
 
-Each guide states the rules, shows good and bad examples, and explains how to apply them.
+Use:
 
-| Guide | What it covers |
-| ----- | -------------- |
-| [GitHub Actions](GitHub-Actions.md) | Workflow and composite action authoring, naming, and security |
-| [Markdown](Markdown.md) | Headings, lists, code blocks, links, tables, and formatting |
-| [PowerShell](PowerShell.md) | Brace style, naming, parameters, error handling, and testing |
+- [MSX Coding Standards](https://msxorg.github.io/docs/Coding-Standards/)
+
+This page is retained as a migration pointer only.
