@@ -86,8 +86,8 @@ Always ship both directions so data can round-trip between the format and the ob
 
 | Verb pattern | Purpose |
 | ------------ | ------- |
-| `ConvertFrom-<Format>` | Format-specific text/representation -> `[PSCustomObject]` / `[hashtable]` |
-| `ConvertTo-<Format>` | Object -> format-specific text/representation |
+| `ConvertFrom-<Format>` | Format-specific text/representation → `[PSCustomObject]` / `[hashtable]` |
+| `ConvertTo-<Format>` | `[PSCustomObject]` / `[hashtable]` → format-specific text/representation |
 | `Import-<Noun>` | Read from a file or store into objects |
 | `Export-<Noun>` | Write objects to a file or store |
 | `Format-<Noun>` | Produce a normalized or pretty rendering |
