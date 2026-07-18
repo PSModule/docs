@@ -17,7 +17,7 @@ If you find a problem, fix it if it's small; otherwise, register it as an issue 
 
 To install:
  Clone the repos in the users home folder under a sub-folder named `.msx/PSModule`.
-- Set configs locally to each of these repos using the github username and email.
+- Set configs locally to each of these repos using the GitHub username and email.
 
 ## Working with the ecosystem
 
