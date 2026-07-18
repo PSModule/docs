@@ -140,22 +140,30 @@ These files are the agent equivalent of the README: pointers, not copies. Keep t
 
 ## Managed file distribution
 
-Shared files should be treated as managed files. The current distribution service is [`PSModule/Distributor`](https://github.com/PSModule/Distributor). It keeps source file sets under `Repos/{Type}/{Selection}/` and syncs those files into repositories through pull requests.
+Shared repository files are managed through [`PSModule/Distributor`](https://github.com/PSModule/Distributor). Distributor is the source of truth for managed file content and file-set membership.
 
-The current Distributor model is subscription-based:
+Managed-file distribution follows this contract:
 
-- `Type` is an organization repository custom property that maps a repository to a type folder such as `Module` or `Action`.
-- `SubscribeTo` is an organization repository custom property that selects file sets such as `dependabot.yml`, `Linter Settings`, `PSModule Settings`, `CODEOWNERS`, `License`, `.gitattributes`, and `.gitignore`.
-- Sync changes are delivered through a `managed-files/update` branch and a `⚙️ [Maintenance]: Sync managed files` pull request.
-- Managed files are overwritten by the source file set. Local edits to managed files should be made in Distributor, not directly in the receiving repository.
-- Removing a file from a Distributor file set does not delete the previously distributed file from target repositories; cleanup is explicit.
+- `Type` maps a repository to its file-set root (for example `Module` or `Action`).
+- `SubscribeTo` declares which optional managed file sets the repository receives.
+- Organization-wide mandatory file sets define non-optional governance and supply-chain files for each applicable repository type.
+- Distributor delivers changes through a `managed-files/update` branch and a `⚙️ [Maintenance]: Sync managed files` pull request.
+- Receiving repositories treat managed files as generated artifacts from Distributor. Local edits in the receiving repository are replaced on the next sync and must be made in Distributor instead.
+- Removing a file from a file set does not implicitly delete previously synced copies; deletion is an explicit managed change.
 
-Two follow-up Distributor capabilities define the desired direction:
+This page defines what files must exist in repositories. Distributor defines how those files are distributed and kept aligned.
 
-- **Global file sets** should allow common file sets such as `.gitattributes`, `.gitignore`, and `License` to be defined once and made available to all repository types while still requiring subscription.
-- **Mandatory file sets** should allow organization-critical files such as `SECURITY.md`, `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, and supply-chain configuration to be pushed to applicable repositories without each repository having to subscribe manually.
+### Migration for existing repositories
 
-Until mandatory file sets exist, repository owners are still responsible for ensuring the required common files exist. Distributor is the preferred implementation mechanism; this document is the standard that says what must exist and why.
+Repositories that still reflect older distribution behavior should be aligned to this contract:
+
+1. Set or correct repository `Type` and `SubscribeTo` properties.
+2. Ensure mandatory governance and supply-chain files from this standard exist in the repository.
+3. Move any intended local edits in managed files into Distributor source file sets.
+4. Sync from Distributor and merge the `managed-files/update` pull request.
+5. Remove unmanaged duplicates or stale files explicitly when they are no longer part of an active file set.
+
+After migration, the repository keeps the required files from this standard, and managed-file content changes are made through Distributor-first updates.
 
 ## Supply-chain defaults
 
