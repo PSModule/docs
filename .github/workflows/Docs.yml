@@ -7,7 +7,7 @@ on:
       - main
     paths:
       - src/**
-      - .github/scripts/**
+      - .github/actions/update-index/**
       - .github/workflows/Docs.yml
       - .github/workflows/Update-Index.yml
   pull_request:
@@ -68,12 +68,10 @@ jobs:
           persist-credentials: false
 
       - name: Update index
-        uses: PSModule/GitHub-Script@8083ec1f733f00357ee4d0db0c6056686e483bc0 # v1.9.0
+        uses: ./.github/actions/update-index
         with:
-          # Org-level shared secrets used across multiple repositories — no dedicated GitHub Environment needed.
           ClientID: ${{ secrets.SCRIBBLER_BOT_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
           PrivateKey: ${{ secrets.SCRIBBLER_BOT_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
-          Script: .github/scripts/main.ps1
 
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
