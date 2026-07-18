@@ -34,11 +34,20 @@ the HTTP method or the endpoint path. Map REST methods to verbs:
 
 Prefix the noun with the service's term of art (`GitHubRepository`, not `Repository`).
 
-### Transport stays private
+### Transport abstraction
 
-Public functions accept resolved inputs and typed objects; private helpers own the concrete
-`Invoke-RestMethod` / GraphQL / HTTP calls. This is the Dependency Inversion rule from
-[Standards](Standards.md#solid-applied) applied to the network boundary.
+Lower-level helpers own the concrete `Invoke-RestMethod` / GraphQL / HTTP calls. How you expose
+or hide this abstraction is a design choice:
+
+- **Private transport** (common): Keep REST, GraphQL, and HTTP helpers private. Public functions
+  accept resolved inputs and typed objects. This follows the Dependency Inversion rule from
+  [Standards](Standards.md#solid-applied) applied to the network boundary.
+- **Public transport**: Expose REST or GraphQL functions publicly for power users or module
+  composition.
+- **Public Context**: Expose the `Context` module as public so users can configure and manage
+  module state, secrets, and settings directly.
+
+Choose the strategy that best serves your module's audience.
 
 ### Use Context for user and module settings
 
