@@ -98,35 +98,18 @@ function Update-MDSection {
     $startSegment = "<!-- $Name`_START -->"
     $endSegment = "<!-- $Name`_END -->"
 
-    function Write-UpdateWarning {
-        param([string] $Message)
-
-        Write-Warning $Message
-        if ($env:GITHUB_ACTIONS -eq 'true') {
-            Write-Output "::warning::$Message"
-        }
-    }
-
-    if (-not (Test-Path -Path $Path)) {
-        Write-UpdateWarning "[$Name] Skipping update because target file was not found: $Path"
-        return
-    }
-
     $currentContent = Get-Content -Path $Path
     $startIndex = $currentContent.IndexOf($startSegment)
     $endIndex = $currentContent.IndexOf($endSegment)
 
     if ($startIndex -lt 0) {
-        Write-UpdateWarning "[$Name] Skipping update because the start marker was not found in: $Path"
-        return
+        throw "[$Name] The start comment segment was not found in the file."
     }
     if ($endIndex -lt 0) {
-        Write-UpdateWarning "[$Name] Skipping update because the end marker was not found in: $Path"
-        return
+        throw "[$Name] The end comment segment was not found in the file."
     }
     if ($endIndex -lt $startIndex) {
-        Write-UpdateWarning "[$Name] Skipping update because marker order is invalid in: $Path"
-        return
+        throw "[$Name] The end comment segment was found before the start comment segment."
     }
 
     $updatedContent = $currentContent[0..$startIndex] + $Content + $currentContent[($endIndex)..($currentContent.Length - 1)]

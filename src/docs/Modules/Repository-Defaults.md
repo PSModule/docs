@@ -68,7 +68,7 @@ Module repositories use the PSModule framework layout:
 | `SECURITY.md` | Security support policy and private vulnerability reporting instructions. |
 | `SUPPORT.md` | Support expectations and where users ask for help. |
 | `CODE_OF_CONDUCT.md` | Community conduct expectations. |
-| `AGENTS.md` | Agent onboarding entry point. Points agents to the PSModule and MSX documentation for the why, how, and what. |
+| `AGENTS.md` | Agent onboarding entry point. Points agents to the canonical guidance in `PSModule/docs`. |
 | `CLAUDE.md` | Claude Code entry point. Imports `AGENTS.md` so Claude reads the same instructions. |
 | `.github/copilot-instructions.md` | VS Code and GitHub Copilot repository instructions. Points to the same documentation. |
 | `.github/PSModule.yml` | Module workflow configuration overrides. |
@@ -111,7 +111,7 @@ Required baseline files for module repositories:
 | `SECURITY.md` | Private vulnerability reporting and latest-version support policy. |
 | `SUPPORT.md` | Support channel and issue-routing expectations. |
 | `CODE_OF_CONDUCT.md` | Community participation rules. |
-| `AGENTS.md` | Cross-tool agent instructions pointing to the PSModule and MSX documentation. |
+| `AGENTS.md` | Cross-tool agent instructions pointing to the canonical guidance in `PSModule/docs`. |
 | `CLAUDE.md` | Claude Code entry point that imports `AGENTS.md`. |
 | `.github/copilot-instructions.md` | VS Code and GitHub Copilot repository instructions pointing to the documentation. |
 | `.github/dependabot.yml` | Supply-chain maintenance for GitHub Actions and PowerShell dependencies. |
@@ -132,7 +132,7 @@ Each repository must stand on its own. It carries its own copy of every file abo
 
 Every repository must be usable by an agent that has never seen it before, without special configuration. Each repository carries its own agent entry points that point to the authoritative documentation instead of restating it:
 
-- `AGENTS.md`: the cross-tool entry point, read by the GitHub Copilot coding agent, VS Code, and other AGENTS.md-aware tools. It names what the repository is in a line or two and points to the PSModule documentation (`https://psmodule.io`, source in [`PSModule/docs`](https://github.com/PSModule/docs)) for the module's why/how/what, and to the MSX documentation (`https://msxorg.github.io/docs`, source in [`MSXOrg/docs`](https://github.com/MSXOrg/docs)) for organization-level principles and ways of working.
+- `AGENTS.md`: the cross-tool entry point, read by the GitHub Copilot coding agent, VS Code, and other AGENTS.md-aware tools. It names what the repository is in a line or two and points to the canonical agent guidance in [`PSModule/docs`](https://github.com/PSModule/docs).
 - `CLAUDE.md`: a thin file that imports `AGENTS.md` with `@AGENTS.md` so Claude Code reads the same instructions. Claude-specific notes, if any, go below the import.
 - `.github/copilot-instructions.md`: repository instructions for VS Code and GitHub Copilot that point to the same documentation.
 
