@@ -97,7 +97,6 @@ function Update-MDSection {
 
     $startSegment = "<!-- $Name`_START -->"
     $endSegment = "<!-- $Name`_END -->"
-
     $currentContent = Get-Content -Path $Path
     $startIndex = $currentContent.IndexOf($startSegment)
     $endIndex = $currentContent.IndexOf($endSegment)
