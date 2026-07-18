@@ -229,7 +229,7 @@ $moduleTableRows</table>
 
 "@
 
-    Update-MDSection -Path '.\src\docs\PowerShell\Modules\index.md' -Name 'MODULE_LIST' -Content $moduleTable
+    Update-MDSection -Path '.\src\docs\Modules\Catalog\index.md' -Name 'MODULE_CATALOG' -Content $moduleTable
 }
 
 function Update-FunctionAppList {
