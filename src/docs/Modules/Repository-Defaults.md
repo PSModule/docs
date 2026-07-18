@@ -15,6 +15,8 @@ They do not apply directly to:
 - Template repositories other than `Template-PSModule`.
 - Test, archive, service, or infrastructure repositories that are not published as module artifacts.
 
+Two baseline expectations still apply to every PSModule repository, including the types listed above. Each repository stands on its own: it carries its own governance and community files instead of relying on the organization `.github` fallback, and each repository ships the [agent onboarding files](#agent-onboarding-files) so an agent can work in it without prior context. What differs by type is the concrete file set and layout: the required files, README shape, and framework wiring on the rest of this page are module defaults, and non-module repositories keep only the equivalent baseline appropriate to their own type. This repository, `PSModule/docs`, follows those two baseline expectations itself.
+
 Each initiative should keep its own repository standards in its central documentation repository. For the PSModule organization, this repository is the source of truth.
 
 ## Repository creation
@@ -62,10 +64,13 @@ Module repositories use the PSModule framework layout:
 | ---- | --------------- |
 | `README.md` | Concise start page for the module. |
 | `LICENSE` | Repository license. PSModule module repositories default to MIT unless a different license is explicitly decided. |
-| `CONTRIBUTING.md` | Contribution workflow or a repository-level pointer to the organization contribution guide. |
+| `CONTRIBUTING.md` | Self-contained contribution workflow for this repository. Does not rely on an organization-level fallback. |
 | `SECURITY.md` | Security support policy and private vulnerability reporting instructions. |
 | `SUPPORT.md` | Support expectations and where users ask for help. |
 | `CODE_OF_CONDUCT.md` | Community conduct expectations. |
+| `AGENTS.md` | Agent onboarding entry point. Points agents to the PSModule and MSX documentation for the why, how, and what. |
+| `CLAUDE.md` | Claude Code entry point. Imports `AGENTS.md` so Claude reads the same instructions. |
+| `.github/copilot-instructions.md` | VS Code and GitHub Copilot repository instructions. Points to the same documentation. |
 | `.github/PSModule.yml` | Module workflow configuration overrides. |
 | `.github/workflows/workflow.yml` | Reusable Process-PSModule workflow entry point. |
 | `.github/dependabot.yml` | Dependency and supply-chain update configuration. |
@@ -102,10 +107,13 @@ Required baseline files for module repositories:
 | ---- | ------------------ |
 | `README.md` | Repository landing page and evergreen context for humans and agents. |
 | `LICENSE` | Clear legal terms for reuse, packaging, and redistribution. |
-| `CONTRIBUTING.md` | Shared contribution workflow and expectations. |
+| `CONTRIBUTING.md` | Self-contained contribution workflow and expectations for this repository. |
 | `SECURITY.md` | Private vulnerability reporting and latest-version support policy. |
 | `SUPPORT.md` | Support channel and issue-routing expectations. |
 | `CODE_OF_CONDUCT.md` | Community participation rules. |
+| `AGENTS.md` | Cross-tool agent instructions pointing to the PSModule and MSX documentation. |
+| `CLAUDE.md` | Claude Code entry point that imports `AGENTS.md`. |
+| `.github/copilot-instructions.md` | VS Code and GitHub Copilot repository instructions pointing to the documentation. |
 | `.github/dependabot.yml` | Supply-chain maintenance for GitHub Actions and PowerShell dependencies. |
 | `.github/CODEOWNERS` | Review routing for source, docs, and GitHub workflow files. |
 | `.github/pull_request_template.md` | Consistent PR Manager-style PR descriptions and change classification. |
@@ -117,6 +125,18 @@ Required baseline files for module repositories:
 | `.gitignore` | Shared ignore rules. |
 
 Repositories can add local files, but they should not remove these baseline files unless the repository is explicitly outside the module standard.
+
+Each repository must stand on its own. It carries its own copy of every file above and does not depend on the organization `.github` fallback: that fallback is only surfaced in GitHub's web UI, and agents, linters, and local tooling do not read it.
+
+## Agent onboarding files
+
+Every repository must be usable by an agent that has never seen it before, without special configuration. Each repository carries its own agent entry points that point to the authoritative documentation instead of restating it:
+
+- `AGENTS.md`: the cross-tool entry point, read by the GitHub Copilot coding agent, VS Code, and other AGENTS.md-aware tools. It names what the repository is in a line or two and points to the PSModule documentation (`https://psmodule.io`, source in [`PSModule/docs`](https://github.com/PSModule/docs)) for the module's why/how/what, and to the MSX documentation (`https://msxorg.github.io/docs`, source in [`MSXOrg/docs`](https://github.com/MSXOrg/docs)) for organization-level principles and ways of working.
+- `CLAUDE.md`: a thin file that imports `AGENTS.md` with `@AGENTS.md` so Claude Code reads the same instructions. Claude-specific notes, if any, go below the import.
+- `.github/copilot-instructions.md`: repository instructions for VS Code and GitHub Copilot that point to the same documentation.
+
+These files are the agent equivalent of the README: pointers, not copies. Keep them short so the linked documentation stays the single source of truth. Like the other governance files, they live in the repository itself so it can stand on its own.
 
 ## Managed file distribution
 
