@@ -64,6 +64,12 @@ function Show-RepoList {
                 }
             }
         } | Sort-Object Type, Name
+        $reposByType = $repos | Group-Object Type | Sort-Object Name
+        Write-Host 'Repository type distribution:'
+        $reposByType | ForEach-Object {
+            Write-Host " - $($_.Name): $($_.Count)"
+        }
+        Write-Host 'Repository table preview:'
         $repos | Format-Table -AutoSize
     }
 
@@ -106,25 +112,28 @@ function Update-MDSection {
         [string] $Content
     )
 
-    $startSegment = "<!-- $Name`_START -->"
-    $endSegment = "<!-- $Name`_END -->"
-    $currentContent = Get-Content -Path $Path
-    $startIndex = $currentContent.IndexOf($startSegment)
-    $endIndex = $currentContent.IndexOf($endSegment)
+    LogGroup "Update markdown section [$Name] in [$Path]" {
+        $startSegment = "<!-- $Name`_START -->"
+        $endSegment = "<!-- $Name`_END -->"
+        $currentContent = Get-Content -Path $Path
+        $startIndex = $currentContent.IndexOf($startSegment)
+        $endIndex = $currentContent.IndexOf($endSegment)
 
-    if ($startIndex -lt 0) {
-        throw "[$Name] The start comment segment was not found in the file."
-    }
-    if ($endIndex -lt 0) {
-        throw "[$Name] The end comment segment was not found in the file."
-    }
-    if ($endIndex -lt $startIndex) {
-        throw "[$Name] The end comment segment was found before the start comment segment."
-    }
+        if ($startIndex -lt 0) {
+            throw "[$Name] The start comment segment was not found in the file."
+        }
+        if ($endIndex -lt 0) {
+            throw "[$Name] The end comment segment was not found in the file."
+        }
+        if ($endIndex -lt $startIndex) {
+            throw "[$Name] The end comment segment was found before the start comment segment."
+        }
 
-    $updatedContent = $currentContent[0..$startIndex] + $Content + $currentContent[($endIndex)..($currentContent.Length - 1)]
-    if ($PSCmdlet.ShouldProcess('Readme section', 'Update')) {
-        Set-Content -Path $Path -Value $updatedContent
+        $updatedContent = $currentContent[0..$startIndex] + $Content + $currentContent[($endIndex)..($currentContent.Length - 1)]
+        if ($PSCmdlet.ShouldProcess('Readme section', 'Update')) {
+            Set-Content -Path $Path -Value $updatedContent
+            Write-Host "Section [$Name] updated in [$Path]"
+        }
     }
 }
 
@@ -654,96 +663,115 @@ function Update-ModuleList {
         [object[]] $Repos = @()
     )
 
-    if ($Repos.Count -eq 0) {
-        $Repos = Show-RepoList
+    LogGroup 'Prepare module catalog generation' {
+        if ($Repos.Count -eq 0) {
+            Write-Host 'No repository list was provided, retrieving repositories now'
+            $Repos = Show-RepoList
+        }
+
+        $moduleCatalogTemplateVersion = 'v2'
+        $moduleCatalogTemplateFolder = Join-Path (Join-Path $PSScriptRoot '..') 'templates\module-catalog'
+        $moduleCatalogRowTemplatePath = Join-Path $moduleCatalogTemplateFolder "$moduleCatalogTemplateVersion-row.html"
+        $moduleCatalogTableTemplatePath = Join-Path $moduleCatalogTemplateFolder "$moduleCatalogTemplateVersion-table.html"
+        $moduleCatalogRowTemplate = Get-TemplateContent -Path $moduleCatalogRowTemplatePath
+        $moduleCatalogTableTemplate = Get-TemplateContent -Path $moduleCatalogTableTemplatePath
+
+        $moduleRepos = $Repos | Where-Object {
+            $_.Type -eq 'Module' -and $_.Owner -eq 'PSModule'
+        } | Sort-Object Name
+        Write-Host "Module repositories to process: $($moduleRepos.Count)"
+
+        $catalogFolderPath = Join-Path 'src\docs\Modules\Catalog' 'Repositories'
+        if (-not (Test-Path $catalogFolderPath)) {
+            Write-Host "Creating catalog folder [$catalogFolderPath]"
+            $null = New-Item -Path $catalogFolderPath -ItemType Directory
+        }
+
+        $processLatestVersion = Get-RepositoryVersion -Owner 'PSModule' -Name 'Process-PSModule'
+        Write-Host "Latest Process-PSModule version: $processLatestVersion"
+        $moduleTableRows = ''
     }
 
-    $moduleCatalogTemplateVersion = 'v2'
-    $moduleCatalogTemplateFolder = Join-Path (Join-Path $PSScriptRoot '..') 'templates\module-catalog'
-    $moduleCatalogRowTemplatePath = Join-Path $moduleCatalogTemplateFolder "$moduleCatalogTemplateVersion-row.html"
-    $moduleCatalogTableTemplatePath = Join-Path $moduleCatalogTemplateFolder "$moduleCatalogTemplateVersion-table.html"
-    $moduleCatalogRowTemplate = Get-TemplateContent -Path $moduleCatalogRowTemplatePath
-    $moduleCatalogTableTemplate = Get-TemplateContent -Path $moduleCatalogTableTemplatePath
-
-    $moduleRepos = $Repos | Where-Object {
-        $_.Type -eq 'Module' -and $_.Owner -eq 'PSModule'
-    } | Sort-Object Name
-
-    $catalogFolderPath = Join-Path 'src\docs\Modules\Catalog' 'Repositories'
-    if (-not (Test-Path $catalogFolderPath)) {
-        $null = New-Item -Path $catalogFolderPath -ItemType Directory
-    }
-
-    $processLatestVersion = Get-RepositoryVersion -Owner 'PSModule' -Name 'Process-PSModule'
-    $moduleTableRows = ''
-
+    $moduleRepoTotal = $moduleRepos.Count
+    $moduleRepoIndex = 0
     foreach ($repo in $moduleRepos) {
+        $moduleRepoIndex++
         $owner = [string](Get-PropertyValue -InputObject $repo -Names @('Owner') -Default 'PSModule')
         $name = [string](Get-PropertyValue -InputObject $repo -Names @('Name') -Default '')
         if ([string]::IsNullOrWhiteSpace($name)) {
+            Write-Host "Skipping module at index [$moduleRepoIndex] because the repository name is empty"
             continue
         }
 
-        $description = [string](Get-PropertyValue -InputObject $repo -Names @('Description') -Default 'No description available.')
-        if ([string]::IsNullOrWhiteSpace($description)) {
-            $description = 'No description available.'
+        LogGroup "Process module [$moduleRepoIndex/$moduleRepoTotal] [$owner/$name]" {
+            $description = [string](Get-PropertyValue -InputObject $repo -Names @('Description') -Default 'No description available.')
+            if ([string]::IsNullOrWhiteSpace($description)) {
+                $description = 'No description available.'
+            }
+
+            $defaultBranch = [string](Get-PropertyValue -InputObject $repo -Names @('DefaultBranch', 'default_branch') -Default 'main')
+            if ([string]::IsNullOrWhiteSpace($defaultBranch)) {
+                $defaultBranch = 'main'
+            }
+
+            Write-Host "Collecting metadata from branch [$defaultBranch]"
+            $readmeContent = Get-RepositoryReadmeContent -Owner $owner -Name $name
+            $aboutSummary = Get-MarkdownSummary -Markdown $readmeContent
+            if ([string]::IsNullOrWhiteSpace($aboutSummary)) {
+                $aboutSummary = $description
+            }
+
+            $titleSummary = ConvertTo-HtmlAttributeValue -Value $aboutSummary
+            $version = Get-RepositoryVersion -Owner $owner -Name $name
+            $processReference = Get-WorkflowReference -Owner $owner -Name $name -DefaultBranch $defaultBranch
+            $processStatus = Get-ProcessReferenceStatus -Reference $processReference -LatestVersion $processLatestVersion
+            $issues = Get-OpenItemCount -Owner $owner -Name $name -Type issue
+            $pullRequests = Get-OpenItemCount -Owner $owner -Name $name -Type pr
+            $stars = [int](Get-PropertyValue -InputObject $repo -Names @('Stars', 'stargazers_count', 'StargazersCount') -Default 0)
+
+            Write-Host "Version [$version], Process ref [$processReference], status [$processStatus]"
+            Write-Host "Open issues [$issues], open PRs [$pullRequests], stars [$stars]"
+
+            $modulePageFileName = "$name.md"
+            $modulePagePath = Join-Path $catalogFolderPath $modulePageFileName
+            $modulePageRelativeLink = "./Repositories/$modulePageFileName"
+
+            $moduleData = [pscustomobject]@{
+                Owner            = $owner
+                Name             = $name
+                Description      = $description
+                Version          = $version
+                ProcessReference = $processReference
+                ProcessStatus    = $processStatus
+                Issues           = $issues
+                PullRequests     = $pullRequests
+                Stars            = $stars
+                About            = $aboutSummary
+            }
+            New-ModuleCatalogPage -Path $modulePagePath -ModuleData $moduleData
+            Write-Host "Wrote repository page [$modulePagePath]"
+
+            $moduleTableRow = $moduleCatalogRowTemplate
+            $moduleTableRow = $moduleTableRow.Replace('{{ MODULE_PAGE_LINK }}', $modulePageRelativeLink)
+            $moduleTableRow = $moduleTableRow.Replace('{{ TITLE_SUMMARY }}', $titleSummary)
+            $moduleTableRow = $moduleTableRow.Replace('{{ NAME }}', $name)
+            $moduleTableRow = $moduleTableRow.Replace('{{ VERSION }}', $version)
+            $moduleTableRow = $moduleTableRow.Replace('{{ PROCESS_REFERENCE }}', $processReference)
+            $moduleTableRow = $moduleTableRow.Replace('{{ PROCESS_STATUS }}', $processStatus)
+            $moduleTableRow = $moduleTableRow.Replace('{{ OWNER }}', $owner)
+            $moduleTableRow = $moduleTableRow.Replace('{{ ISSUES }}', [string]$issues)
+            $moduleTableRow = $moduleTableRow.Replace('{{ PULL_REQUESTS }}', [string]$pullRequests)
+            $moduleTableRow = $moduleTableRow.Replace('{{ STARS }}', [string]$stars)
+            $moduleTableRows += $moduleTableRow.TrimEnd()
+            $moduleTableRows += [Environment]::NewLine
         }
-
-        $defaultBranch = [string](Get-PropertyValue -InputObject $repo -Names @('DefaultBranch', 'default_branch') -Default 'main')
-        if ([string]::IsNullOrWhiteSpace($defaultBranch)) {
-            $defaultBranch = 'main'
-        }
-
-        $readmeContent = Get-RepositoryReadmeContent -Owner $owner -Name $name
-        $aboutSummary = Get-MarkdownSummary -Markdown $readmeContent
-        if ([string]::IsNullOrWhiteSpace($aboutSummary)) {
-            $aboutSummary = $description
-        }
-
-        $titleSummary = ConvertTo-HtmlAttributeValue -Value $aboutSummary
-        $version = Get-RepositoryVersion -Owner $owner -Name $name
-        $processReference = Get-WorkflowReference -Owner $owner -Name $name -DefaultBranch $defaultBranch
-        $processStatus = Get-ProcessReferenceStatus -Reference $processReference -LatestVersion $processLatestVersion
-        $issues = Get-OpenItemCount -Owner $owner -Name $name -Type issue
-        $pullRequests = Get-OpenItemCount -Owner $owner -Name $name -Type pr
-        $stars = [int](Get-PropertyValue -InputObject $repo -Names @('Stars', 'stargazers_count', 'StargazersCount') -Default 0)
-
-        $modulePageFileName = "$name.md"
-        $modulePagePath = Join-Path $catalogFolderPath $modulePageFileName
-        $modulePageRelativeLink = "./Repositories/$modulePageFileName"
-
-        $moduleData = [pscustomobject]@{
-            Owner            = $owner
-            Name             = $name
-            Description      = $description
-            Version          = $version
-            ProcessReference = $processReference
-            ProcessStatus    = $processStatus
-            Issues           = $issues
-            PullRequests     = $pullRequests
-            Stars            = $stars
-            About            = $aboutSummary
-        }
-        New-ModuleCatalogPage -Path $modulePagePath -ModuleData $moduleData
-
-        $moduleTableRow = $moduleCatalogRowTemplate
-        $moduleTableRow = $moduleTableRow.Replace('{{ MODULE_PAGE_LINK }}', $modulePageRelativeLink)
-        $moduleTableRow = $moduleTableRow.Replace('{{ TITLE_SUMMARY }}', $titleSummary)
-        $moduleTableRow = $moduleTableRow.Replace('{{ NAME }}', $name)
-        $moduleTableRow = $moduleTableRow.Replace('{{ VERSION }}', $version)
-        $moduleTableRow = $moduleTableRow.Replace('{{ PROCESS_REFERENCE }}', $processReference)
-        $moduleTableRow = $moduleTableRow.Replace('{{ PROCESS_STATUS }}', $processStatus)
-        $moduleTableRow = $moduleTableRow.Replace('{{ OWNER }}', $owner)
-        $moduleTableRow = $moduleTableRow.Replace('{{ ISSUES }}', [string]$issues)
-        $moduleTableRow = $moduleTableRow.Replace('{{ PULL_REQUESTS }}', [string]$pullRequests)
-        $moduleTableRow = $moduleTableRow.Replace('{{ STARS }}', [string]$stars)
-        $moduleTableRows += $moduleTableRow.TrimEnd()
-        $moduleTableRows += [Environment]::NewLine
     }
 
-    $moduleTable = $moduleCatalogTableTemplate.Replace('{{ ROWS }}', $moduleTableRows.TrimEnd())
-
-    Update-MDSection -Path '.\src\docs\Modules\Catalog\index.md' -Name 'MODULE_CATALOG' -Content $moduleTable
+    LogGroup 'Write module catalog table to docs index' {
+        $moduleTable = $moduleCatalogTableTemplate.Replace('{{ ROWS }}', $moduleTableRows.TrimEnd())
+        Update-MDSection -Path '.\src\docs\Modules\Catalog\index.md' -Name 'MODULE_CATALOG' -Content $moduleTable
+        Write-Host 'Module catalog table update completed'
+    }
 }
 
 function Update-FunctionAppList {
