@@ -646,7 +646,7 @@ function Update-ModuleList {
 
     $catalogFolderPath = Join-Path 'src\docs\Modules\Catalog' 'Repositories'
     if (-not (Test-Path $catalogFolderPath)) {
-        New-Item -Path $catalogFolderPath -ItemType Directory | Out-Null
+        $null = New-Item -Path $catalogFolderPath -ItemType Directory
     }
 
     $processLatestVersion = Get-RepositoryVersion -Owner 'PSModule' -Name 'Process-PSModule'
