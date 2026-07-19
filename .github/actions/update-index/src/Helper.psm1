@@ -473,9 +473,62 @@ function Get-WorkflowReference {
         [string] $DefaultBranch
     )
 
-    foreach ($workflowPath in @('.github/workflows/workflow.yml', '.github/workflows/workflow.yaml')) {
+    $encodedRef = [uri]::EscapeDataString($DefaultBranch)
+    $workflowFolderPath = '.github/workflows'
+    $workflowFolderUri = "https://api.github.com/repos/$Owner/$Name/contents/$workflowFolderPath?ref=$encodedRef"
+    Write-Host "Discovering workflow files under [$workflowFolderPath] for [$Owner/$Name] on [$DefaultBranch]"
+    $workflowEntries = Invoke-GitHubApi -Uri $workflowFolderUri
+    if ($null -eq $workflowEntries) {
+        Write-Host "Workflow folder not found: [$workflowFolderPath]"
+        return 'N/A'
+    }
+
+    $workflowFiles = @(
+        $workflowEntries |
+            Where-Object {
+                (Get-PropertyValue -InputObject $_ -Names @('type') -Default '') -eq 'file' -and
+                [string](Get-PropertyValue -InputObject $_ -Names @('name') -Default '') -match '\.ya?ml$'
+            } |
+            Sort-Object { [string](Get-PropertyValue -InputObject $_ -Names @('name') -Default '') }
+    )
+
+    if ($workflowFiles.Count -eq 0) {
+        Write-Host 'No workflow .yml/.yaml files found'
+        return 'N/A'
+    }
+
+    if ($workflowFiles.Count -eq 1) {
+        Write-Host "Single workflow file found: [$([string](Get-PropertyValue -InputObject $workflowFiles[0] -Names @('name') -Default 'unknown'))]"
+    } else {
+        Write-Host "Multiple workflow files found: $($workflowFiles.Count)"
+        $workflowFiles | ForEach-Object {
+            $workflowName = [string](Get-PropertyValue -InputObject $_ -Names @('name') -Default 'unknown')
+            Write-Host " - $workflowName"
+        }
+    }
+
+    $candidateWorkflowFiles = $workflowFiles
+    if ($workflowFiles.Count -gt 1) {
+        $preferredFiles = @(
+            $workflowFiles | Where-Object {
+                [string](Get-PropertyValue -InputObject $_ -Names @('name') -Default '') -match '(?i)^process-psmodule\.ya?ml$'
+            }
+        )
+        if ($preferredFiles.Count -eq 1) {
+            $preferredFileName = [string](Get-PropertyValue -InputObject $preferredFiles[0] -Names @('name') -Default 'unknown')
+            Write-Host "Multiple workflows detected; preferring canonical workflow file [$preferredFileName]"
+            $candidateWorkflowFiles = $preferredFiles
+        }
+    }
+
+    $resolvedRefs = @()
+    foreach ($workflowFile in $candidateWorkflowFiles) {
+        $workflowPath = [string](Get-PropertyValue -InputObject $workflowFile -Names @('path') -Default '')
+        if ([string]::IsNullOrWhiteSpace($workflowPath)) {
+            continue
+        }
+
         Write-Host "Checking workflow path [$workflowPath] for [$Owner/$Name] on [$DefaultBranch]"
-        $encodedRef = [uri]::EscapeDataString($DefaultBranch)
         $uri = "https://api.github.com/repos/$Owner/$Name/contents/${workflowPath}?ref=$encodedRef"
         $response = Invoke-GitHubApi -Uri $uri
         if ($null -eq $response) {
@@ -503,10 +556,21 @@ function Get-WorkflowReference {
 
         $match = [regex]::Match($decoded, $processReferencePattern)
         if ($match.Success) {
-            Write-Host "Resolved Process-PSModule ref [$($match.Groups['ref'].Value)] from [$workflowPath]"
-            return $match.Groups['ref'].Value
+            $resolvedRef = $match.Groups['ref'].Value
+            Write-Host "Resolved Process-PSModule ref [$resolvedRef] from [$workflowPath]"
+            $resolvedRefs += $resolvedRef
+        } else {
+            Write-Host "Unable to parse Process-PSModule ref in [$workflowPath]"
         }
-        Write-Host "Unable to parse Process-PSModule ref in [$workflowPath]"
+    }
+
+    $uniqueResolvedRefs = @($resolvedRefs | Select-Object -Unique)
+    if ($uniqueResolvedRefs.Count -eq 1) {
+        return [string]$uniqueResolvedRefs[0]
+    }
+    if ($uniqueResolvedRefs.Count -gt 1) {
+        Write-Host "Multiple Process-PSModule refs resolved for [$Owner/$Name]: $($uniqueResolvedRefs -join ', ')"
+        return 'N/A'
     }
 
     Write-Host "No Process-PSModule workflow reference found for [$Owner/$Name]"
