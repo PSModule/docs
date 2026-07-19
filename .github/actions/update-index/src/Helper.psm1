@@ -37,11 +37,9 @@ function Show-RepoList {
         $currentContext = Get-GitHubContext -ErrorAction SilentlyContinue
         if ($null -eq $currentContext) {
             Connect-GitHubApp -Organization $Owner -Default
-        }
-        elseif ($currentContext.AuthType -eq 'App') {
+        } elseif ($currentContext.AuthType -eq 'App') {
             Connect-GitHubApp -Organization $Owner -Default
-        }
-        else {
+        } else {
             Write-Output "Using existing GitHub context [$($currentContext.Name)] with auth type [$($currentContext.AuthType)]"
         }
         Get-GitHubContext | Select-Object * | Format-List | Out-String
@@ -131,6 +129,14 @@ function Update-MDSection {
 }
 
 function Get-PropertyValue {
+    <#
+        .SYNOPSIS
+        Gets the first non-empty property value from an object.
+
+        .DESCRIPTION
+        Evaluates the provided property names in order and returns the first property
+        value that exists and is not null/whitespace. Returns the default value otherwise.
+    #>
     [OutputType([object])]
     [CmdletBinding()]
     param(
@@ -163,6 +169,14 @@ function Get-PropertyValue {
 }
 
 function Invoke-GitHubApi {
+    <#
+        .SYNOPSIS
+        Invokes a GitHub REST API GET request.
+
+        .DESCRIPTION
+        Calls the GitHub module API wrapper, auto-selects anonymous mode when no context
+        is configured, normalizes wrapped responses, and treats HTTP 404 as missing data.
+    #>
     [OutputType([object])]
     [CmdletBinding()]
     param(
@@ -196,8 +210,7 @@ function Invoke-GitHubApi {
 
                 if ($item.Response -is [array]) {
                     $payloadItems += $item.Response
-                }
-                else {
+                } else {
                     $payloadItems += , $item.Response
                 }
             }
@@ -217,8 +230,7 @@ function Invoke-GitHubApi {
         }
 
         return $rawResponse
-    }
-    catch {
+    } catch {
         $statusCode = $null
         if ($_.Exception.Response) {
             $statusCode = $_.Exception.Response.StatusCode.value__
@@ -241,6 +253,14 @@ function Invoke-GitHubApi {
 }
 
 function Get-RepositoryReadmeContent {
+    <#
+        .SYNOPSIS
+        Gets a repository README as plain text.
+
+        .DESCRIPTION
+        Downloads the repository README from GitHub and decodes the returned
+        Base64 content to UTF-8 text.
+    #>
     [OutputType([string])]
     [CmdletBinding()]
     param(
@@ -266,6 +286,14 @@ function Get-RepositoryReadmeContent {
 }
 
 function Get-MarkdownSummary {
+    <#
+        .SYNOPSIS
+        Extracts a short summary from markdown content.
+
+        .DESCRIPTION
+        Removes common markdown formatting and returns the first non-empty paragraph,
+        suitable for compact previews.
+    #>
     [OutputType([string])]
     [CmdletBinding()]
     param(
@@ -297,6 +325,14 @@ function Get-MarkdownSummary {
 }
 
 function ConvertTo-HtmlAttributeValue {
+    <#
+        .SYNOPSIS
+        Converts text to a safe HTML attribute preview value.
+
+        .DESCRIPTION
+        Normalizes whitespace, truncates to a max length, and escapes special HTML
+        characters for use in attributes such as title.
+    #>
     [OutputType([string])]
     [CmdletBinding()]
     param(
@@ -323,6 +359,14 @@ function ConvertTo-HtmlAttributeValue {
 }
 
 function Get-OpenItemCount {
+    <#
+        .SYNOPSIS
+        Gets the open issue or pull request count for a repository.
+
+        .DESCRIPTION
+        Uses GitHub search API with a repository/type/state query and returns
+        the total count.
+    #>
     [OutputType([int])]
     [CmdletBinding()]
     param(
@@ -346,6 +390,14 @@ function Get-OpenItemCount {
 }
 
 function Get-RepositoryVersion {
+    <#
+        .SYNOPSIS
+        Gets a repository's latest version identifier.
+
+        .DESCRIPTION
+        Returns the latest release tag/name when available, otherwise falls back
+        to the most recent tag, or N/A.
+    #>
     [OutputType([string])]
     [CmdletBinding()]
     param(
@@ -374,6 +426,14 @@ function Get-RepositoryVersion {
 }
 
 function Get-WorkflowReference {
+    <#
+        .SYNOPSIS
+        Gets the Process-PSModule workflow reference used by a repository.
+
+        .DESCRIPTION
+        Scans common workflow entry files on the default branch and extracts the
+        `@ref` from `uses: PSModule/Process-PSModule/...@ref` if present.
+    #>
     [OutputType([string])]
     [CmdletBinding()]
     param(
@@ -409,6 +469,14 @@ function Get-WorkflowReference {
 }
 
 function Get-ProcessReferenceStatus {
+    <#
+        .SYNOPSIS
+        Computes status of a Process-PSModule workflow reference.
+
+        .DESCRIPTION
+        Classifies a workflow reference value relative to the latest available
+        Process-PSModule version.
+    #>
     [OutputType([string])]
     [CmdletBinding()]
     param(
@@ -451,7 +519,15 @@ function Get-ProcessReferenceStatus {
 }
 
 function New-ModuleCatalogPage {
-    [CmdletBinding()]
+    <#
+        .SYNOPSIS
+        Creates or updates a generated module catalog page.
+
+        .DESCRIPTION
+        Builds markdown content from module metadata and writes it to the
+        target page path.
+    #>
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory)]
         [string] $Path,
@@ -481,7 +557,9 @@ $($ModuleData.About)
 [View source README](https://github.com/$($ModuleData.Owner)/$($ModuleData.Name)#readme)
 "@
 
-    Set-Content -Path $Path -Value $content
+    if ($PSCmdlet.ShouldProcess($Path, 'Write module catalog page')) {
+        Set-Content -Path $Path -Value $content
+    }
 }
 
 function Update-ActionList {
