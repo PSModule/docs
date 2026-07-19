@@ -39,7 +39,7 @@ function Show-RepoList {
     }
 
     LogGroup "Get repositories for organization [$Owner]" {
-        $rawRepos = Get-GitHubRepository -Organization $Owner -AdditionalProperty @(
+        $rawRepos = Get-GitHubRepository -Owner $Owner -AdditionalProperty @(
             'description',
             'default_branch',
             'stargazers_count',
@@ -159,41 +159,6 @@ function Get-PropertyValue {
     return $Default
 }
 
-function Get-GitHubAccessToken {
-    [OutputType([string])]
-    [CmdletBinding()]
-    param()
-
-    $context = Get-GitHubContext
-    if ($null -eq $context) {
-        return $null
-    }
-
-    foreach ($propertyName in @('AccessToken', 'Token', 'token')) {
-        $property = $context.PSObject.Properties[$propertyName]
-        if ($null -eq $property) {
-            continue
-        }
-
-        $token = $property.Value
-        if ($token -is [securestring]) {
-            $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($token)
-            try {
-                return [Runtime.InteropServices.Marshal]::PtrToStringBSTR($bstr)
-            }
-            finally {
-                [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr)
-            }
-        }
-
-        if (-not [string]::IsNullOrWhiteSpace([string]$token)) {
-            return [string]$token
-        }
-    }
-
-    return $null
-}
-
 function Invoke-GitHubApi {
     [OutputType([object])]
     [CmdletBinding()]
@@ -202,18 +167,8 @@ function Invoke-GitHubApi {
         [string] $Uri
     )
 
-    $headers = @{
-        Accept     = 'application/vnd.github+json'
-        'User-Agent' = 'PSModule-Docs-UpdateIndex'
-    }
-
-    $accessToken = Get-GitHubAccessToken
-    if (-not [string]::IsNullOrWhiteSpace($accessToken)) {
-        $headers.Authorization = "Bearer $accessToken"
-    }
-
     try {
-        Invoke-RestMethod -Method Get -Uri $Uri -Headers $headers
+        Invoke-GitHubAPI -Method GET -Uri $Uri -ErrorAction Stop
     }
     catch {
         $statusCode = $null
