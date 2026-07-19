@@ -50,7 +50,7 @@
         }
     }
     ExcludeRules = @(
-        'PSAvoidUsingWriteHost',        # Write-Host is acceptable in guidance scripts.
+        'PSAvoidUsingWriteHost',        # Write-Host is acceptable in scripts used for docs tooling and guidance.
         'PSMissingModuleManifestField', # This rule is not applicable until the module is built.
         'PSUseToExportFieldsInManifest'
     )
