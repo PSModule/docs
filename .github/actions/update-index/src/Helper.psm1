@@ -40,14 +40,14 @@ function Show-RepoList {
         } elseif ($currentContext.AuthType -eq 'App') {
             Connect-GitHubApp -Organization $Owner -Default
         } else {
-            Write-Output "Using existing GitHub context [$($currentContext.Name)] with auth type [$($currentContext.AuthType)]"
+            Write-Host "Using existing GitHub context [$($currentContext.Name)] with auth type [$($currentContext.AuthType)]"
         }
         Get-GitHubContext | Select-Object * | Format-List | Out-String
     }
 
     LogGroup "Get repositories for organization [$Owner]" {
         $rawRepos = Get-GitHubRepository -Owner $Owner
-        Write-Output "Found $($rawRepos.Count) repositories"
+        Write-Host "Found $($rawRepos.Count) repositories"
         $repos = $rawRepos | ForEach-Object {
             $rawRepo = $_
             $rawRepo.CustomProperties | Where-Object { $_.Name -eq 'Type' } | ForEach-Object {
