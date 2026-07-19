@@ -30,6 +30,7 @@ permissions:
 jobs:
   lint:
     name: Lint
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -94,7 +95,7 @@ jobs:
 
   publish:
     name: Publish
-    needs: [build, lint]
+    needs: [build]
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     environment:
