@@ -9,7 +9,7 @@ on:
       - main
     paths:
       - src/**
-      - scripts/**
+      - .github/scripts/**
       - .github/actions/update-index/**
       - .github/workflows/Docs.yml
   pull_request:
@@ -22,7 +22,7 @@ on:
       - main
     paths:
       - src/**
-      - scripts/**
+      - .github/scripts/**
       - .github/workflows/Docs.yml
 
 concurrency:
@@ -105,84 +105,10 @@ jobs:
         run: zensical build --clean
         working-directory: src
 
-      - name: Clone gh-pages branch
-        shell: bash
-        env:
-          TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          set -euo pipefail
-          git clone --no-tags --depth 1 --branch gh-pages "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" _pages || {
-            echo "gh-pages branch is required for branch-based deployment. Create and protect gh-pages before enabling this workflow."
-            exit 1
-          }
-
-      - name: Sync live docs content
-        id: sync-live
+      - name: Publish live docs
+        id: publish-live
         shell: pwsh
-        run: |
-          Get-ChildItem -LiteralPath "$PWD\_pages" -Force |
-            Where-Object { $_.Name -notin @('.git', 'previews') } |
-            Remove-Item -Recurse -Force
-
-          Get-ChildItem -LiteralPath "$PWD\src\site" -Force |
-            ForEach-Object {
-              Copy-Item -LiteralPath $_.FullName -Destination "$PWD\_pages" -Recurse -Force
-            }
-
-          New-Item -Path "$PWD\_pages\.nojekyll" -ItemType File -Force | Out-Null
-
-          git -C _pages config user.name "scribbler-bot[bot]"
-          git -C _pages config user.email "scribe@psmodule.io"
-          git -C _pages add -A
-
-          $status = git -C _pages status --porcelain
-          if ([string]::IsNullOrWhiteSpace($status)) {
-            "has_changes=false" >> $env:GITHUB_OUTPUT
-            exit 0
-          }
-
-          git -C _pages commit -m "Deploy docs from ${{ github.sha }}"
-          "has_changes=true" >> $env:GITHUB_OUTPUT
-
-      - name: Push publish branch
-        if: steps.sync-live.outputs.has_changes == 'true'
-        shell: bash
-        env:
-          TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          set -euo pipefail
-          git -C _pages remote set-url origin "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git -C _pages push --force-with-lease origin "HEAD:refs/heads/scribbler/publish/main"
-
-      - name: Create or update publish PR
-        if: steps.sync-live.outputs.has_changes == 'true'
-        id: publish-pr
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          $repo = "${{ github.repository }}"
-          $title = "docs(publish): update live docs"
-          $body = @"
-          Automated docs publish from `${{ github.sha }}`.
-          Live URL: https://psmodule.io/docs/
-          "@
-          $existing = gh pr list --repo $repo --base gh-pages --head "scribbler/publish/main" --state open --json number --jq '.[0].number'
-          if ([string]::IsNullOrWhiteSpace($existing)) {
-            $number = gh pr create --repo $repo --base gh-pages --head "scribbler/publish/main" --title $title --body $body --json number --jq '.number'
-          } else {
-            gh pr edit $existing --repo $repo --title $title --body $body | Out-Null
-            $number = $existing
-          }
-          "number=$number" >> $env:GITHUB_OUTPUT
-
-      - name: Enable auto-merge for publish PR
-        if: steps.sync-live.outputs.has_changes == 'true'
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          gh pr merge ${{ steps.publish-pr.outputs.number }} --repo "${{ github.repository }}" --squash --auto --delete-branch
+        run: ./.github/scripts/docs/Publish-LiveDocs.ps1 -Repository "${{ github.repository }}" -Token "${{ steps.app-token.outputs.token }}" -BuildDirectory "$PWD/src/site" -HeadBranch "scribbler/publish/main" -CommitSha "${{ github.sha }}"
 
   preview:
     name: Preview
@@ -227,134 +153,17 @@ jobs:
       - name: Install Zensical
         run: pip install zensical
 
-      - name: Set preview URL output
-        id: preview-url
-        run: echo "url=${PREVIEW_URL}" >> "$GITHUB_OUTPUT"
-        shell: bash
-
       - name: Build preview site
         shell: pwsh
         run: |
-          $configPath = Join-Path $PWD 'zensical.toml'
-          $content = Get-Content -LiteralPath $configPath -Raw
-          $updated = $content -replace '(?m)^site_url = ".*"$', "site_url = `"$env:PREVIEW_URL`""
-          Set-Content -LiteralPath $configPath -Value $updated
+          ./.github/scripts/docs/Set-ZensicalSiteUrl.ps1 -ConfigPath "$PWD/zensical.toml" -SiteUrl "${{ env.PREVIEW_URL }}"
           zensical build --clean
         working-directory: src
 
-      - name: Clone gh-pages branch
-        shell: bash
-        env:
-          TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          set -euo pipefail
-          git clone --no-tags --depth 1 --branch gh-pages "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" _pages || {
-            echo "gh-pages branch is required for previews. Create and protect gh-pages before enabling this workflow."
-            exit 1
-          }
-
-      - name: Sync preview content
-        id: sync-preview
+      - name: Publish preview docs
+        id: preview-url
         shell: pwsh
-        run: |
-          $previewDir = Join-Path $PWD "_pages\previews\pr-${{ github.event.number }}"
-
-          if (Test-Path -LiteralPath $previewDir) {
-            Remove-Item -LiteralPath $previewDir -Recurse -Force
-          }
-
-          New-Item -Path $previewDir -ItemType Directory -Force | Out-Null
-          Get-ChildItem -LiteralPath "$PWD\src\site" -Force |
-            ForEach-Object {
-              Copy-Item -LiteralPath $_.FullName -Destination $previewDir -Recurse -Force
-            }
-
-          New-Item -Path "$PWD\_pages\.nojekyll" -ItemType File -Force | Out-Null
-
-          git -C _pages config user.name "scribbler-bot[bot]"
-          git -C _pages config user.email "scribe@psmodule.io"
-          git -C _pages add -A
-
-          $status = git -C _pages status --porcelain
-          if ([string]::IsNullOrWhiteSpace($status)) {
-            "has_changes=false" >> $env:GITHUB_OUTPUT
-            exit 0
-          }
-
-          git -C _pages commit -m "Update docs preview for PR #${{ github.event.number }}"
-          "has_changes=true" >> $env:GITHUB_OUTPUT
-
-      - name: Push preview branch
-        if: steps.sync-preview.outputs.has_changes == 'true'
-        shell: bash
-        env:
-          TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          set -euo pipefail
-          git -C _pages remote set-url origin "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git -C _pages push --force-with-lease origin "HEAD:refs/heads/${PREVIEW_PAGES_BRANCH}"
-
-      - name: Create or update gh-pages PR
-        if: steps.sync-preview.outputs.has_changes == 'true'
-        id: preview-pr
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          $repo = "${{ github.repository }}"
-          $title = "docs(preview): PR #${{ github.event.number }}"
-          $body = @"
-          Automated preview content update for #${{ github.event.number }}.
-          Preview URL: $env:PREVIEW_URL
-          "@
-          $existing = gh pr list --repo $repo --base gh-pages --head "${env:PREVIEW_PAGES_BRANCH}" --state open --json number --jq '.[0].number'
-          if ([string]::IsNullOrWhiteSpace($existing)) {
-            $number = gh pr create --repo $repo --base gh-pages --head "${env:PREVIEW_PAGES_BRANCH}" --title $title --body $body --json number --jq '.number'
-          } else {
-            gh pr edit $existing --repo $repo --title $title --body $body | Out-Null
-            $number = $existing
-          }
-          "number=$number" >> $env:GITHUB_OUTPUT
-
-      - name: Enable auto-merge for gh-pages PR
-        if: steps.sync-preview.outputs.has_changes == 'true'
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          gh pr merge ${{ steps.preview-pr.outputs.number }} --repo "${{ github.repository }}" --squash --auto --delete-branch
-
-      - name: Comment preview URL
-        uses: actions/github-script@v8
-        with:
-          github-token: ${{ steps.app-token.outputs.token }}
-          script: |
-            const marker = '<!-- docs-pr-preview -->';
-            const body = `${marker}
-            ✅ Preview is ready: ${process.env.PREVIEW_URL}`;
-            const issueNumber = context.payload.pull_request.number;
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issueNumber,
-              per_page: 100
-            });
-            const existing = comments.find((c) => c.body?.includes(marker));
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existing.id,
-                body
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issueNumber,
-                body
-              });
-            }
+        run: ./.github/scripts/docs/Publish-PreviewDocs.ps1 -Repository "${{ github.repository }}" -Token "${{ steps.app-token.outputs.token }}" -PullRequestNumber ${{ github.event.number }} -PreviewUrl "${{ env.PREVIEW_URL }}" -BuildDirectory "$PWD/src/site" -HeadBranch "${{ env.PREVIEW_PAGES_BRANCH }}"
 
   preview-cleanup:
     name: Preview cleanup
@@ -370,6 +179,11 @@ jobs:
       PREVIEW_URL: https://psmodule.io/docs/previews/pr-${{ github.event.number }}/
       PREVIEW_ENVIRONMENT: pr-preview-${{ github.event.number }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
       - name: Create GitHub App token
         id: app-token
         uses: actions/create-github-app-token@v2
@@ -377,149 +191,6 @@ jobs:
           app-id: ${{ secrets.SCRIBBLER_BOT_CLIENT_ID }}
           private-key: ${{ secrets.SCRIBBLER_BOT_PRIVATE_KEY }}
 
-      - name: Clone gh-pages branch
-        id: clone-pages
-        shell: bash
-        env:
-          TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          set -euo pipefail
-          if ! git clone --no-tags --depth 1 --branch gh-pages "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" _pages; then
-            echo "missing=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          echo "missing=false" >> "$GITHUB_OUTPUT"
-
-      - name: Remove preview content
-        if: steps.clone-pages.outputs.missing == 'false'
-        id: remove-preview
+      - name: Cleanup preview resources
         shell: pwsh
-        run: |
-          $previewDir = Join-Path $PWD "_pages\previews\pr-${{ github.event.number }}"
-          if (Test-Path -LiteralPath $previewDir) {
-            Remove-Item -LiteralPath $previewDir -Recurse -Force
-          }
-
-          git -C _pages config user.name "scribbler-bot[bot]"
-          git -C _pages config user.email "scribe@psmodule.io"
-          git -C _pages add -A
-
-          $status = git -C _pages status --porcelain
-          if ([string]::IsNullOrWhiteSpace($status)) {
-            "has_changes=false" >> $env:GITHUB_OUTPUT
-            exit 0
-          }
-
-          git -C _pages commit -m "Remove docs preview for PR #${{ github.event.number }}"
-          "has_changes=true" >> $env:GITHUB_OUTPUT
-
-      - name: Push cleanup branch
-        if: steps.clone-pages.outputs.missing == 'false' && steps.remove-preview.outputs.has_changes == 'true'
-        shell: bash
-        env:
-          TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          set -euo pipefail
-          git -C _pages remote set-url origin "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git -C _pages push --force-with-lease origin "HEAD:refs/heads/${PREVIEW_CLEANUP_BRANCH}"
-
-      - name: Create or update cleanup PR
-        if: steps.clone-pages.outputs.missing == 'false' && steps.remove-preview.outputs.has_changes == 'true'
-        id: cleanup-pr
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          $repo = "${{ github.repository }}"
-          $title = "docs(preview): cleanup PR #${{ github.event.number }}"
-          $body = "Automated cleanup for preview URL: $env:PREVIEW_URL"
-          $existing = gh pr list --repo $repo --base gh-pages --head "${env:PREVIEW_CLEANUP_BRANCH}" --state open --json number --jq '.[0].number'
-          if ([string]::IsNullOrWhiteSpace($existing)) {
-            $number = gh pr create --repo $repo --base gh-pages --head "${env:PREVIEW_CLEANUP_BRANCH}" --title $title --body $body --json number --jq '.number'
-          } else {
-            gh pr edit $existing --repo $repo --title $title --body $body | Out-Null
-            $number = $existing
-          }
-          "number=$number" >> $env:GITHUB_OUTPUT
-
-      - name: Enable auto-merge for cleanup PR
-        if: steps.clone-pages.outputs.missing == 'false' && steps.remove-preview.outputs.has_changes == 'true'
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          gh pr merge ${{ steps.cleanup-pr.outputs.number }} --repo "${{ github.repository }}" --squash --auto --delete-branch
-
-      - name: Delete preview deployments and environment
-        uses: actions/github-script@v8
-        with:
-          github-token: ${{ steps.app-token.outputs.token }}
-          script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const environment = process.env.PREVIEW_ENVIRONMENT;
-
-            const deployments = await github.paginate(github.rest.repos.listDeployments, {
-              owner,
-              repo,
-              environment,
-              per_page: 100
-            });
-
-            for (const deployment of deployments) {
-              await github.rest.repos.createDeploymentStatus({
-                owner,
-                repo,
-                deployment_id: deployment.id,
-                state: 'inactive'
-              });
-              await github.request('DELETE /repos/{owner}/{repo}/deployments/{deployment_id}', {
-                owner,
-                repo,
-                deployment_id: deployment.id
-              });
-            }
-
-            try {
-              await github.request('DELETE /repos/{owner}/{repo}/environments/{environment_name}', {
-                owner,
-                repo,
-                environment_name: environment
-              });
-            } catch (error) {
-              if (error.status !== 404) {
-                throw error;
-              }
-            }
-
-      - name: Comment preview removal
-        uses: actions/github-script@v8
-        with:
-          github-token: ${{ steps.app-token.outputs.token }}
-          script: |
-            const marker = '<!-- docs-pr-preview -->';
-            const issueNumber = context.payload.pull_request.number;
-            const body = `${marker}
-            🧹 Preview removed: ${process.env.PREVIEW_URL}`;
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issueNumber,
-              per_page: 100
-            });
-            const existing = comments.find((c) => c.body?.includes(marker));
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existing.id,
-                body
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issueNumber,
-                body
-              });
-            }
+        run: ./.github/scripts/docs/Cleanup-PreviewDocs.ps1 -Repository "${{ github.repository }}" -Token "${{ steps.app-token.outputs.token }}" -PullRequestNumber ${{ github.event.number }} -PreviewUrl "${{ env.PREVIEW_URL }}" -EnvironmentName "${{ env.PREVIEW_ENVIRONMENT }}" -HeadBranch "${{ env.PREVIEW_CLEANUP_BRANCH }}"
