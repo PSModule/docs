@@ -96,7 +96,7 @@ jobs:
   publish:
     name: Publish
     needs: [build, lint]
-    if: github.event_name != 'pull_request' && (needs.lint.result == 'success' || needs.lint.result == 'skipped')
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     environment:
       name: github-pages
