@@ -112,25 +112,26 @@ function Update-MDSection {
         [string] $Content
     )
 
-    LogGroup "Update markdown section [$Name] in [$Path]" {
-        $startSegment = "<!-- $Name`_START -->"
-        $endSegment = "<!-- $Name`_END -->"
-        $currentContent = Get-Content -Path $Path
-        $startIndex = $currentContent.IndexOf($startSegment)
-        $endIndex = $currentContent.IndexOf($endSegment)
+    Write-Host "Preparing markdown section update [$Name] in [$Path]"
+    $startSegment = "<!-- $Name`_START -->"
+    $endSegment = "<!-- $Name`_END -->"
+    $currentContent = Get-Content -Path $Path
+    $startIndex = $currentContent.IndexOf($startSegment)
+    $endIndex = $currentContent.IndexOf($endSegment)
 
-        if ($startIndex -lt 0) {
-            throw "[$Name] The start comment segment was not found in the file."
-        }
-        if ($endIndex -lt 0) {
-            throw "[$Name] The end comment segment was not found in the file."
-        }
-        if ($endIndex -lt $startIndex) {
-            throw "[$Name] The end comment segment was found before the start comment segment."
-        }
+    if ($startIndex -lt 0) {
+        throw "[$Name] The start comment segment was not found in the file."
+    }
+    if ($endIndex -lt 0) {
+        throw "[$Name] The end comment segment was not found in the file."
+    }
+    if ($endIndex -lt $startIndex) {
+        throw "[$Name] The end comment segment was found before the start comment segment."
+    }
 
-        $updatedContent = $currentContent[0..$startIndex] + $Content + $currentContent[($endIndex)..($currentContent.Length - 1)]
-        if ($PSCmdlet.ShouldProcess('Readme section', 'Update')) {
+    $updatedContent = $currentContent[0..$startIndex] + $Content + $currentContent[($endIndex)..($currentContent.Length - 1)]
+    if ($PSCmdlet.ShouldProcess('Readme section', 'Update')) {
+        LogGroup "Update markdown section [$Name] in [$Path]" {
             Set-Content -Path $Path -Value $updatedContent
             Write-Host "Section [$Name] updated in [$Path]"
         }
@@ -663,33 +664,34 @@ function Update-ModuleList {
         [object[]] $Repos = @()
     )
 
-    LogGroup 'Prepare module catalog generation' {
-        if ($Repos.Count -eq 0) {
+    if ($Repos.Count -eq 0) {
+        LogGroup 'Prepare module catalog generation' {
             Write-Host 'No repository list was provided, retrieving repositories now'
-            $Repos = Show-RepoList
         }
+        $Repos = Show-RepoList
+    }
 
-        $moduleCatalogTemplateVersion = 'v2'
-        $moduleCatalogTemplateFolder = Join-Path (Join-Path $PSScriptRoot '..') 'templates\module-catalog'
-        $moduleCatalogRowTemplatePath = Join-Path $moduleCatalogTemplateFolder "$moduleCatalogTemplateVersion-row.html"
-        $moduleCatalogTableTemplatePath = Join-Path $moduleCatalogTemplateFolder "$moduleCatalogTemplateVersion-table.html"
-        $moduleCatalogRowTemplate = Get-TemplateContent -Path $moduleCatalogRowTemplatePath
-        $moduleCatalogTableTemplate = Get-TemplateContent -Path $moduleCatalogTableTemplatePath
+    $moduleCatalogTemplateVersion = 'v2'
+    $moduleCatalogTemplateFolder = Join-Path (Join-Path $PSScriptRoot '..') 'templates\module-catalog'
+    $moduleCatalogRowTemplatePath = Join-Path $moduleCatalogTemplateFolder "$moduleCatalogTemplateVersion-row.html"
+    $moduleCatalogTableTemplatePath = Join-Path $moduleCatalogTemplateFolder "$moduleCatalogTemplateVersion-table.html"
+    $moduleCatalogRowTemplate = Get-TemplateContent -Path $moduleCatalogRowTemplatePath
+    $moduleCatalogTableTemplate = Get-TemplateContent -Path $moduleCatalogTableTemplatePath
 
-        $moduleRepos = $Repos | Where-Object {
-            $_.Type -eq 'Module' -and $_.Owner -eq 'PSModule'
-        } | Sort-Object Name
+    $moduleRepos = $Repos | Where-Object {
+        $_.Type -eq 'Module' -and $_.Owner -eq 'PSModule'
+    } | Sort-Object Name
+    $catalogFolderPath = Join-Path 'src\docs\Modules\Catalog' 'Repositories'
+    if (-not (Test-Path $catalogFolderPath)) {
+        Write-Host "Creating catalog folder [$catalogFolderPath]"
+        $null = New-Item -Path $catalogFolderPath -ItemType Directory
+    }
+
+    $processLatestVersion = Get-RepositoryVersion -Owner 'PSModule' -Name 'Process-PSModule'
+    $moduleTableRows = ''
+    LogGroup 'Prepare module catalog generation' {
         Write-Host "Module repositories to process: $($moduleRepos.Count)"
-
-        $catalogFolderPath = Join-Path 'src\docs\Modules\Catalog' 'Repositories'
-        if (-not (Test-Path $catalogFolderPath)) {
-            Write-Host "Creating catalog folder [$catalogFolderPath]"
-            $null = New-Item -Path $catalogFolderPath -ItemType Directory
-        }
-
-        $processLatestVersion = Get-RepositoryVersion -Owner 'PSModule' -Name 'Process-PSModule'
         Write-Host "Latest Process-PSModule version: $processLatestVersion"
-        $moduleTableRows = ''
     }
 
     $moduleRepoTotal = $moduleRepos.Count
