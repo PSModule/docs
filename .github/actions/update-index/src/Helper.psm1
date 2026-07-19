@@ -128,6 +128,24 @@ function Update-MDSection {
     }
 }
 
+function Get-TemplateContent {
+    <#
+        .SYNOPSIS
+        Reads a template file as raw text.
+
+        .DESCRIPTION
+        Loads a UTF-8 template file from disk and returns the complete content as a string.
+    #>
+    [OutputType([string])]
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string] $Path
+    )
+
+    Get-Content -Path $Path -Raw
+}
+
 function Get-PropertyValue {
     <#
         .SYNOPSIS
@@ -640,6 +658,13 @@ function Update-ModuleList {
         $Repos = Show-RepoList
     }
 
+    $moduleCatalogTemplateVersion = 'v2'
+    $moduleCatalogTemplateFolder = Join-Path (Join-Path $PSScriptRoot '..') 'templates\module-catalog'
+    $moduleCatalogRowTemplatePath = Join-Path $moduleCatalogTemplateFolder "$moduleCatalogTemplateVersion-row.html"
+    $moduleCatalogTableTemplatePath = Join-Path $moduleCatalogTemplateFolder "$moduleCatalogTemplateVersion-table.html"
+    $moduleCatalogRowTemplate = Get-TemplateContent -Path $moduleCatalogRowTemplatePath
+    $moduleCatalogTableTemplate = Get-TemplateContent -Path $moduleCatalogTableTemplatePath
+
     $moduleRepos = $Repos | Where-Object {
         $_.Type -eq 'Module' -and $_.Owner -eq 'PSModule'
     } | Sort-Object Name
@@ -701,32 +726,22 @@ function Update-ModuleList {
         }
         New-ModuleCatalogPage -Path $modulePagePath -ModuleData $moduleData
 
-        $moduleTableRows += @"
-    <tr>
-        <td><a href="$modulePageRelativeLink" title="$titleSummary">$name</a></td>
-        <td><code>$version</code></td>
-        <td><code>$processReference</code><br><sub>$processStatus</sub></td>
-        <td><a href="https://github.com/$owner/$name/issues">$issues</a></td>
-        <td><a href="https://github.com/$owner/$name/pulls">$pullRequests</a></td>
-        <td><a href="https://github.com/$owner/$name/stargazers">$stars</a></td>
-    </tr>
-"@
+        $moduleTableRow = $moduleCatalogRowTemplate
+        $moduleTableRow = $moduleTableRow.Replace('{{ MODULE_PAGE_LINK }}', $modulePageRelativeLink)
+        $moduleTableRow = $moduleTableRow.Replace('{{ TITLE_SUMMARY }}', $titleSummary)
+        $moduleTableRow = $moduleTableRow.Replace('{{ NAME }}', $name)
+        $moduleTableRow = $moduleTableRow.Replace('{{ VERSION }}', $version)
+        $moduleTableRow = $moduleTableRow.Replace('{{ PROCESS_REFERENCE }}', $processReference)
+        $moduleTableRow = $moduleTableRow.Replace('{{ PROCESS_STATUS }}', $processStatus)
+        $moduleTableRow = $moduleTableRow.Replace('{{ OWNER }}', $owner)
+        $moduleTableRow = $moduleTableRow.Replace('{{ ISSUES }}', [string]$issues)
+        $moduleTableRow = $moduleTableRow.Replace('{{ PULL_REQUESTS }}', [string]$pullRequests)
+        $moduleTableRow = $moduleTableRow.Replace('{{ STARS }}', [string]$stars)
+        $moduleTableRows += $moduleTableRow.TrimEnd()
+        $moduleTableRows += [Environment]::NewLine
     }
 
-    $moduleTable = @"
-
-<table>
-    <tr>
-        <th width="24%">Name</th>
-        <th width="12%">Version</th>
-        <th width="24%">ProcessVersion</th>
-        <th width="10%">Issues</th>
-        <th width="10%">PRs</th>
-        <th width="10%">Stars</th>
-    </tr>
-$moduleTableRows</table>
-
-"@
+    $moduleTable = $moduleCatalogTableTemplate.Replace('{{ ROWS }}', $moduleTableRows.TrimEnd())
 
     Update-MDSection -Path '.\src\docs\Modules\Catalog\index.md' -Name 'MODULE_CATALOG' -Content $moduleTable
 }
