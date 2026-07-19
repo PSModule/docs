@@ -2,6 +2,8 @@ name: Docs
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
   push:
     branches:
       - main
@@ -28,6 +30,7 @@ permissions:
 jobs:
   lint:
     name: Lint
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     permissions:
       contents: read
