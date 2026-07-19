@@ -14,7 +14,7 @@ Each module page should capture:
 
 ## Catalog generation
 
-The module list is intended to be generated from repository metadata and refreshed automatically.
+The module list and linked module pages are generated from PSModule repository metadata and README content, then refreshed automatically.
 
 <!-- MODULE_CATALOG_START -->
 
