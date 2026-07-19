@@ -34,18 +34,21 @@ function Show-RepoList {
     )
 
     LogGroup "Connect to organization [$Owner]" {
-        Connect-GitHubApp -Organization $Owner -Default
+        $currentContext = Get-GitHubContext -ErrorAction SilentlyContinue
+        if ($null -eq $currentContext) {
+            Connect-GitHubApp -Organization $Owner -Default
+        }
+        elseif ($currentContext.AuthType -eq 'App') {
+            Connect-GitHubApp -Organization $Owner -Default
+        }
+        else {
+            Write-Output "Using existing GitHub context [$($currentContext.Name)] with auth type [$($currentContext.AuthType)]"
+        }
         Get-GitHubContext | Select-Object * | Format-List | Out-String
     }
 
     LogGroup "Get repositories for organization [$Owner]" {
-        $rawRepos = Get-GitHubRepository -Owner $Owner -AdditionalProperty @(
-            'description',
-            'default_branch',
-            'stargazers_count',
-            'open_issues_count',
-            'html_url'
-        )
+        $rawRepos = Get-GitHubRepository -Owner $Owner
         Write-Output "Found $($rawRepos.Count) repositories"
         $repos = $rawRepos | ForEach-Object {
             $rawRepo = $_
@@ -57,9 +60,9 @@ function Show-RepoList {
                     Type            = $type
                     Description     = $rawRepo.Description
                     DefaultBranch   = $rawRepo.DefaultBranch
-                    Stars           = $rawRepo.StargazersCount
-                    OpenIssuesCount = $rawRepo.OpenIssuesCount
-                    HtmlUrl         = $rawRepo.HtmlUrl
+                    Stars           = $rawRepo.Stargazers
+                    OpenIssuesCount = $rawRepo.OpenIssues
+                    HtmlUrl         = $rawRepo.Url
                 }
             }
         } | Sort-Object Type, Name
@@ -220,8 +223,15 @@ function Invoke-GitHubApi {
         if ($_.Exception.Response) {
             $statusCode = $_.Exception.Response.StatusCode.value__
         }
+        $exceptionMessage = [string]$_.Exception.Message
         $errorText = $_ | Out-String
-        if ($statusCode -eq 404 -or $errorText -match 'StatusCode\s*:\s*404' -or $errorText -match '\(404\)') {
+        if (
+            $statusCode -eq 404 -or
+            $exceptionMessage -match '\b404\b' -or
+            $exceptionMessage -match 'Not Found' -or
+            $errorText -match 'StatusCode\s*:\s*404' -or
+            $errorText -match '\(404\)'
+        ) {
             return $null
         }
 
