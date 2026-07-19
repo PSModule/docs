@@ -40,7 +40,6 @@ This site is now focused on PSModule-org specific documentation:
 - [Modules](Modules/index.md): module catalog and module-specific standards
 - [Process-PSModule](Modules/Process-PSModule/index.md): how modules are structured and built
 - [Template onboarding](Modules/Process-PSModule/template-quickstart.md): how to start from the template
-- [Dashboard extension](Modules/Dashboard-Extension/index.md): module telemetry documentation spec
 
 ## Cross-org guidance has moved
 

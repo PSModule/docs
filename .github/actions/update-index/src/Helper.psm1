@@ -7,6 +7,35 @@
 [CmdletBinding()]
 param()
 
+function Connect-GitHubAppDefaultContext {
+    <#
+        .SYNOPSIS
+        Ensures a default GitHub App context is active.
+
+        .DESCRIPTION
+        Uses Connect-GitHubApp with -Default so subsequent GitHub module calls
+        use an authenticated default context instead of anonymous access.
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter()]
+        [string] $Owner = $env:GITHUB_REPOSITORY_OWNER
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Owner)) {
+        throw 'Owner is required to establish a default GitHub App context.'
+    }
+
+    $currentContext = Get-GitHubContext -ErrorAction SilentlyContinue
+    if ($null -ne $currentContext -and $currentContext.AuthType -eq 'App' -and $currentContext.Name -eq $Owner) {
+        Write-Host "Using existing default GitHub App context [$($currentContext.Name)]"
+        return
+    }
+
+    Write-Host "Connecting GitHub App context as default for organization [$Owner]"
+    Connect-GitHubApp -Organization $Owner -Default
+}
+
 function Show-RepoList {
     <#
         .SYNOPSIS
@@ -34,20 +63,13 @@ function Show-RepoList {
     )
 
     LogGroup "Connect to organization [$Owner]" {
-        $currentContext = Get-GitHubContext -ErrorAction SilentlyContinue
-        if ($null -eq $currentContext) {
-            Connect-GitHubApp -Organization $Owner -Default
-        } elseif ($currentContext.AuthType -eq 'App') {
-            Connect-GitHubApp -Organization $Owner -Default
-        } else {
-            Write-Output "Using existing GitHub context [$($currentContext.Name)] with auth type [$($currentContext.AuthType)]"
-        }
+        Connect-GitHubAppDefaultContext -Owner $Owner
         Get-GitHubContext | Select-Object * | Format-List | Out-String
     }
 
     LogGroup "Get repositories for organization [$Owner]" {
         $rawRepos = Get-GitHubRepository -Owner $Owner
-        Write-Output "Found $($rawRepos.Count) repositories"
+        Write-Host "Found $($rawRepos.Count) repositories"
         $repos = $rawRepos | ForEach-Object {
             $rawRepo = $_
             $rawRepo.CustomProperties | Where-Object { $_.Name -eq 'Type' } | ForEach-Object {
@@ -64,6 +86,12 @@ function Show-RepoList {
                 }
             }
         } | Sort-Object Type, Name
+        $reposByType = $repos | Group-Object Type | Sort-Object Name
+        Write-Host 'Repository type distribution:'
+        $reposByType | ForEach-Object {
+            Write-Host " - $($_.Name): $($_.Count)"
+        }
+        Write-Host 'Repository table preview:'
         $repos | Format-Table -AutoSize
     }
 
@@ -106,6 +134,7 @@ function Update-MDSection {
         [string] $Content
     )
 
+    Write-Host "Preparing markdown section update [$Name] in [$Path]"
     $startSegment = "<!-- $Name`_START -->"
     $endSegment = "<!-- $Name`_END -->"
     $currentContent = Get-Content -Path $Path
@@ -124,7 +153,10 @@ function Update-MDSection {
 
     $updatedContent = $currentContent[0..$startIndex] + $Content + $currentContent[($endIndex)..($currentContent.Length - 1)]
     if ($PSCmdlet.ShouldProcess('Readme section', 'Update')) {
-        Set-Content -Path $Path -Value $updatedContent
+        LogGroup "Update markdown section [$Name] in [$Path]" {
+            Set-Content -Path $Path -Value $updatedContent
+            Write-Host "Section [$Name] updated in [$Path]"
+        }
     }
 }
 
@@ -192,14 +224,17 @@ function Invoke-GitHubApi {
         Invokes a GitHub REST API GET request.
 
         .DESCRIPTION
-        Calls the GitHub module API wrapper, auto-selects anonymous mode when no context
-        is configured, normalizes wrapped responses, and treats HTTP 404 as missing data.
+        Calls the GitHub module API wrapper, ensures a default GitHub App context
+        for authenticated requests (unless -Anonymous is used), normalizes wrapped
+        responses, and treats HTTP 404 as missing data.
     #>
     [OutputType([object])]
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [string] $Uri
+        [string] $Uri,
+        [Parameter()]
+        [switch] $Anonymous
     )
 
     try {
@@ -209,8 +244,8 @@ function Invoke-GitHubApi {
             ErrorAction = 'Stop'
         }
 
-        $availableContexts = Get-GitHubContext -ListAvailable -ErrorAction SilentlyContinue
-        if ($null -eq $availableContexts -or $availableContexts.Count -eq 0) {
+        if ($Anonymous) {
+            Write-Host "Invoking GitHub API anonymously for [$Uri]"
             $apiParameters.Anonymous = $true
         }
 
@@ -463,26 +498,151 @@ function Get-WorkflowReference {
         [string] $DefaultBranch
     )
 
-    foreach ($workflowPath in @('.github/workflows/workflow.yml', '.github/workflows/workflow.yaml')) {
-        $encodedRef = [uri]::EscapeDataString($DefaultBranch)
-        $uri = "https://api.github.com/repos/$Owner/$Name/contents/${workflowPath}?ref=$encodedRef"
-        $response = Invoke-GitHubApi -Uri $uri
-        if ($null -eq $response) {
+    $encodedRef = [uri]::EscapeDataString($DefaultBranch)
+    $workflowFolderPath = '.github/workflows'
+    $workflowFolderUri = "https://api.github.com/repos/$Owner/$Name/contents/${workflowFolderPath}?ref=$encodedRef"
+    Write-Host "Discovering workflow files under [$workflowFolderPath] for [$Owner/$Name] on [$DefaultBranch]"
+    $workflowDiscoveryStrategy = 'folder-listing'
+    $workflowEntries = Invoke-GitHubApi -Uri $workflowFolderUri
+    if ($null -eq $workflowEntries) {
+        Write-Host "Workflow folder lookup failed with current auth; retrying anonymously for [$workflowFolderPath]"
+        $workflowEntries = Invoke-GitHubApi -Uri $workflowFolderUri -Anonymous
+    }
+
+    $workflowFiles = @()
+    $prefetchedWorkflowResponses = @{}
+    if ($null -ne $workflowEntries) {
+        $workflowEntryItems = @($workflowEntries)
+        Write-Host "Workflow folder listing returned [$($workflowEntryItems.Count)] item(s)"
+        $workflowFiles = @(
+            $workflowEntryItems |
+                Where-Object {
+                    (Get-PropertyValue -InputObject $_ -Names @('type') -Default '') -eq 'file' -and
+                    [string](Get-PropertyValue -InputObject $_ -Names @('name') -Default '') -match '\.ya?ml$'
+                } |
+                Sort-Object { [string](Get-PropertyValue -InputObject $_ -Names @('name') -Default '') }
+        )
+    }
+
+    if ($workflowFiles.Count -eq 0) {
+        $workflowDiscoveryStrategy = 'canonical-fallback'
+        Write-Host "Workflow folder listing unavailable or empty; trying canonical workflow files directly"
+        foreach ($canonicalWorkflowPath in @('.github/workflows/Process-PSModule.yml', '.github/workflows/Process-PSModule.yaml')) {
+            $canonicalWorkflowUri = "https://api.github.com/repos/$Owner/$Name/contents/${canonicalWorkflowPath}?ref=$encodedRef"
+            $canonicalWorkflowResponse = Invoke-GitHubApi -Uri $canonicalWorkflowUri
+            if ($null -eq $canonicalWorkflowResponse) {
+                $canonicalWorkflowResponse = Invoke-GitHubApi -Uri $canonicalWorkflowUri -Anonymous
+            }
+            if ($null -eq $canonicalWorkflowResponse) {
+                continue
+            }
+
+            Write-Host "Canonical workflow candidate found: [$canonicalWorkflowPath]"
+            $prefetchedWorkflowResponses[$canonicalWorkflowPath] = $canonicalWorkflowResponse
+            $workflowFiles += [pscustomobject]@{
+                name = [IO.Path]::GetFileName($canonicalWorkflowPath)
+                path = $canonicalWorkflowPath
+                type = 'file'
+            }
+        }
+    }
+
+    if ($workflowFiles.Count -eq 1) {
+        Write-Host "Single workflow file found: [$([string](Get-PropertyValue -InputObject $workflowFiles[0] -Names @('name') -Default 'unknown'))]"
+    } else {
+        Write-Host "Multiple workflow files found: $($workflowFiles.Count)"
+        $workflowFiles | ForEach-Object {
+            $workflowName = [string](Get-PropertyValue -InputObject $_ -Names @('name') -Default 'unknown')
+            Write-Host " - $workflowName"
+        }
+    }
+    Write-Host "Workflow discovery strategy used: [$workflowDiscoveryStrategy]"
+
+    $candidateWorkflowFiles = $workflowFiles
+    if ($workflowFiles.Count -gt 1) {
+        $preferredFiles = @(
+            $workflowFiles | Where-Object {
+                [string](Get-PropertyValue -InputObject $_ -Names @('name') -Default '') -match '(?i)^process-psmodule\.ya?ml$'
+            }
+        )
+        if ($preferredFiles.Count -eq 1) {
+            $preferredFileName = [string](Get-PropertyValue -InputObject $preferredFiles[0] -Names @('name') -Default 'unknown')
+            Write-Host "Multiple workflows detected; preferring canonical workflow file [$preferredFileName]"
+            $candidateWorkflowFiles = $preferredFiles
+        }
+    }
+
+    $resolvedRefs = @()
+    $foundWorkflowFile = $false
+    foreach ($workflowFile in $candidateWorkflowFiles) {
+        $workflowPath = [string](Get-PropertyValue -InputObject $workflowFile -Names @('path') -Default '')
+        if ([string]::IsNullOrWhiteSpace($workflowPath)) {
             continue
         }
 
+        Write-Host "Checking workflow path [$workflowPath] for [$Owner/$Name] on [$DefaultBranch]"
+        if ($prefetchedWorkflowResponses.ContainsKey($workflowPath)) {
+            $response = $prefetchedWorkflowResponses[$workflowPath]
+        } else {
+            $uri = "https://api.github.com/repos/$Owner/$Name/contents/${workflowPath}?ref=$encodedRef"
+            $response = Invoke-GitHubApi -Uri $uri
+            if ($null -eq $response) {
+                Write-Host "Workflow path lookup failed with current auth; retrying anonymously for [$workflowPath]"
+                $response = Invoke-GitHubApi -Uri $uri -Anonymous
+                if ($null -eq $response) {
+                    Write-Host "Workflow path not found: [$workflowPath]"
+                    continue
+                }
+            }
+        }
+        $foundWorkflowFile = $true
+
         $content = Get-PropertyValue -InputObject $response -Names @('content')
         if ([string]::IsNullOrWhiteSpace([string]$content)) {
+            Write-Host "Workflow content is empty for path [$workflowPath]"
             continue
         }
 
         $decoded = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String(([string]$content).Replace("`n", '').Replace("`r", '')))
-        $match = [regex]::Match($decoded, '(?m)uses:\s*PSModule/Process-PSModule/.+?@(?<ref>[^\s#]+)')
+        $processLinePattern = '(?m)^\s*uses:\s*["'']?PSModule/Process-PSModule/.+$'
+        $processReferencePattern = '(?m)uses:\s*["'']?PSModule/Process-PSModule/.+?@(?<ref>[^"''\s#]+)'
+        $processLines = [regex]::Matches($decoded, $processLinePattern)
+        if ($processLines.Count -gt 0) {
+            foreach ($processLine in $processLines) {
+                Write-Host "Processing workflow line: $($processLine.Value.Trim())"
+            }
+        } else {
+            Write-Host "No Process-PSModule uses line found in [$workflowPath]"
+        }
+
+        $match = [regex]::Match($decoded, $processReferencePattern)
         if ($match.Success) {
-            return $match.Groups['ref'].Value
+            $resolvedRef = $match.Groups['ref'].Value
+            Write-Host "Resolved Process-PSModule ref [$resolvedRef] from [$workflowPath]"
+            $resolvedRefs += $resolvedRef
+        } else {
+            Write-Host "Unable to parse Process-PSModule ref in [$workflowPath]"
         }
     }
 
+    if (-not $foundWorkflowFile) {
+        Write-Host "No workflow files could be fetched for [$Owner/$Name]"
+        return 'N/A'
+    }
+
+    $uniqueResolvedRefs = @($resolvedRefs | Select-Object -Unique)
+    if ($uniqueResolvedRefs.Count -eq 1) {
+        Write-Host "Workflow reference resolution succeeded using strategy [$workflowDiscoveryStrategy]"
+        return [string]$uniqueResolvedRefs[0]
+    }
+    if ($uniqueResolvedRefs.Count -gt 1) {
+        Write-Host "Multiple Process-PSModule refs resolved for [$Owner/$Name]: $($uniqueResolvedRefs -join ', ')"
+        Write-Host "Workflow reference resolution failed using strategy [$workflowDiscoveryStrategy]"
+        return 'N/A'
+    }
+
+    Write-Host "No Process-PSModule workflow reference found for [$Owner/$Name]"
+    Write-Host "Workflow reference resolution failed using strategy [$workflowDiscoveryStrategy]"
     'N/A'
 }
 
@@ -655,6 +815,9 @@ function Update-ModuleList {
     )
 
     if ($Repos.Count -eq 0) {
+        LogGroup 'Prepare module catalog generation' {
+            Write-Host 'No repository list was provided, retrieving repositories now'
+        }
         $Repos = Show-RepoList
     }
 
@@ -668,82 +831,99 @@ function Update-ModuleList {
     $moduleRepos = $Repos | Where-Object {
         $_.Type -eq 'Module' -and $_.Owner -eq 'PSModule'
     } | Sort-Object Name
-
     $catalogFolderPath = Join-Path 'src\docs\Modules\Catalog' 'Repositories'
     if (-not (Test-Path $catalogFolderPath)) {
+        Write-Host "Creating catalog folder [$catalogFolderPath]"
         $null = New-Item -Path $catalogFolderPath -ItemType Directory
     }
 
     $processLatestVersion = Get-RepositoryVersion -Owner 'PSModule' -Name 'Process-PSModule'
     $moduleTableRows = ''
+    LogGroup 'Prepare module catalog generation' {
+        Write-Host "Module repositories to process: $($moduleRepos.Count)"
+        Write-Host "Latest Process-PSModule version: $processLatestVersion"
+    }
 
+    $moduleRepoTotal = $moduleRepos.Count
+    $moduleRepoIndex = 0
     foreach ($repo in $moduleRepos) {
+        $moduleRepoIndex++
         $owner = [string](Get-PropertyValue -InputObject $repo -Names @('Owner') -Default 'PSModule')
         $name = [string](Get-PropertyValue -InputObject $repo -Names @('Name') -Default '')
         if ([string]::IsNullOrWhiteSpace($name)) {
+            Write-Host "Skipping module at index [$moduleRepoIndex] because the repository name is empty"
             continue
         }
 
-        $description = [string](Get-PropertyValue -InputObject $repo -Names @('Description') -Default 'No description available.')
-        if ([string]::IsNullOrWhiteSpace($description)) {
-            $description = 'No description available.'
+        LogGroup "Process module [$moduleRepoIndex/$moduleRepoTotal] [$owner/$name]" {
+            $description = [string](Get-PropertyValue -InputObject $repo -Names @('Description') -Default 'No description available.')
+            if ([string]::IsNullOrWhiteSpace($description)) {
+                $description = 'No description available.'
+            }
+
+            $defaultBranch = [string](Get-PropertyValue -InputObject $repo -Names @('DefaultBranch', 'default_branch') -Default 'main')
+            if ([string]::IsNullOrWhiteSpace($defaultBranch)) {
+                $defaultBranch = 'main'
+            }
+
+            Write-Host "Collecting metadata from branch [$defaultBranch]"
+            $readmeContent = Get-RepositoryReadmeContent -Owner $owner -Name $name
+            $aboutSummary = Get-MarkdownSummary -Markdown $readmeContent
+            if ([string]::IsNullOrWhiteSpace($aboutSummary)) {
+                $aboutSummary = $description
+            }
+
+            $titleSummary = ConvertTo-HtmlAttributeValue -Value $aboutSummary
+            $version = Get-RepositoryVersion -Owner $owner -Name $name
+            $processReference = Get-WorkflowReference -Owner $owner -Name $name -DefaultBranch $defaultBranch
+            $processStatus = Get-ProcessReferenceStatus -Reference $processReference -LatestVersion $processLatestVersion
+            $issues = Get-OpenItemCount -Owner $owner -Name $name -Type issue
+            $pullRequests = Get-OpenItemCount -Owner $owner -Name $name -Type pr
+            $stars = [int](Get-PropertyValue -InputObject $repo -Names @('Stars', 'stargazers_count', 'StargazersCount') -Default 0)
+
+            Write-Host "Version [$version], Process ref [$processReference], status [$processStatus]"
+            Write-Host "Open issues [$issues], open PRs [$pullRequests], stars [$stars]"
+
+            $modulePageFileName = "$name.md"
+            $modulePagePath = Join-Path $catalogFolderPath $modulePageFileName
+            $modulePageRelativeLink = "./Repositories/$modulePageFileName"
+
+            $moduleData = [pscustomobject]@{
+                Owner            = $owner
+                Name             = $name
+                Description      = $description
+                Version          = $version
+                ProcessReference = $processReference
+                ProcessStatus    = $processStatus
+                Issues           = $issues
+                PullRequests     = $pullRequests
+                Stars            = $stars
+                About            = $aboutSummary
+            }
+            New-ModuleCatalogPage -Path $modulePagePath -ModuleData $moduleData
+            Write-Host "Wrote repository page [$modulePagePath]"
+
+            $moduleTableRow = $moduleCatalogRowTemplate
+            $moduleTableRow = $moduleTableRow.Replace('{{ MODULE_PAGE_LINK }}', $modulePageRelativeLink)
+            $moduleTableRow = $moduleTableRow.Replace('{{ TITLE_SUMMARY }}', $titleSummary)
+            $moduleTableRow = $moduleTableRow.Replace('{{ NAME }}', $name)
+            $moduleTableRow = $moduleTableRow.Replace('{{ VERSION }}', $version)
+            $moduleTableRow = $moduleTableRow.Replace('{{ PROCESS_REFERENCE }}', $processReference)
+            $moduleTableRow = $moduleTableRow.Replace('{{ PROCESS_STATUS }}', $processStatus)
+            $moduleTableRow = $moduleTableRow.Replace('{{ OWNER }}', $owner)
+            $moduleTableRow = $moduleTableRow.Replace('{{ ISSUES }}', [string]$issues)
+            $moduleTableRow = $moduleTableRow.Replace('{{ PULL_REQUESTS }}', [string]$pullRequests)
+            $moduleTableRow = $moduleTableRow.Replace('{{ STARS }}', [string]$stars)
+            $moduleTableRows += $moduleTableRow.TrimEnd()
+            $moduleTableRows += [Environment]::NewLine
         }
-
-        $defaultBranch = [string](Get-PropertyValue -InputObject $repo -Names @('DefaultBranch', 'default_branch') -Default 'main')
-        if ([string]::IsNullOrWhiteSpace($defaultBranch)) {
-            $defaultBranch = 'main'
-        }
-
-        $readmeContent = Get-RepositoryReadmeContent -Owner $owner -Name $name
-        $aboutSummary = Get-MarkdownSummary -Markdown $readmeContent
-        if ([string]::IsNullOrWhiteSpace($aboutSummary)) {
-            $aboutSummary = $description
-        }
-
-        $titleSummary = ConvertTo-HtmlAttributeValue -Value $aboutSummary
-        $version = Get-RepositoryVersion -Owner $owner -Name $name
-        $processReference = Get-WorkflowReference -Owner $owner -Name $name -DefaultBranch $defaultBranch
-        $processStatus = Get-ProcessReferenceStatus -Reference $processReference -LatestVersion $processLatestVersion
-        $issues = Get-OpenItemCount -Owner $owner -Name $name -Type issue
-        $pullRequests = Get-OpenItemCount -Owner $owner -Name $name -Type pr
-        $stars = [int](Get-PropertyValue -InputObject $repo -Names @('Stars', 'stargazers_count', 'StargazersCount') -Default 0)
-
-        $modulePageFileName = "$name.md"
-        $modulePagePath = Join-Path $catalogFolderPath $modulePageFileName
-        $modulePageRelativeLink = "./Repositories/$modulePageFileName"
-
-        $moduleData = [pscustomobject]@{
-            Owner            = $owner
-            Name             = $name
-            Description      = $description
-            Version          = $version
-            ProcessReference = $processReference
-            ProcessStatus    = $processStatus
-            Issues           = $issues
-            PullRequests     = $pullRequests
-            Stars            = $stars
-            About            = $aboutSummary
-        }
-        New-ModuleCatalogPage -Path $modulePagePath -ModuleData $moduleData
-
-        $moduleTableRow = $moduleCatalogRowTemplate
-        $moduleTableRow = $moduleTableRow.Replace('{{ MODULE_PAGE_LINK }}', $modulePageRelativeLink)
-        $moduleTableRow = $moduleTableRow.Replace('{{ TITLE_SUMMARY }}', $titleSummary)
-        $moduleTableRow = $moduleTableRow.Replace('{{ NAME }}', $name)
-        $moduleTableRow = $moduleTableRow.Replace('{{ VERSION }}', $version)
-        $moduleTableRow = $moduleTableRow.Replace('{{ PROCESS_REFERENCE }}', $processReference)
-        $moduleTableRow = $moduleTableRow.Replace('{{ PROCESS_STATUS }}', $processStatus)
-        $moduleTableRow = $moduleTableRow.Replace('{{ OWNER }}', $owner)
-        $moduleTableRow = $moduleTableRow.Replace('{{ ISSUES }}', [string]$issues)
-        $moduleTableRow = $moduleTableRow.Replace('{{ PULL_REQUESTS }}', [string]$pullRequests)
-        $moduleTableRow = $moduleTableRow.Replace('{{ STARS }}', [string]$stars)
-        $moduleTableRows += $moduleTableRow.TrimEnd()
-        $moduleTableRows += [Environment]::NewLine
     }
 
-    $moduleTable = $moduleCatalogTableTemplate.Replace('{{ ROWS }}', $moduleTableRows.TrimEnd())
-
-    Update-MDSection -Path '.\src\docs\Modules\Catalog\index.md' -Name 'MODULE_CATALOG' -Content $moduleTable
+    LogGroup 'Write module catalog table to docs index' {
+        $moduleTable = $moduleCatalogTableTemplate.Replace('{{ ROWS }}', $moduleTableRows.TrimEnd())
+        Update-MDSection -Path '.\src\docs\Modules\Catalog\index.md' -Name 'MODULE_CATALOG' -Content $moduleTable
+        Write-Host 'Module catalog table update completed'
+    }
 }
 
 function Update-FunctionAppList {

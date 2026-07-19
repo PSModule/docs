@@ -7,7 +7,6 @@ This section is the local source of truth for:
 - module catalog and module-level specs
 - Process-PSModule structure and build flow
 - repository anatomy and template onboarding
-- optional dashboard extension specification for module telemetry
 
 ## Sections
 
@@ -18,4 +17,3 @@ This section is the local source of truth for:
 - [Versioning](Versioning.md)
 - [Catalog](Catalog/index.md) (auto-generated from PSModule repo metadata, release data, and README summaries)
 - [Process-PSModule](Process-PSModule/index.md)
-- [Dashboard Extension](Dashboard-Extension/index.md)
