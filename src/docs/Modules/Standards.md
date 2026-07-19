@@ -57,6 +57,7 @@ Layout rules:
 - No pipeline input.
 - No defaulting from context — public callers resolve before calling.
 - Required inputs declared as mandatory.
+- No nested helper functions. If logic needs a helper, create it as a separate private function file under `src/functions/private/<Group>/`.
 
 ## SOLID applied
 
