@@ -209,7 +209,9 @@ function Invoke-GitHubApi {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [string] $Uri
+        [string] $Uri,
+        [Parameter()]
+        [switch] $Anonymous
     )
 
     try {
@@ -219,9 +221,13 @@ function Invoke-GitHubApi {
             ErrorAction = 'Stop'
         }
 
-        $availableContexts = Get-GitHubContext -ListAvailable -ErrorAction SilentlyContinue
-        if ($null -eq $availableContexts -or $availableContexts.Count -eq 0) {
+        if ($Anonymous) {
             $apiParameters.Anonymous = $true
+        } else {
+            $availableContexts = Get-GitHubContext -ListAvailable -ErrorAction SilentlyContinue
+            if ($null -eq $availableContexts -or $availableContexts.Count -eq 0) {
+                $apiParameters.Anonymous = $true
+            }
         }
 
         $rawResponse = GitHub\Invoke-GitHubAPI @apiParameters
@@ -477,24 +483,49 @@ function Get-WorkflowReference {
     $workflowFolderPath = '.github/workflows'
     $workflowFolderUri = "https://api.github.com/repos/$Owner/$Name/contents/$workflowFolderPath?ref=$encodedRef"
     Write-Host "Discovering workflow files under [$workflowFolderPath] for [$Owner/$Name] on [$DefaultBranch]"
+    $workflowDiscoveryStrategy = 'folder-listing'
     $workflowEntries = Invoke-GitHubApi -Uri $workflowFolderUri
     if ($null -eq $workflowEntries) {
-        Write-Host "Workflow folder not found: [$workflowFolderPath]"
-        return 'N/A'
+        Write-Host "Workflow folder lookup failed with current auth; retrying anonymously for [$workflowFolderPath]"
+        $workflowEntries = Invoke-GitHubApi -Uri $workflowFolderUri -Anonymous
     }
 
-    $workflowFiles = @(
-        $workflowEntries |
-            Where-Object {
-                (Get-PropertyValue -InputObject $_ -Names @('type') -Default '') -eq 'file' -and
-                [string](Get-PropertyValue -InputObject $_ -Names @('name') -Default '') -match '\.ya?ml$'
-            } |
-            Sort-Object { [string](Get-PropertyValue -InputObject $_ -Names @('name') -Default '') }
-    )
+    $workflowFiles = @()
+    $prefetchedWorkflowResponses = @{}
+    if ($null -ne $workflowEntries) {
+        $workflowEntryItems = @($workflowEntries)
+        Write-Host "Workflow folder listing returned [$($workflowEntryItems.Count)] item(s)"
+        $workflowFiles = @(
+            $workflowEntryItems |
+                Where-Object {
+                    (Get-PropertyValue -InputObject $_ -Names @('type') -Default '') -eq 'file' -and
+                    [string](Get-PropertyValue -InputObject $_ -Names @('name') -Default '') -match '\.ya?ml$'
+                } |
+                Sort-Object { [string](Get-PropertyValue -InputObject $_ -Names @('name') -Default '') }
+        )
+    }
 
     if ($workflowFiles.Count -eq 0) {
-        Write-Host 'No workflow .yml/.yaml files found'
-        return 'N/A'
+        $workflowDiscoveryStrategy = 'canonical-fallback'
+        Write-Host "Workflow folder listing unavailable or empty; trying canonical workflow files directly"
+        foreach ($canonicalWorkflowPath in @('.github/workflows/Process-PSModule.yml', '.github/workflows/Process-PSModule.yaml')) {
+            $canonicalWorkflowUri = "https://api.github.com/repos/$Owner/$Name/contents/${canonicalWorkflowPath}?ref=$encodedRef"
+            $canonicalWorkflowResponse = Invoke-GitHubApi -Uri $canonicalWorkflowUri
+            if ($null -eq $canonicalWorkflowResponse) {
+                $canonicalWorkflowResponse = Invoke-GitHubApi -Uri $canonicalWorkflowUri -Anonymous
+            }
+            if ($null -eq $canonicalWorkflowResponse) {
+                continue
+            }
+
+            Write-Host "Canonical workflow candidate found: [$canonicalWorkflowPath]"
+            $prefetchedWorkflowResponses[$canonicalWorkflowPath] = $canonicalWorkflowResponse
+            $workflowFiles += [pscustomobject]@{
+                name = [IO.Path]::GetFileName($canonicalWorkflowPath)
+                path = $canonicalWorkflowPath
+                type = 'file'
+            }
+        }
     }
 
     if ($workflowFiles.Count -eq 1) {
@@ -506,6 +537,7 @@ function Get-WorkflowReference {
             Write-Host " - $workflowName"
         }
     }
+    Write-Host "Workflow discovery strategy used: [$workflowDiscoveryStrategy]"
 
     $candidateWorkflowFiles = $workflowFiles
     if ($workflowFiles.Count -gt 1) {
@@ -522,6 +554,7 @@ function Get-WorkflowReference {
     }
 
     $resolvedRefs = @()
+    $foundWorkflowFile = $false
     foreach ($workflowFile in $candidateWorkflowFiles) {
         $workflowPath = [string](Get-PropertyValue -InputObject $workflowFile -Names @('path') -Default '')
         if ([string]::IsNullOrWhiteSpace($workflowPath)) {
@@ -529,12 +562,21 @@ function Get-WorkflowReference {
         }
 
         Write-Host "Checking workflow path [$workflowPath] for [$Owner/$Name] on [$DefaultBranch]"
-        $uri = "https://api.github.com/repos/$Owner/$Name/contents/${workflowPath}?ref=$encodedRef"
-        $response = Invoke-GitHubApi -Uri $uri
-        if ($null -eq $response) {
-            Write-Host "Workflow path not found: [$workflowPath]"
-            continue
+        if ($prefetchedWorkflowResponses.ContainsKey($workflowPath)) {
+            $response = $prefetchedWorkflowResponses[$workflowPath]
+        } else {
+            $uri = "https://api.github.com/repos/$Owner/$Name/contents/${workflowPath}?ref=$encodedRef"
+            $response = Invoke-GitHubApi -Uri $uri
+            if ($null -eq $response) {
+                Write-Host "Workflow path lookup failed with current auth; retrying anonymously for [$workflowPath]"
+                $response = Invoke-GitHubApi -Uri $uri -Anonymous
+                if ($null -eq $response) {
+                    Write-Host "Workflow path not found: [$workflowPath]"
+                    continue
+                }
+            }
         }
+        $foundWorkflowFile = $true
 
         $content = Get-PropertyValue -InputObject $response -Names @('content')
         if ([string]::IsNullOrWhiteSpace([string]$content)) {
@@ -564,16 +606,24 @@ function Get-WorkflowReference {
         }
     }
 
+    if (-not $foundWorkflowFile) {
+        Write-Host "No workflow files could be fetched for [$Owner/$Name]"
+        return 'N/A'
+    }
+
     $uniqueResolvedRefs = @($resolvedRefs | Select-Object -Unique)
     if ($uniqueResolvedRefs.Count -eq 1) {
+        Write-Host "Workflow reference resolution succeeded using strategy [$workflowDiscoveryStrategy]"
         return [string]$uniqueResolvedRefs[0]
     }
     if ($uniqueResolvedRefs.Count -gt 1) {
         Write-Host "Multiple Process-PSModule refs resolved for [$Owner/$Name]: $($uniqueResolvedRefs -join ', ')"
+        Write-Host "Workflow reference resolution failed using strategy [$workflowDiscoveryStrategy]"
         return 'N/A'
     }
 
     Write-Host "No Process-PSModule workflow reference found for [$Owner/$Name]"
+    Write-Host "Workflow reference resolution failed using strategy [$workflowDiscoveryStrategy]"
     'N/A'
 }
 
