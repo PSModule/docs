@@ -474,25 +474,42 @@ function Get-WorkflowReference {
     )
 
     foreach ($workflowPath in @('.github/workflows/workflow.yml', '.github/workflows/workflow.yaml')) {
+        Write-Host "Checking workflow path [$workflowPath] for [$Owner/$Name] on [$DefaultBranch]"
         $encodedRef = [uri]::EscapeDataString($DefaultBranch)
         $uri = "https://api.github.com/repos/$Owner/$Name/contents/${workflowPath}?ref=$encodedRef"
         $response = Invoke-GitHubApi -Uri $uri
         if ($null -eq $response) {
+            Write-Host "Workflow path not found: [$workflowPath]"
             continue
         }
 
         $content = Get-PropertyValue -InputObject $response -Names @('content')
         if ([string]::IsNullOrWhiteSpace([string]$content)) {
+            Write-Host "Workflow content is empty for path [$workflowPath]"
             continue
         }
 
         $decoded = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String(([string]$content).Replace("`n", '').Replace("`r", '')))
-        $match = [regex]::Match($decoded, '(?m)uses:\s*PSModule/Process-PSModule/.+?@(?<ref>[^\s#]+)')
+        $processLinePattern = '(?m)^\s*uses:\s*["'']?PSModule/Process-PSModule/.+$'
+        $processReferencePattern = '(?m)uses:\s*["'']?PSModule/Process-PSModule/.+?@(?<ref>[^"''\s#]+)'
+        $processLines = [regex]::Matches($decoded, $processLinePattern)
+        if ($processLines.Count -gt 0) {
+            foreach ($processLine in $processLines) {
+                Write-Host "Processing workflow line: $($processLine.Value.Trim())"
+            }
+        } else {
+            Write-Host "No Process-PSModule uses line found in [$workflowPath]"
+        }
+
+        $match = [regex]::Match($decoded, $processReferencePattern)
         if ($match.Success) {
+            Write-Host "Resolved Process-PSModule ref [$($match.Groups['ref'].Value)] from [$workflowPath]"
             return $match.Groups['ref'].Value
         }
+        Write-Host "Unable to parse Process-PSModule ref in [$workflowPath]"
     }
 
+    Write-Host "No Process-PSModule workflow reference found for [$Owner/$Name]"
     'N/A'
 }
 
