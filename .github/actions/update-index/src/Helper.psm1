@@ -7,6 +7,35 @@
 [CmdletBinding()]
 param()
 
+function Connect-GitHubAppDefaultContext {
+    <#
+        .SYNOPSIS
+        Ensures a default GitHub App context is active.
+
+        .DESCRIPTION
+        Uses Connect-GitHubApp with -Default so subsequent GitHub module calls
+        use an authenticated default context instead of anonymous access.
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter()]
+        [string] $Owner = $env:GITHUB_REPOSITORY_OWNER
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Owner)) {
+        throw 'Owner is required to establish a default GitHub App context.'
+    }
+
+    $currentContext = Get-GitHubContext -ErrorAction SilentlyContinue
+    if ($null -ne $currentContext -and $currentContext.AuthType -eq 'App' -and $currentContext.Name -eq $Owner) {
+        Write-Host "Using existing default GitHub App context [$($currentContext.Name)]"
+        return
+    }
+
+    Write-Host "Connecting GitHub App context as default for organization [$Owner]"
+    Connect-GitHubApp -Organization $Owner -Default
+}
+
 function Show-RepoList {
     <#
         .SYNOPSIS
@@ -34,14 +63,7 @@ function Show-RepoList {
     )
 
     LogGroup "Connect to organization [$Owner]" {
-        $currentContext = Get-GitHubContext -ErrorAction SilentlyContinue
-        if ($null -eq $currentContext) {
-            Connect-GitHubApp -Organization $Owner -Default
-        } elseif ($currentContext.AuthType -eq 'App') {
-            Connect-GitHubApp -Organization $Owner -Default
-        } else {
-            Write-Host "Using existing GitHub context [$($currentContext.Name)] with auth type [$($currentContext.AuthType)]"
-        }
+        Connect-GitHubAppDefaultContext -Owner $Owner
         Get-GitHubContext | Select-Object * | Format-List | Out-String
     }
 
@@ -202,8 +224,9 @@ function Invoke-GitHubApi {
         Invokes a GitHub REST API GET request.
 
         .DESCRIPTION
-        Calls the GitHub module API wrapper, auto-selects anonymous mode when no context
-        is configured, normalizes wrapped responses, and treats HTTP 404 as missing data.
+        Calls the GitHub module API wrapper, ensures a default GitHub App context
+        for authenticated requests (unless -Anonymous is used), normalizes wrapped
+        responses, and treats HTTP 404 as missing data.
     #>
     [OutputType([object])]
     [CmdletBinding()]
@@ -222,12 +245,8 @@ function Invoke-GitHubApi {
         }
 
         if ($Anonymous) {
+            Write-Host "Invoking GitHub API anonymously for [$Uri]"
             $apiParameters.Anonymous = $true
-        } else {
-            $availableContexts = Get-GitHubContext -ListAvailable -ErrorAction SilentlyContinue
-            if ($null -eq $availableContexts -or $availableContexts.Count -eq 0) {
-                $apiParameters.Anonymous = $true
-            }
         }
 
         $rawResponse = GitHub\Invoke-GitHubAPI @apiParameters
@@ -481,7 +500,7 @@ function Get-WorkflowReference {
 
     $encodedRef = [uri]::EscapeDataString($DefaultBranch)
     $workflowFolderPath = '.github/workflows'
-    $workflowFolderUri = "https://api.github.com/repos/$Owner/$Name/contents/$workflowFolderPath?ref=$encodedRef"
+    $workflowFolderUri = "https://api.github.com/repos/$Owner/$Name/contents/${workflowFolderPath}?ref=$encodedRef"
     Write-Host "Discovering workflow files under [$workflowFolderPath] for [$Owner/$Name] on [$DefaultBranch]"
     $workflowDiscoveryStrategy = 'folder-listing'
     $workflowEntries = Invoke-GitHubApi -Uri $workflowFolderUri
