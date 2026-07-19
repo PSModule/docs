@@ -168,14 +168,60 @@ function Invoke-GitHubApi {
     )
 
     try {
-        Invoke-GitHubAPI -Method GET -Uri $Uri -ErrorAction Stop
+        $apiParameters = @{
+            Method      = 'GET'
+            Uri         = $Uri
+            ErrorAction = 'Stop'
+        }
+
+        $availableContexts = Get-GitHubContext -ListAvailable -ErrorAction SilentlyContinue
+        if ($null -eq $availableContexts -or $availableContexts.Count -eq 0) {
+            $apiParameters.Anonymous = $true
+        }
+
+        $rawResponse = GitHub\Invoke-GitHubAPI @apiParameters
+        if ($null -eq $rawResponse) {
+            return $null
+        }
+
+        if ($rawResponse -is [array] -and $rawResponse.Count -gt 0 -and $rawResponse[0].PSObject.Properties['Response']) {
+            $payloadItems = @()
+            foreach ($item in $rawResponse) {
+                if ($null -eq $item.Response) {
+                    continue
+                }
+
+                if ($item.Response -is [array]) {
+                    $payloadItems += $item.Response
+                }
+                else {
+                    $payloadItems += , $item.Response
+                }
+            }
+
+            if ($payloadItems.Count -eq 0) {
+                return $null
+            }
+            if ($payloadItems.Count -eq 1) {
+                return $payloadItems[0]
+            }
+
+            return $payloadItems
+        }
+
+        if ($rawResponse.PSObject.Properties['Response']) {
+            return $rawResponse.Response
+        }
+
+        return $rawResponse
     }
     catch {
         $statusCode = $null
         if ($_.Exception.Response) {
             $statusCode = $_.Exception.Response.StatusCode.value__
         }
-        if ($statusCode -eq 404) {
+        $errorText = $_ | Out-String
+        if ($statusCode -eq 404 -or $errorText -match 'StatusCode\s*:\s*404' -or $errorText -match '\(404\)') {
             return $null
         }
 
@@ -331,7 +377,7 @@ function Get-WorkflowReference {
 
     foreach ($workflowPath in @('.github/workflows/workflow.yml', '.github/workflows/workflow.yaml')) {
         $encodedRef = [uri]::EscapeDataString($DefaultBranch)
-        $uri = "https://api.github.com/repos/$Owner/$Name/contents/$workflowPath?ref=$encodedRef"
+        $uri = "https://api.github.com/repos/$Owner/$Name/contents/${workflowPath}?ref=$encodedRef"
         $response = Invoke-GitHubApi -Uri $uri
         if ($null -eq $response) {
             continue
