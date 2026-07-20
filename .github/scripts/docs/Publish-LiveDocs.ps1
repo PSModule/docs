@@ -6,8 +6,6 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$BuildDirectory,
     [Parameter(Mandatory = $true)]
-    [string]$HeadBranch,
-    [Parameter(Mandatory = $true)]
     [string]$CommitSha,
     [string]$PagesDirectory = '_pages',
     [string]$BaseBranch = 'gh-pages'
@@ -57,16 +55,6 @@ if ([string]::IsNullOrWhiteSpace($status)) {
 }
 
 Invoke-Git -Arguments @('-C', $PagesDirectory, 'commit', '-m', "Deploy docs from $CommitSha")
-Invoke-Git -Arguments @('-C', $PagesDirectory, 'push', '--force-with-lease', 'origin', "HEAD:refs/heads/$HeadBranch")
-
-$env:GH_TOKEN = $Token
-$prNumber = Upsert-PullRequest `
-    -Repository $Repository `
-    -HeadBranch $HeadBranch `
-    -BaseBranch $BaseBranch `
-    -Title 'docs(publish): update live docs' `
-    -Body "Automated docs publish from `$CommitSha`nLive URL: https://psmodule.io/docs/"
-Enable-PullRequestAutoMerge -Repository $Repository -PullRequestNumber $prNumber
+Invoke-Git -Arguments @('-C', $PagesDirectory, 'push', 'origin', "HEAD:refs/heads/$BaseBranch")
 
 Set-WorkflowOutput -Name 'has_changes' -Value 'true'
-Set-WorkflowOutput -Name 'pr_number' -Value $prNumber

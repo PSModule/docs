@@ -9,8 +9,6 @@ param(
     [string]$PreviewUrl,
     [Parameter(Mandatory = $true)]
     [string]$BuildDirectory,
-    [Parameter(Mandatory = $true)]
-    [string]$HeadBranch,
     [string]$PagesDirectory = '_pages',
     [string]$BaseBranch = 'gh-pages'
 )
@@ -53,16 +51,7 @@ Invoke-Git -Arguments @('-C', $PagesDirectory, 'add', '-A')
 $status = (& git -C $PagesDirectory status --porcelain)
 if (-not [string]::IsNullOrWhiteSpace($status)) {
     Invoke-Git -Arguments @('-C', $PagesDirectory, 'commit', '-m', "Update docs preview for PR #$PullRequestNumber")
-    Invoke-Git -Arguments @('-C', $PagesDirectory, 'push', '--force-with-lease', 'origin', "HEAD:refs/heads/$HeadBranch")
-
-    $env:GH_TOKEN = $Token
-    $prNumber = Upsert-PullRequest `
-        -Repository $Repository `
-        -HeadBranch $HeadBranch `
-        -BaseBranch $BaseBranch `
-        -Title "docs(preview): PR #$PullRequestNumber" `
-        -Body "Automated preview content update for #$PullRequestNumber`nPreview URL: $PreviewUrl"
-    Enable-PullRequestAutoMerge -Repository $Repository -PullRequestNumber $prNumber
+    Invoke-Git -Arguments @('-C', $PagesDirectory, 'push', 'origin', "HEAD:refs/heads/$BaseBranch")
 }
 
 $commentBody = "<!-- docs-pr-preview -->`n✅ Preview is ready: $PreviewUrl"

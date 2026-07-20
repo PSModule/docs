@@ -9,8 +9,6 @@ param(
     [string]$PreviewUrl,
     [Parameter(Mandatory = $true)]
     [string]$EnvironmentName,
-    [Parameter(Mandatory = $true)]
-    [string]$HeadBranch,
     [string]$PagesDirectory = '_pages',
     [string]$BaseBranch = 'gh-pages'
 )
@@ -47,16 +45,7 @@ if ($clonedPages) {
     $status = (& git -C $PagesDirectory status --porcelain)
     if (-not [string]::IsNullOrWhiteSpace($status)) {
         Invoke-Git -Arguments @('-C', $PagesDirectory, 'commit', '-m', "Remove docs preview for PR #$PullRequestNumber")
-        Invoke-Git -Arguments @('-C', $PagesDirectory, 'push', '--force-with-lease', 'origin', "HEAD:refs/heads/$HeadBranch")
-
-        $env:GH_TOKEN = $Token
-        $prNumber = Upsert-PullRequest `
-            -Repository $Repository `
-            -HeadBranch $HeadBranch `
-            -BaseBranch $BaseBranch `
-            -Title "docs(preview): cleanup PR #$PullRequestNumber" `
-            -Body "Automated cleanup for preview URL: $PreviewUrl"
-        Enable-PullRequestAutoMerge -Repository $Repository -PullRequestNumber $prNumber
+        Invoke-Git -Arguments @('-C', $PagesDirectory, 'push', 'origin', "HEAD:refs/heads/$BaseBranch")
     }
 }
 

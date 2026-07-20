@@ -72,8 +72,7 @@ jobs:
       name: github-pages
       url: https://psmodule.io/docs/
     permissions:
-      contents: read
-      pull-requests: write
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -108,7 +107,7 @@ jobs:
       - name: Publish live docs
         id: publish-live
         shell: pwsh
-        run: ./.github/scripts/docs/Publish-LiveDocs.ps1 -Repository "${{ github.repository }}" -Token "${{ steps.app-token.outputs.token }}" -BuildDirectory "$PWD/src/site" -HeadBranch "scribbler/publish/main" -CommitSha "${{ github.sha }}"
+        run: ./.github/scripts/docs/Publish-LiveDocs.ps1 -Repository "${{ github.repository }}" -Token "${{ steps.app-token.outputs.token }}" -BuildDirectory "$PWD/src/site" -CommitSha "${{ github.sha }}"
 
   preview:
     name: Preview
@@ -119,12 +118,10 @@ jobs:
       name: pr-preview-${{ github.event.number }}
       url: ${{ steps.preview-url.outputs.url }}
     permissions:
-      contents: read
+      contents: write
       deployments: write
       issues: write
-      pull-requests: write
     env:
-      PREVIEW_PAGES_BRANCH: scribbler/preview/pr-${{ github.event.number }}
       PREVIEW_URL: https://psmodule.io/docs/previews/pr-${{ github.event.number }}/
     steps:
       - name: Checkout repository
@@ -163,19 +160,17 @@ jobs:
       - name: Publish preview docs
         id: preview-url
         shell: pwsh
-        run: ./.github/scripts/docs/Publish-PreviewDocs.ps1 -Repository "${{ github.repository }}" -Token "${{ steps.app-token.outputs.token }}" -PullRequestNumber ${{ github.event.number }} -PreviewUrl "${{ env.PREVIEW_URL }}" -BuildDirectory "$PWD/src/site" -HeadBranch "${{ env.PREVIEW_PAGES_BRANCH }}"
+        run: ./.github/scripts/docs/Publish-PreviewDocs.ps1 -Repository "${{ github.repository }}" -Token "${{ steps.app-token.outputs.token }}" -PullRequestNumber ${{ github.event.number }} -PreviewUrl "${{ env.PREVIEW_URL }}" -BuildDirectory "$PWD/src/site"
 
   preview-cleanup:
     name: Preview cleanup
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-24.04
     permissions:
-      contents: read
+      contents: write
       deployments: write
       issues: write
-      pull-requests: write
     env:
-      PREVIEW_CLEANUP_BRANCH: scribbler/preview-cleanup/pr-${{ github.event.number }}
       PREVIEW_URL: https://psmodule.io/docs/previews/pr-${{ github.event.number }}/
       PREVIEW_ENVIRONMENT: pr-preview-${{ github.event.number }}
     steps:
@@ -193,4 +188,4 @@ jobs:
 
       - name: Cleanup preview resources
         shell: pwsh
-        run: ./.github/scripts/docs/Cleanup-PreviewDocs.ps1 -Repository "${{ github.repository }}" -Token "${{ steps.app-token.outputs.token }}" -PullRequestNumber ${{ github.event.number }} -PreviewUrl "${{ env.PREVIEW_URL }}" -EnvironmentName "${{ env.PREVIEW_ENVIRONMENT }}" -HeadBranch "${{ env.PREVIEW_CLEANUP_BRANCH }}"
+        run: ./.github/scripts/docs/Cleanup-PreviewDocs.ps1 -Repository "${{ github.repository }}" -Token "${{ steps.app-token.outputs.token }}" -PullRequestNumber ${{ github.event.number }} -PreviewUrl "${{ env.PREVIEW_URL }}" -EnvironmentName "${{ env.PREVIEW_ENVIRONMENT }}"

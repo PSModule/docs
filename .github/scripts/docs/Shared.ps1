@@ -48,40 +48,6 @@ function Invoke-Gh {
     return $output
 }
 
-function Upsert-PullRequest {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Repository,
-        [Parameter(Mandatory = $true)]
-        [string]$HeadBranch,
-        [Parameter(Mandatory = $true)]
-        [string]$BaseBranch,
-        [Parameter(Mandatory = $true)]
-        [string]$Title,
-        [Parameter(Mandatory = $true)]
-        [string]$Body
-    )
-
-    $existing = Invoke-Gh -Arguments @('pr', 'list', '--repo', $Repository, '--base', $BaseBranch, '--head', $HeadBranch, '--state', 'open', '--json', 'number', '--jq', '.[0].number')
-    if ([string]::IsNullOrWhiteSpace($existing)) {
-        return (Invoke-Gh -Arguments @('pr', 'create', '--repo', $Repository, '--base', $BaseBranch, '--head', $HeadBranch, '--title', $Title, '--body', $Body, '--json', 'number', '--jq', '.number'))
-    }
-
-    Invoke-Gh -Arguments @('pr', 'edit', $existing, '--repo', $Repository, '--title', $Title, '--body', $Body) | Out-Null
-    return $existing
-}
-
-function Enable-PullRequestAutoMerge {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Repository,
-        [Parameter(Mandatory = $true)]
-        [string]$PullRequestNumber
-    )
-
-    Invoke-Gh -Arguments @('pr', 'merge', $PullRequestNumber, '--repo', $Repository, '--squash', '--auto', '--delete-branch') | Out-Null
-}
-
 function Upsert-IssueComment {
     param(
         [Parameter(Mandatory = $true)]
