@@ -15,6 +15,22 @@ This repository publishes docs previews for pull requests under:
    - removes `previews/pr-<number>/` by pushing directly to `gh-pages` as the Scribbler app,
    - deletes all preview deployments and the preview environment.
 
+## Flow diagram
+
+```mermaid
+flowchart TD
+    A[Contributor opens or updates PR to main] --> B[Docs workflow builds preview site]
+    B --> C[Scribbler app token pushes preview files to gh-pages under previews/pr-N]
+    C --> D[Workflow sets environment pr-preview-N with preview URL]
+    D --> E[Workflow comments on PR with preview link]
+    E --> F[Contributor iterates on PR]
+    F --> B
+    G[PR closed: merged or abandoned] --> H[Cleanup job runs]
+    H --> I[Scribbler app token removes previews/pr-N from gh-pages]
+    I --> J[Workflow deletes preview deployments + environment]
+    J --> K[Workflow updates PR comment: preview removed]
+```
+
 ## Required repository configuration
 
 1. Ensure `gh-pages` branch exists.
