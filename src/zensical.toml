@@ -32,6 +32,7 @@ nav = [
       {"Repository Structure" = "Modules/Process-PSModule/repository-structure.md"},
       {"Module Anatomy" = "Modules/Process-PSModule/module-anatomy.md"},
       {"Build, Test, Pack, Publish" = "Modules/Process-PSModule/build-test-pack-publish.md"},
+      {"GitHub App Authentication" = "Modules/Process-PSModule/github-app-authentication.md"},
       {"Template Quickstart" = "Modules/Process-PSModule/template-quickstart.md"},
     ]},
   ]},
