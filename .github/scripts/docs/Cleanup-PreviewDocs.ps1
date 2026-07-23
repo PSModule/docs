@@ -93,4 +93,4 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 $commentBody = "<!-- docs-pr-preview -->`n🧹 Preview removed: $PreviewUrl"
-Update-IssueComment -Repository $Repository -IssueNumber $PullRequestNumber -Marker '<!-- docs-pr-preview -->' -Body $commentBody
+Write-IssueComment -Repository $Repository -IssueNumber $PullRequestNumber -Marker '<!-- docs-pr-preview -->' -Body $commentBody

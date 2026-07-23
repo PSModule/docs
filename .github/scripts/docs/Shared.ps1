@@ -60,7 +60,7 @@ function Invoke-Gh {
     return $output
 }
 
-function Update-IssueComment {
+function Write-IssueComment {
     <#
         .SYNOPSIS
         Creates or updates a marker-based issue/PR comment.

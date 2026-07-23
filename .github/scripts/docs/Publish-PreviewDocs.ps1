@@ -82,6 +82,6 @@ if (-not [string]::IsNullOrWhiteSpace($status)) {
 
 $commentBody = "<!-- docs-pr-preview -->`n✅ Preview is ready: $PreviewUrl"
 $env:GH_TOKEN = $Token
-Update-IssueComment -Repository $Repository -IssueNumber $PullRequestNumber -Marker '<!-- docs-pr-preview -->' -Body $commentBody
+Write-IssueComment -Repository $Repository -IssueNumber $PullRequestNumber -Marker '<!-- docs-pr-preview -->' -Body $commentBody
 
 Write-WorkflowOutput -Name 'url' -Value $PreviewUrl
