@@ -338,3 +338,18 @@ Source code is linted with PSScriptAnalyzer using the repo-level settings at `.g
 - `PSPlaceOpenBrace` / `PSPlaceCloseBrace` — OTBS brace style
 - `PSUseConsistentIndentation` — 4-space indentation
 - `PSUseConsistentWhitespace` — consistent spacing around operators, pipes, and separators
+
+When a PSScriptAnalyzer rule flags code, follow this decision path:
+
+1. Fix the issue.
+2. Reconsider the implementation approach or design.
+3. If the implementation is correct only for one file (case-specific deviation), add one file-level suppression attribute at the top of that file:
+
+   ```powershell
+   [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+    'PSUseDeclaredVarsMoreThanAssignments', '',
+    Justification = 'Required for Pester tests'
+   )]
+   ```
+
+4. If the implementation is broadly correct across repositories, update linter settings (usually `.github/linters/.powershell-psscriptanalyzer.psd1`) instead of suppressing per file.
