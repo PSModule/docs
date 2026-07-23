@@ -9,7 +9,11 @@
     the updated branch using the GitHub App token identity.
 
     .EXAMPLE
-    ./Publish-LiveDocs.ps1 -Repository "PSModule/docs" -Token $token -BuildDirectory "$PWD/src/site" -CommitSha $env:GITHUB_SHA
+    ./Publish-LiveDocs.ps1 `
+      -Repository "PSModule/docs" `
+      -Token $token `
+      -BuildDirectory "$PWD/src/site" `
+      -CommitSha $env:GITHUB_SHA
 #>
 [CmdletBinding()]
 param(
@@ -70,11 +74,11 @@ Invoke-Git -Arguments @('-C', $PagesDirectory, 'add', '-A')
 
 $status = (& git -C $PagesDirectory status --porcelain)
 if ([string]::IsNullOrWhiteSpace($status)) {
-    Set-WorkflowOutput -Name 'has_changes' -Value 'false'
+    Write-WorkflowOutput -Name 'has_changes' -Value 'false'
     exit 0
 }
 
 Invoke-Git -Arguments @('-C', $PagesDirectory, 'commit', '-m', "Deploy docs from $CommitSha")
 Invoke-Git -Arguments @('-C', $PagesDirectory, 'push', 'origin', "HEAD:refs/heads/$BaseBranch")
 
-Set-WorkflowOutput -Name 'has_changes' -Value 'true'
+Write-WorkflowOutput -Name 'has_changes' -Value 'true'

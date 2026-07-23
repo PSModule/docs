@@ -81,10 +81,11 @@ jobs:
 
       - name: Create GitHub App token
         id: app-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
         with:
           app-id: ${{ secrets.SCRIBBLER_BOT_CLIENT_ID }}
           private-key: ${{ secrets.SCRIBBLER_BOT_PRIVATE_KEY }}
+          permission-contents: write
 
       - name: Update index
         uses: ./.github/actions/update-index
@@ -107,7 +108,16 @@ jobs:
       - name: Publish live docs
         id: publish-live
         shell: pwsh
-        run: ./.github/scripts/docs/Publish-LiveDocs.ps1 -Repository "${{ github.repository }}" -Token "${{ steps.app-token.outputs.token }}" -BuildDirectory "$PWD/src/site" -CommitSha "${{ github.sha }}"
+        env:
+          REPOSITORY: ${{ github.repository }}
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          ./.github/scripts/docs/Publish-LiveDocs.ps1 `
+            -Repository $env:REPOSITORY `
+            -Token $env:APP_TOKEN `
+            -BuildDirectory "$PWD/src/site" `
+            -CommitSha $env:COMMIT_SHA
 
   preview:
     name: Preview
@@ -131,10 +141,12 @@ jobs:
 
       - name: Create GitHub App token
         id: app-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
         with:
           app-id: ${{ secrets.SCRIBBLER_BOT_CLIENT_ID }}
           private-key: ${{ secrets.SCRIBBLER_BOT_PRIVATE_KEY }}
+          permission-contents: write
+          permission-issues: write
 
       - name: Update index
         uses: ./.github/actions/update-index
@@ -152,15 +164,28 @@ jobs:
 
       - name: Build preview site
         shell: pwsh
+        env:
+          PREVIEW_SITE_URL: ${{ env.PREVIEW_URL }}
         run: |
-          ./.github/scripts/docs/Set-ZensicalSiteUrl.ps1 -ConfigPath "$PWD/zensical.toml" -SiteUrl "${{ env.PREVIEW_URL }}"
+          ./.github/scripts/docs/Set-ZensicalSiteUrl.ps1 -ConfigPath "$PWD/zensical.toml" -SiteUrl $env:PREVIEW_SITE_URL
           zensical build --clean
         working-directory: src
 
       - name: Publish preview docs
         id: preview-url
         shell: pwsh
-        run: ./.github/scripts/docs/Publish-PreviewDocs.ps1 -Repository "${{ github.repository }}" -Token "${{ steps.app-token.outputs.token }}" -PullRequestNumber ${{ github.event.number }} -PreviewUrl "${{ env.PREVIEW_URL }}" -BuildDirectory "$PWD/src/site"
+        env:
+          REPOSITORY: ${{ github.repository }}
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_NUMBER: ${{ github.event.number }}
+          PREVIEW_SITE_URL: ${{ env.PREVIEW_URL }}
+        run: |
+          ./.github/scripts/docs/Publish-PreviewDocs.ps1 `
+            -Repository $env:REPOSITORY `
+            -Token $env:APP_TOKEN `
+            -PullRequestNumber $env:PR_NUMBER `
+            -PreviewUrl $env:PREVIEW_SITE_URL `
+            -BuildDirectory "$PWD/src/site"
 
   preview-cleanup:
     name: Preview cleanup
@@ -181,11 +206,27 @@ jobs:
 
       - name: Create GitHub App token
         id: app-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
         with:
           app-id: ${{ secrets.SCRIBBLER_BOT_CLIENT_ID }}
           private-key: ${{ secrets.SCRIBBLER_BOT_PRIVATE_KEY }}
+          permission-administration: write
+          permission-contents: write
+          permission-deployments: write
+          permission-issues: write
 
       - name: Cleanup preview resources
         shell: pwsh
-        run: ./.github/scripts/docs/Cleanup-PreviewDocs.ps1 -Repository "${{ github.repository }}" -Token "${{ steps.app-token.outputs.token }}" -PullRequestNumber ${{ github.event.number }} -PreviewUrl "${{ env.PREVIEW_URL }}" -EnvironmentName "${{ env.PREVIEW_ENVIRONMENT }}"
+        env:
+          REPOSITORY: ${{ github.repository }}
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_NUMBER: ${{ github.event.number }}
+          PREVIEW_SITE_URL: ${{ env.PREVIEW_URL }}
+          PREVIEW_ENV: ${{ env.PREVIEW_ENVIRONMENT }}
+        run: |
+          ./.github/scripts/docs/Cleanup-PreviewDocs.ps1 `
+            -Repository $env:REPOSITORY `
+            -Token $env:APP_TOKEN `
+            -PullRequestNumber $env:PR_NUMBER `
+            -PreviewUrl $env:PREVIEW_SITE_URL `
+            -EnvironmentName $env:PREVIEW_ENV

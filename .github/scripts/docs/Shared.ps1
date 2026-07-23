@@ -2,6 +2,10 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 function Invoke-Git {
+    <#
+        .SYNOPSIS
+        Executes a git command and optionally allows non-zero exits.
+    #>
     param(
         [Parameter(Mandatory = $true)]
         [string[]]$Arguments,
@@ -17,7 +21,11 @@ function Invoke-Git {
     return $exitCode
 }
 
-function Set-WorkflowOutput {
+function Write-WorkflowOutput {
+    <#
+        .SYNOPSIS
+        Writes a named value to the GitHub Actions output file.
+    #>
     param(
         [Parameter(Mandatory = $true)]
         [string]$Name,
@@ -33,6 +41,10 @@ function Set-WorkflowOutput {
 }
 
 function Invoke-Gh {
+    <#
+        .SYNOPSIS
+        Executes a gh command and optionally allows non-zero exits.
+    #>
     param(
         [Parameter(Mandatory = $true)]
         [string[]]$Arguments,
@@ -48,7 +60,11 @@ function Invoke-Gh {
     return $output
 }
 
-function Upsert-IssueComment {
+function Update-IssueComment {
+    <#
+        .SYNOPSIS
+        Creates or updates a marker-based issue/PR comment.
+    #>
     param(
         [Parameter(Mandatory = $true)]
         [string]$Repository,

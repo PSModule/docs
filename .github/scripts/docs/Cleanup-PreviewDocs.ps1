@@ -9,7 +9,12 @@
     deployments, deletes the preview environment, and updates the PR comment.
 
     .EXAMPLE
-    ./Cleanup-PreviewDocs.ps1 -Repository "PSModule/docs" -Token $token -PullRequestNumber 42 -PreviewUrl "https://psmodule.io/docs/previews/pr-42/" -EnvironmentName "pr-preview-42"
+    ./Cleanup-PreviewDocs.ps1 `
+      -Repository "PSModule/docs" `
+      -Token $token `
+      -PullRequestNumber 42 `
+      -PreviewUrl "https://psmodule.io/docs/previews/pr-42/" `
+      -EnvironmentName "pr-preview-42"
 #>
 [CmdletBinding()]
 param(
@@ -79,13 +84,13 @@ foreach ($deployment in $deployments) {
     Invoke-Gh -Arguments @('api', '--method', 'DELETE', "repos/$Repository/deployments/$($deployment.id)") | Out-Null
 }
 
-$deleteEnvironmentExit = Invoke-Gh -Arguments @('api', '--method', 'DELETE', "repos/$Repository/environments/$EnvironmentName") -AllowFailure
+Invoke-Gh -Arguments @('api', '--method', 'DELETE', "repos/$Repository/environments/$EnvironmentName") -AllowFailure | Out-Null
 if ($LASTEXITCODE -ne 0) {
-    $environmentCheckExit = Invoke-Gh -Arguments @('api', "repos/$Repository/environments/$EnvironmentName") -AllowFailure
+    Invoke-Gh -Arguments @('api', "repos/$Repository/environments/$EnvironmentName") -AllowFailure | Out-Null
     if ($LASTEXITCODE -eq 0) {
         throw "Failed to delete environment '$EnvironmentName'."
     }
 }
 
 $commentBody = "<!-- docs-pr-preview -->`n🧹 Preview removed: $PreviewUrl"
-Upsert-IssueComment -Repository $Repository -IssueNumber $PullRequestNumber -Marker '<!-- docs-pr-preview -->' -Body $commentBody
+Update-IssueComment -Repository $Repository -IssueNumber $PullRequestNumber -Marker '<!-- docs-pr-preview -->' -Body $commentBody

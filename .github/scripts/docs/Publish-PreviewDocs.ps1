@@ -9,7 +9,12 @@
     pushes branch updates, and ensures the preview comment is present on the PR.
 
     .EXAMPLE
-    ./Publish-PreviewDocs.ps1 -Repository "PSModule/docs" -Token $token -PullRequestNumber 42 -PreviewUrl "https://psmodule.io/docs/previews/pr-42/" -BuildDirectory "$PWD/src/site"
+    ./Publish-PreviewDocs.ps1 `
+      -Repository "PSModule/docs" `
+      -Token $token `
+      -PullRequestNumber 42 `
+      -PreviewUrl "https://psmodule.io/docs/previews/pr-42/" `
+      -BuildDirectory "$PWD/src/site"
 #>
 [CmdletBinding()]
 param(
@@ -77,6 +82,6 @@ if (-not [string]::IsNullOrWhiteSpace($status)) {
 
 $commentBody = "<!-- docs-pr-preview -->`n✅ Preview is ready: $PreviewUrl"
 $env:GH_TOKEN = $Token
-Upsert-IssueComment -Repository $Repository -IssueNumber $PullRequestNumber -Marker '<!-- docs-pr-preview -->' -Body $commentBody
+Update-IssueComment -Repository $Repository -IssueNumber $PullRequestNumber -Marker '<!-- docs-pr-preview -->' -Body $commentBody
 
-Set-WorkflowOutput -Name 'url' -Value $PreviewUrl
+Write-WorkflowOutput -Name 'url' -Value $PreviewUrl
