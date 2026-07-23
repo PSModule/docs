@@ -1,15 +1,36 @@
+﻿#Requires -Version 7.0
+
+<#
+    .SYNOPSIS
+    Removes pull request preview artifacts and related environment state.
+
+    .DESCRIPTION
+    Deletes previews/pr-<number> from gh-pages, deactivates and removes preview
+    deployments, deletes the preview environment, and updates the PR comment.
+
+    .EXAMPLE
+    ./Cleanup-PreviewDocs.ps1 -Repository "PSModule/docs" -Token $token -PullRequestNumber 42 -PreviewUrl "https://psmodule.io/docs/previews/pr-42/" -EnvironmentName "pr-preview-42"
+#>
+[CmdletBinding()]
 param(
+    # Repository in owner/name format.
     [Parameter(Mandatory = $true)]
     [string]$Repository,
+    # GitHub App token used for authenticated git and gh operations.
     [Parameter(Mandatory = $true)]
     [string]$Token,
+    # Pull request number used for preview path and comment targeting.
     [Parameter(Mandatory = $true)]
     [int]$PullRequestNumber,
+    # Public preview URL for PR comments.
     [Parameter(Mandatory = $true)]
     [string]$PreviewUrl,
+    # Environment name to clean up from repository environments.
     [Parameter(Mandatory = $true)]
     [string]$EnvironmentName,
+    # Working directory used to clone gh-pages.
     [string]$PagesDirectory = '_pages',
+    # Branch used as the Pages source branch.
     [string]$BaseBranch = 'gh-pages'
 )
 

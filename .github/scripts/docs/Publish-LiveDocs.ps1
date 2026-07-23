@@ -1,13 +1,33 @@
+﻿#Requires -Version 7.0
+
+<#
+    .SYNOPSIS
+    Publishes live docs content to the gh-pages branch.
+
+    .DESCRIPTION
+    Clones gh-pages, replaces live content while keeping previews, and pushes
+    the updated branch using the GitHub App token identity.
+
+    .EXAMPLE
+    ./Publish-LiveDocs.ps1 -Repository "PSModule/docs" -Token $token -BuildDirectory "$PWD/src/site" -CommitSha $env:GITHUB_SHA
+#>
+[CmdletBinding()]
 param(
+    # Repository in owner/name format.
     [Parameter(Mandatory = $true)]
     [string]$Repository,
+    # GitHub App token used for authenticated git and gh operations.
     [Parameter(Mandatory = $true)]
     [string]$Token,
+    # Full path to the built static site directory.
     [Parameter(Mandatory = $true)]
     [string]$BuildDirectory,
+    # Commit SHA used in the publish commit message.
     [Parameter(Mandatory = $true)]
     [string]$CommitSha,
+    # Working directory used to clone gh-pages.
     [string]$PagesDirectory = '_pages',
+    # Branch used as the Pages source branch.
     [string]$BaseBranch = 'gh-pages'
 )
 

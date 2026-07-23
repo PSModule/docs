@@ -16,4 +16,4 @@ runs:
         ClientID: ${{ inputs.ClientID }}
         PrivateKey: ${{ inputs.PrivateKey }}
         Script: |
-          ${{ github.action_path }}/src/main.ps1
+          ${{ github.action_path }}/src/Invoke-UpdateIndex.ps1
