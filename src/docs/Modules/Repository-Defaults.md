@@ -141,30 +141,30 @@ These files are the agent equivalent of the README: pointers, not copies. Keep t
 
 ## Managed file distribution
 
-Shared repository files are managed through [`PSModule/Distributor`](https://github.com/PSModule/Distributor). Distributor is the source of truth for managed file content and file-set membership.
+Shared repository files are distributed through [`MSXOrg/Custo`](https://github.com/MSXOrg/Custo), the central managed-file distribution and compliance orchestration engine for MSX initiatives. Custo is the runtime responsible for keeping managed file content aligned across repositories.
+
+**Policy ownership and distribution runtime are separate concerns.** This page — and this repository (`PSModule/docs`) — defines *what* files must exist and *what standards they must meet*. Custo defines *how* those files are distributed and kept aligned at runtime.
 
 Managed-file distribution follows this contract:
 
 - `Type` maps a repository to its file-set root (for example `Module` or `Action`).
 - `SubscribeTo` declares which optional managed file sets the repository receives.
 - Organization-wide mandatory file sets define non-optional governance and supply-chain files for each applicable repository type.
-- Distributor delivers changes through a `managed-files/update` branch and a `⚙️ [Maintenance]: Sync managed files` pull request.
-- Receiving repositories treat managed files as generated artifacts from Distributor. Local edits in the receiving repository are replaced on the next sync and must be made in Distributor instead.
+- Custo delivers changes through a `managed-files/update` branch and a `⚙️ [Maintenance]: Sync managed files` pull request.
+- Receiving repositories treat managed files as generated artifacts from Custo. Local edits in the receiving repository are replaced on the next sync; content changes must be made in Custo instead.
 - Removing a file from a file set does not implicitly delete previously synced copies; deletion is an explicit managed change.
-
-This page defines what files must exist in repositories. Distributor defines how those files are distributed and kept aligned.
 
 ### Migration for existing repositories
 
-Repositories that still reflect older distribution behavior should be aligned to this contract:
+Repositories still aligned to `PSModule/Distributor` (the previous distribution engine) or older distribution behavior should be migrated to Custo:
 
 1. Set or correct repository `Type` and `SubscribeTo` properties.
 2. Ensure mandatory governance and supply-chain files from this standard exist in the repository.
-3. Move any intended local edits in managed files into Distributor source file sets.
-4. Sync from Distributor and merge the `managed-files/update` pull request.
+3. Move any intended local edits in managed files into Custo source file sets.
+4. Sync from Custo and merge the `managed-files/update` pull request.
 5. Remove unmanaged duplicates or stale files explicitly when they are no longer part of an active file set.
 
-After migration, the repository keeps the required files from this standard, and managed-file content changes are made through Distributor-first updates.
+After migration, the repository keeps the required files from this standard, and managed-file content changes are made through Custo-first updates.
 
 ## Supply-chain defaults
 
