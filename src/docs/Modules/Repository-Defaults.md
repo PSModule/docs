@@ -54,7 +54,7 @@ Local work should use the organization worktree convention:
 - `main/` tracks the default branch.
 - Feature worktrees use `<type>-<slug>` directories and `<type>/<slug>` branches.
 
-For branch and worktree details, see [Git Worktrees](https://github.com/MSXOrg/docs/blob/main/src/docs/Ways-of-Working/Git-Worktrees.md).
+For branch and worktree details, see [Git Worktrees](https://msxorg.github.io/docs/Ways-of-Working/Git-Worktrees/).
 
 ## Default repository layout
 
