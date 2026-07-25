@@ -316,7 +316,6 @@ The CI pipeline automatically tests every source file against the following rule
 | `NumberOfProcessors` | Use `[System.Environment]::ProcessorCount`, not `$env:NUMBER_OF_PROCESSORS` |
 | `Verbose` | Do not pass `-Verbose` to commands unless explicitly silenced with `-Verbose:$false` |
 | `OutNull` | Use `$null = ...` instead of `\| Out-Null` |
-| `NoTernary` | No ternary operators — use explicit conditional statements for readability |
 | `LowercaseKeywords` | All PowerShell keywords must be lowercase |
 | `FunctionCount` | Each file must contain exactly one function or filter |
 | `FunctionName` | Filename must match the function or filter name |
