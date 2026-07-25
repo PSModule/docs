@@ -138,6 +138,34 @@ Every repository must be usable by an agent that has never seen it before, witho
 
 These files are the agent equivalent of the README: pointers, not copies. Keep them short so the linked documentation stays the single source of truth. Like the other governance files, they live in the repository itself so it can stand on its own.
 
+### Example
+
+`AGENTS.md`:
+
+```markdown
+# Agents
+
+This repository is a PowerShell module built with the [PSModule](https://github.com/PSModule) framework.
+
+- Read this repository's own [README](README.md) and [CONTRIBUTING](CONTRIBUTING.md) first.
+- For module layout, build/test/pack/publish behavior, and repository conventions, see
+  [PSModule/docs](https://psmodule.io/docs/), starting with
+  [Process-PSModule](https://psmodule.io/docs/Modules/Process-PSModule/).
+- For org-wide coding standards and ways of working, see [MSXOrg/docs](https://msxorg.github.io/docs/).
+```
+
+`CLAUDE.md`:
+
+```markdown
+@AGENTS.md
+```
+
+`.github/copilot-instructions.md`:
+
+```markdown
+Follow the instructions in [AGENTS.md](../AGENTS.md).
+```
+
 ## Managed file distribution
 
 Shared repository files are managed through [`PSModule/Distributor`](https://github.com/PSModule/Distributor). Distributor is the source of truth for managed file content and file-set membership.
