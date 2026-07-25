@@ -14,6 +14,8 @@ If you find a problem, fix it if it's small; otherwise, register it as an issue 
       - Create a worktree for all branches - worktree = name of the branch.
    2. <https://github.com/PSModule/memory> — work directly towards main.
       - Simple clone, only main.
+      - This repository is private; cloning requires GitHub credentials with read access to
+        the PSModule organization.
 
 To install:
  Clone the repos in the users home folder under a sub-folder named `.msx/PSModule`.
