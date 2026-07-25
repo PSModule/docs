@@ -140,7 +140,7 @@ Copy-pasteable starters:
 ```md
 # AGENTS
 
-Follow the canonical agent guidance in [PSModule/docs](https://github.com/PSModule/docs).
+Follow the template repository's agent guidance in [PSModule/Template-PSModule](https://github.com/PSModule/Template-PSModule).
 ```
 
 ```md
