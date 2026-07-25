@@ -2,7 +2,11 @@
 
 Standards for implementing and reviewing PowerShell modules in the PSModule organization. These rules apply to modules built with the [PSModule framework](https://github.com/PSModule/Process-PSModule).
 
-For general PowerShell coding standards (naming, style, function structure, documentation, readability, error handling), see [PowerShell Standards](../Standard/index.md). This page covers only module-specific conventions.
+For general PowerShell coding standards (naming, style, function structure, documentation, readability, error handling), see [PowerShell Standards](../PowerShell/Standard/index.md). This page covers only module-specific conventions.
+
+## Supported PowerShell version
+
+PSModule modules support only the latest PowerShell Long Term Support (LTS) release. Do not preserve compatibility with Windows PowerShell 5.1; use language and platform capabilities available in the latest LTS when they improve the implementation.
 
 > **Repo-local config wins.** Repo-level `.github/linters/.powershell-psscriptanalyzer.psd1` and `.github/PSModule.yml` override anything below. This standard fills the gap.
 
@@ -312,7 +316,6 @@ The CI pipeline automatically tests every source file against the following rule
 | `NumberOfProcessors` | Use `[System.Environment]::ProcessorCount`, not `$env:NUMBER_OF_PROCESSORS` |
 | `Verbose` | Do not pass `-Verbose` to commands unless explicitly silenced with `-Verbose:$false` |
 | `OutNull` | Use `$null = ...` instead of `\| Out-Null` |
-| `NoTernary` | No ternary operators — maintain PowerShell 5.1 compatibility |
 | `LowercaseKeywords` | All PowerShell keywords must be lowercase |
 | `FunctionCount` | Each file must contain exactly one function or filter |
 | `FunctionName` | Filename must match the function or filter name |
