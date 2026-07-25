@@ -134,7 +134,8 @@ Every repository must be usable by an agent that has never seen it before, witho
 
 - `AGENTS.md`: the cross-tool entry point, read by the GitHub Copilot coding agent, VS Code, and other AGENTS.md-aware tools. It names what the repository is in a line or two and points to the canonical agent guidance in [`PSModule/docs`](https://github.com/PSModule/docs).
 - `CLAUDE.md`: a thin file that imports `AGENTS.md` with `@AGENTS.md` so Claude Code reads the same instructions. Claude-specific notes, if any, go below the import.
-- `.github/copilot-instructions.md`: repository instructions for VS Code and GitHub Copilot that point to the same documentation.
+
+See [PSModule/Template-PSModule](https://github.com/PSModule/Template-PSModule) for a concrete implementation example of `AGENTS.md` and `CLAUDE.md`.
 
 These files are the agent equivalent of the README: pointers, not copies. Keep them short so the linked documentation stays the single source of truth. Like the other governance files, they live in the repository itself so it can stand on its own.
 
