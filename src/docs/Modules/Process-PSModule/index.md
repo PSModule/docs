@@ -8,6 +8,7 @@ This section documents how module repositories are formed and how they move from
 
 - [Repository Structure](repository-structure.md)
 - [Module Anatomy](module-anatomy.md)
+- [Module Build Validation](module-build-validation.md)
 - [Build, Test, Pack, Publish](build-test-pack-publish.md)
 - [Template Quickstart](template-quickstart.md)
 - [Module Bootstrap](module-bootstrap.md)
