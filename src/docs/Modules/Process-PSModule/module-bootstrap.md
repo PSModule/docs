@@ -28,10 +28,20 @@ gitGraph
     branch build-thing-module
     checkout build-thing-module
     commit id: "load-bearing core"
-    commit id: "core, continued"
+    branch function-a
+    branch function-b
+    checkout function-a
+    commit id: "PR: function A"
+    checkout function-b
+    commit id: "PR: function B"
+    checkout build-thing-module
+    merge function-a
+    merge function-b
     checkout main
     merge build-thing-module id: "v1.0.0"
 ```
+
+`function-a` and `function-b` are independent — both cut from `build-thing-module` and merged back in any order, unlike a stacked pull request where each layer depends on the one before it.
 
 ## Example
 
