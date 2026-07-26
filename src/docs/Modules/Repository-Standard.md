@@ -72,14 +72,13 @@ Module repositories use the PSModule framework layout:
 | `CODE_OF_CONDUCT.md` | Community conduct expectations. |
 | `AGENTS.md` | Agent onboarding entry point. Points agents to the canonical guidance in `PSModule/docs`. |
 | `CLAUDE.md` | Claude Code entry point. Imports `AGENTS.md` so Claude reads the same instructions. |
-| `.github/copilot-instructions.md` | VS Code and GitHub Copilot repository instructions. Points to the same documentation. |
 | `.github/PSModule.yml` | Module workflow configuration overrides. |
 | `.github/workflows/workflow.yml` | Reusable Process-PSModule workflow entry point. |
-| `.github/dependabot.yml` | Dependency and supply-chain update configuration. |
+| `.github/dependabot.yml` | Configures ecosystem-appropriate dependency-update pull requests. For PowerShell module repositories the `github-actions` ecosystem is expected; add any other ecosystems the module actually develops in. |
 | `.github/CODEOWNERS` | Ownership routing for reviews and protected areas. |
-| `.github/pull_request_template.md` | PR Manager-compatible pull request template. |
-| `.gitattributes` | Git line-ending and file handling defaults. |
-| `.gitignore` | Shared ignore rules. |
+| `.github/pull_request_template.md` | Scaffolds pull requests in the MSX PR Format (PR Manager) style — an icon + change-type + user-facing-outcome title, user-facing description sections, an optional technical-details block, and a related-issues block. |
+| `.gitattributes` | Normalizes line endings and declares text/binary handling so the module can be developed and built consistently on Linux, macOS, and Windows. |
+| `.gitignore` | Ignores files that must never be committed, tailored to the PowerShell-module ecosystem: operating-system files, editor and developer-tooling files, PowerShell and Pester test-harness artifacts, and all local build outputs and files created during build and test. |
 | `src/` | Module source compiled into the shipped artifact. |
 | `src/functions/public/` | Exported commands, grouped by domain. |
 | `src/functions/private/` | Internal helper commands, grouped by domain. |
@@ -98,7 +97,7 @@ Detailed source layout rules live in [PowerShell module standard](Standards.md#r
 Every module repository must carry the same baseline community, governance, and automation files. GitHub's organization-level `.github` community-file fallback is useful for display defaults, but it is not enough as the long-term PSModule standard because:
 
 - agents and humans need the files in the repository they are changing, not only inherited through GitHub UI behavior;
-- tools such as Dependabot, linters, CODEOWNERS, and release automation read repository-local files;
+- tools such as Dependabot and CODEOWNERS read repository-local files — as do linters and release automation when the module uses those linters or generates releases;
 - reviews need diffs against the actual managed file in the target repository;
 - repository-local files make the standard portable to other initiatives such as MSXOrg, where each initiative should define its own standards and managed files;
 - central fallback files in `PSModule/.github` do not provide a reliable enforcement or update workflow across all repositories.
@@ -115,16 +114,12 @@ Required baseline files for module repositories:
 | `CODE_OF_CONDUCT.md` | Community participation rules. |
 | `AGENTS.md` | Cross-tool agent instructions pointing to the canonical guidance in `PSModule/docs`. |
 | `CLAUDE.md` | Claude Code entry point that imports `AGENTS.md`. |
-| `.github/copilot-instructions.md` | VS Code and GitHub Copilot repository instructions pointing to the documentation. |
-| `.github/dependabot.yml` | Supply-chain maintenance for GitHub Actions and PowerShell dependencies. |
+| `.github/dependabot.yml` | Configures ecosystem-appropriate dependency-update pull requests. For PowerShell module repositories the `github-actions` ecosystem is expected; add any other ecosystems the module actually develops in. |
 | `.github/CODEOWNERS` | Review routing for source, docs, and GitHub workflow files. |
-| `.github/pull_request_template.md` | Consistent PR Manager-style PR descriptions and change classification. |
-| `.github/release.yml` | Release-note and changelog categorization where the repository creates GitHub releases. |
+| `.github/pull_request_template.md` | Scaffolds pull requests in the MSX PR Format (PR Manager) style — an icon + change-type + user-facing-outcome title, user-facing description sections, an optional technical-details block, and a related-issues block. |
 | `.github/PSModule.yml` | Module workflow defaults and overrides. |
-| `.github/linters/.markdown-lint.yml` | Markdown linting defaults. |
-| `.github/linters/.powershell-psscriptanalyzer.psd1` | PSScriptAnalyzer defaults. |
-| `.gitattributes` | Git attribute defaults. |
-| `.gitignore` | Shared ignore rules. |
+| `.gitattributes` | Normalizes line endings and declares text/binary handling so the module can be developed and built consistently on Linux, macOS, and Windows. |
+| `.gitignore` | Ignores files that must never be committed, tailored to the PowerShell-module ecosystem: operating-system files, editor and developer-tooling files, PowerShell and Pester test-harness artifacts, and all local build outputs and files created during build and test. |
 
 Repositories can add local files, but they should not remove these baseline files unless the repository is explicitly outside the module standard.
 
