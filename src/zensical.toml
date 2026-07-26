@@ -33,6 +33,7 @@ nav = [
       {"Module Anatomy" = "Modules/Process-PSModule/module-anatomy.md"},
       {"Build, Test, Pack, Publish" = "Modules/Process-PSModule/build-test-pack-publish.md"},
       {"Template Quickstart" = "Modules/Process-PSModule/template-quickstart.md"},
+      {"Module Bootstrap" = "Modules/Process-PSModule/module-bootstrap.md"},
     ]},
   ]},
   {"Dictionary" = [
