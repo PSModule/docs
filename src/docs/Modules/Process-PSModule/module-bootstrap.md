@@ -7,9 +7,9 @@ A brand-new module usually has a small **load-bearing core**: the piece(s) every
 What counts as "load-bearing" follows the module's archetype from [Module types](../Module-Types.md):
 
 - **Data modules** — the conversion pivot: `ConvertFrom-<Format>` / `ConvertTo-<Format>` (and whatever parser/serializer they wrap). Every other function (`Import-`, `Export-`, `Format-`, `Merge-`, ...) is built on top of this pivot and is meaningless without it.
-- **Integration (API) modules** — a [`Context`](https://github.com/PSModule/Context)-backed credential/config store, the client setup that uses it, and at least one API function that consumes the context end to end. Every other API function needs the same context and client to do anything.
+- **Integration (API) modules** — a [`Context`](https://github.com/PSModule/Context)-backed credential/config store, the client setup that uses it, and at least one API function that consumes the context end-to-end. Every other API function needs the same context and client to do anything.
 
-Scope the integration branch to exactly that core, not to everything planned for v1. Keeping it to the minimum that "everyone needs" gets a usable release out faster, and lets independent follow-up functions be built in parallel — by different people or agents — as soon as the core is stable enough to build against, even before it merges.
+Scope the integration branch to exactly that core, not to everything planned for v1. Keeping it to the minimum that "everyone needs" gets a usable release out faster, and lets independent follow-up functions be developed in parallel — by different people or agents — as soon as the core is stable enough to build against, even before it merges.
 
 ## Pattern
 
