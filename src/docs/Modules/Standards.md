@@ -311,9 +311,21 @@ Each `*.Tests.ps1` file must declare the Pester 6 requirement:
 #Requires -Modules @{ ModuleName = 'Pester'; ModuleVersion = '6.0.0'; MaximumVersion = '6.*' }
 ```
 
-Tests run against the built module artifact installed locally, across a multi-OS matrix (Linux, macOS, Windows). The full suite must also remain runnable locally without mandatory cloud resources, special access, or secrets that cannot be mocked.
+Tests run against the **built and imported module artifact**, never against source files under `src/`. The Process-PSModule pipeline builds the module first, imports the built module, and only then runs the test matrix, across a multi-OS matrix (Linux, macOS, Windows). Test files must not build or import the module themselves — they assume the module is already imported into the session by the framework (or by the contributor locally, see below) and call its exported commands directly.
 
-Unit tests mock boundaries owned by the module, not third-party APIs or SDKs directly. Wrap external dependencies behind a thin module-owned interface and fake that interface. Where the external contract matters, back the unit tests with a small integration suite that exercises the live dependency.
+The full suite must also remain deterministic and runnable locally without mandatory cloud resources, special access, or secrets that cannot be faked. See [Running tests locally](#running-tests-locally).
+
+**No mocks.** Tests use real inputs and real expected outputs against the actual exported commands — see [Test Specification](Test-Specification.md#5-test-guidelines). Where a command depends on an external system that cannot be exercised in CI (a live third-party API, for example), that dependency is wrapped behind a thin module-owned interface, and a small integration suite exercises the live dependency directly, rather than substituting a mock into the unit tests.
+
+A single consolidated `tests/<ModuleName>.Tests.ps1` file (the **Simple** profile below) is the preferred layout for a module. Only split into the **Standard** or **Advanced** profile when the consolidated file becomes too large or unrelated to read as one suite.
+
+### Running tests locally
+
+1. Build the module: `./build.ps1` (or the repository's equivalent local build entry point under `tools/*.ps1`).
+2. Import the built artifact, not the source: `Import-Module ./output/<ModuleName>/<ModuleName>.psd1 -Force`.
+3. Run the suite: `Invoke-Pester -Path ./tests/ -CI`.
+
+Never run `Invoke-Pester` against `src/` or with the module imported via a source-loading helper — that does not reproduce what CI validates.
 
 ### Shared test infrastructure
 
@@ -321,6 +333,8 @@ Tests run in parallel across multiple OS runners. When integration tests need sh
 
 - `tests/BeforeAll.ps1` — special root workflow phase that runs once before the full test matrix. Create shared resources here.
 - `tests/AfterAll.ps1` — special root workflow phase that runs once after the full test matrix. Remove shared resources here.
+
+`tests/BeforeAll.ps1` is a shared setup entry point owned by the framework, not a place to import or build the module — the framework already guarantees the built module is imported before any test phase runs. Use it only for shared external resources (test fixtures, live service state) that every test file in the matrix depends on.
 
 These exact root files are detected separately and are not recursive test entries. Nested files with these names do not create workflow phases.
 
