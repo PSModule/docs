@@ -107,7 +107,7 @@ Keep related things together so the connection between code and its context is v
 
 - `#Requires -Modules` belongs in the function files that use the dependency, not in a central manifest.
 - Parameter descriptions are `#` comments directly above each parameter in `param()`, not `.PARAMETER` blocks.
-- Tests for a public function live alongside it, not in a separate unrelated folder.
+- Tests follow the same domain boundaries as public source: cover every public command under `tests/`, and align grouped suites with `src/functions/public/<Group>/`.
 
 ### Linear versioning
 
@@ -287,17 +287,42 @@ On abandoned (closed without merge) PRs, the pipeline cleans up any prerelease t
 
 ## Tests
 
-- Pester tests under `tests/`.
-- Filenames: `<ModuleName>.Tests.ps1` or `<Function>.Tests.ps1`.
-- One test file per public command for unit tests; integration tests grouped by scenario.
-- Tests run against the built module artifact installed locally, across a multi-OS matrix (Linux, macOS, Windows).
+Keep Pester tests under `tests/`. Every public command's behavior must be covered, but commands do not require separate test files. The framework's `FunctionTest` check confirms that every public command is referenced somewhere under `tests/`, so a grouped suite satisfies the structural check; the suite must still assert the command's behavior.
+
+The profiles below are repository layout conventions, not Process-PSModule configuration modes. Use the simplest profile that keeps the suite readable:
+
+| Profile | Test layout |
+| ------- | ----------- |
+| **Simple** | One root `tests/<ModuleName>.Tests.ps1` file covers the module. |
+| **Standard** | One root `tests/<Group>.Tests.ps1` file per public function group. Ungrouped commands and cross-cutting scenarios may remain in separate root `*.Tests.ps1` files. |
+| **Advanced** | Organize tests in recursive subdirectories. Process-PSModule discovers each directory independently using the precedence below. |
+
+For the Advanced profile, Process-PSModule traverses `tests/` and every subdirectory. Within each directory:
+
+1. Exactly one `*.Configuration.ps1` file is the only discovered test entry. More than one configuration file in the same directory is an error.
+2. Otherwise, one or more `*.Container.ps1` files are all discovered, and `*.Tests.ps1` files in that directory are ignored.
+3. Otherwise, all `*.Tests.ps1` files in that directory are discovered.
+
+Process-PSModule derives `TestName` from the file's basename before the first dot. For example, `Projects.Unit.Tests.ps1` produces `Projects`. Use a unique first-dot prefix for every discovered entry so matrix jobs and result artifacts are unambiguous.
+
+Each `*.Tests.ps1` file must declare the Pester 6 requirement:
+
+```powershell
+#Requires -Modules @{ ModuleName = 'Pester'; ModuleVersion = '6.0.0'; MaximumVersion = '6.*' }
+```
+
+Tests run against the built module artifact installed locally, across a multi-OS matrix (Linux, macOS, Windows). The full suite must also remain runnable locally without mandatory cloud resources, special access, or secrets that cannot be mocked.
+
+Unit tests mock boundaries owned by the module, not third-party APIs or SDKs directly. Wrap external dependencies behind a thin module-owned interface and fake that interface. Where the external contract matters, back the unit tests with a small integration suite that exercises the live dependency.
 
 ### Shared test infrastructure
 
-Tests run in parallel across multiple OS runners. Provision shared infrastructure once rather than inside each test file:
+Tests run in parallel across multiple OS runners. When integration tests need shared infrastructure, provision it once rather than inside each test file:
 
-- `tests/BeforeAll.ps1` — runs once before the full test matrix. Create shared resources here.
-- `tests/AfterAll.ps1` — runs once after the full test matrix. Remove shared resources here.
+- `tests/BeforeAll.ps1` — special root workflow phase that runs once before the full test matrix. Create shared resources here.
+- `tests/AfterAll.ps1` — special root workflow phase that runs once after the full test matrix. Remove shared resources here.
+
+These exact root files are detected separately and are not recursive test entries. Nested files with these names do not create workflow phases.
 
 Use `$env:GITHUB_RUN_ID` (stable per workflow run, shared across all runners) for deterministic resource names:
 
@@ -321,7 +346,7 @@ The CI pipeline automatically tests every source file against the following rule
 | `FunctionName` | Filename must match the function or filter name |
 | `CmdletBinding` | Every function must have `[CmdletBinding()]` |
 | `ParamBlock` | Every function must have a `param()` block |
-| `FunctionTest` | Every public function must have a corresponding test |
+| `FunctionTest` | Every public function must be referenced by the tests; its behavior must be covered whether the suite is per-command or grouped |
 
 To skip a specific rule for one file only, add a comment at the very top of that file:
 
