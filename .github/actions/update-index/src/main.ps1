@@ -9,7 +9,7 @@
     metadata and regenerating module catalog documentation artifacts.
 
     .EXAMPLE
-    ./Invoke-UpdateIndex.ps1
+    ./main.ps1
 #>
 [CmdletBinding()]
 param()
@@ -29,8 +29,8 @@ LogGroup 'Collect repositories' {
 }
 
 LogGroup 'Skipped generators' {
-    Write-Host 'Update-ActionList is currently disabled in Invoke-UpdateIndex.ps1'
-    Write-Host 'Update-FunctionAppList is currently disabled in Invoke-UpdateIndex.ps1'
+    Write-Host 'Update-ActionList is currently disabled in main.ps1'
+    Write-Host 'Update-FunctionAppList is currently disabled in main.ps1'
 }
 
 LogGroup 'Update module catalog docs' {
