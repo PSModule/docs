@@ -29,7 +29,7 @@ Do not repeat the shared workflow here. Follow the shared branch â†’ draft PR â†
 
    Check:
 
-   - `README.md` still answers the start-page questions and reflects any user-visible behavior, prerequisites, or setup changes from [Repository Defaults](../Repository-Defaults.md#readme-default)
+   - `README.md` still answers the start-page questions and reflects any user-visible behavior, prerequisites, or setup changes from [Repository Standard](../Repository-Standard.md#readme-default)
    - the relevant public command-group overview page (`src/functions/public/<Group>/<Group>.md`) exists or is updated when the change affects that group's purpose or usage, per [PowerShell module standard](../Standards.md#repository-layout)
    - any module-level documentation under `docs/` or other published surfaces is updated when the change adds or changes guidance that should not live only in comment-based help
 
@@ -90,5 +90,5 @@ Do not repeat the shared workflow here. Follow the shared branch â†’ draft PR â†
 - [PowerShell module standard](../Standards.md)
 - [Module types](../Module-Types.md)
 - [Module Anatomy](module-anatomy.md)
-- [Repository Defaults](../Repository-Defaults.md)
+- [Repository Standard](../Repository-Standard.md)
 - [MSX Coding Standards](https://msxorg.github.io/docs/Coding-Standards/)

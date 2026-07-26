@@ -103,4 +103,4 @@ The `Hashtable` module demonstrates the full set: `ConvertFrom-Hashtable`, `Conv
 ## Where this connects
 
 - [PowerShell module standard](Standards.md): layout, private functions, and the mandatory context parameter.
-- [Repository Defaults](Repository-Defaults.md): repository files, README shape, and agent onboarding.
+- [Repository Standard](Repository-Standard.md): repository files, README shape, and agent onboarding.

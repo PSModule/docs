@@ -10,7 +10,7 @@ This section is the local source of truth for:
 
 ## Sections
 
-- [Repository Defaults](Repository-Defaults.md)
+- [Repository Standard](Repository-Standard.md)
 - [Standards](Standards.md)
 - [Module types](Module-Types.md)
 - [Test Specification](Test-Specification.md)

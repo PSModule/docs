@@ -19,7 +19,7 @@ watch = ["includes"]
 nav = [
   {"Modules" = [
     "Modules/index.md",
-    {"Repository Defaults" = "Modules/Repository-Defaults.md"},
+    {"Repository Standard" = "Modules/Repository-Standard.md"},
     {"Standards" = "Modules/Standards.md"},
     {"Module types" = "Modules/Module-Types.md"},
     {"Test Specification" = "Modules/Test-Specification.md"},
