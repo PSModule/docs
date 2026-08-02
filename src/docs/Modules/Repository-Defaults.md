@@ -56,7 +56,7 @@ Custom properties are defined once for the whole organization and set per reposi
 | `Archive` | True/false | No | Set to `true` only when the repository is no longer maintained. |
 | `Upstream` | URL | No | Set when the module wraps, mirrors, or is generated from an upstream project. |
 
-There is no `RepoType` property. Automation and repository search select module repositories with the `props.Type:Module` qualifier, for example `gh search repos --owner PSModule 'props.Type:Module'`.
+Automation and repository search select module repositories with the `props.Type:Module` qualifier, for example `gh search repos --owner PSModule 'props.Type:Module'`.
 
 ## Default branch and worktrees
 
@@ -108,7 +108,7 @@ Detailed source layout rules live in [PowerShell module standard](Standards.md#r
 
 ### Caller workflow and reusable workflow
 
-The module repository owns a caller workflow; the framework owns the reusable workflow it calls. These are two different files in two different repositories, and they must not be confused:
+The module repository owns a caller workflow; the framework owns the reusable workflow it calls. These are two separate files in two separate repositories:
 
 | Role | Repository | File |
 | --- | --- | --- |
@@ -125,7 +125,7 @@ jobs:
       APIKey: ${{ secrets.APIKEY }}
 ```
 
-Name the caller file `Process-PSModule.yml`, matching [`PSModule/Template-PSModule`](https://github.com/PSModule/Template-PSModule) and every existing module repository. `workflow.yml` is the reusable workflow's own filename inside `PSModule/Process-PSModule`; it appears only inside the `uses:` reference, never as a file in the module repository. Pin the reference to a commit SHA with the version tag in a trailing comment so Dependabot can update it.
+Name the caller file `Process-PSModule.yml`, matching [`PSModule/Template-PSModule`](https://github.com/PSModule/Template-PSModule) and every existing module repository. `workflow.yml` is the reusable workflow's own filename inside `PSModule/Process-PSModule` and belongs only in the `uses:` reference. Pin the reference to a commit SHA with the version tag in a trailing comment so Dependabot can update it.
 
 ## Required common files
 
@@ -172,9 +172,9 @@ Every repository must be usable by an agent that has never seen it before, witho
 
 See [PSModule/Template-PSModule](https://github.com/PSModule/Template-PSModule) for a concrete implementation example of `AGENTS.md` and `CLAUDE.md`.
 
-These two files are the required set. `AGENTS.md` is the entry point that AGENTS.md-aware runtimes read directly, so a repository does not need a per-runtime copy of the same pointer to be usable by an agent.
+`AGENTS.md` and `CLAUDE.md` are the required set. `AGENTS.md` is the entry point that AGENTS.md-aware runtimes read directly, so a repository is usable by an agent without a per-runtime copy of the same pointer.
 
-Runtime-specific adapter files such as `.github/copilot-instructions.md` and `.github/instructions/*.instructions.md` are optional, not required. MSX's [agentic development capability](https://msxorg.github.io/docs/Capabilities/agentic-development/spec/) states that such client adapters *may* add runtime-specific loading or path rules, while [Agentic Development](https://msxorg.github.io/docs/Ways-of-Working/Agentic-Development/) describes the per-repository pointer files as `AGENTS.md`, the `CLAUDE.md` that imports it, and path-scoped local-rule adapters. Neither makes a Copilot-specific file mandatory. Add one only when a runtime genuinely needs loading or path rules that `AGENTS.md` cannot express, and keep it pointing at `AGENTS.md` rather than restating it. `Template-PSModule` ships without one.
+Runtime-specific adapter files such as `.github/copilot-instructions.md` and `.github/instructions/*.instructions.md` are optional. MSX treats them as client adapters that *may* add runtime-specific loading or path rules, described in [Agentic Development](https://msxorg.github.io/docs/Ways-of-Working/Agentic-Development/) and its [capability specification](https://msxorg.github.io/docs/Capabilities/agentic-development/spec/). Add one when a runtime needs loading or path rules that `AGENTS.md` cannot express, and keep it pointing at `AGENTS.md` rather than restating it. `Template-PSModule` ships without one.
 
 These files are the agent equivalent of the README: pointers, not copies. Keep them short so the linked documentation stays the single source of truth. Like the other governance files, they live in the repository itself so it can stand on its own.
 
@@ -230,15 +230,13 @@ Repositories with other package ecosystems add them explicitly rather than repla
 
 Dependabot PRs still go through normal review. Automated dependency updates are not a substitute for reviewing release notes, changed permissions, pinned SHAs, or generated lockfiles.
 
-### There is no PowerShell ecosystem yet
+### PowerShell dependencies
 
-Dependabot has no `package-ecosystem` for PowerShell or the PowerShell Gallery today. The valid values are enumerated in Dependabot's own configuration parser ([`common/lib/dependabot/config/file.rb`](https://github.com/dependabot/dependabot-core/blob/main/common/lib/dependabot/config/file.rb)) and listed in the [Dependabot options reference](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#package-ecosystem); neither contains `powershell`.
+Dependabot's valid `package-ecosystem` values are enumerated in its configuration parser ([`common/lib/dependabot/config/file.rb`](https://github.com/dependabot/dependabot-core/blob/main/common/lib/dependabot/config/file.rb)) and listed in the [Dependabot options reference](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#package-ecosystem). Configure only values from that list: `powershell` is not among them, and an unsupported value makes `.github/dependabot.yml` invalid, which puts the repository's whole Dependabot configuration at risk, including the `github-actions` entry that does work.
 
-Configuring `package-ecosystem: powershell` therefore does not produce PowerShell dependency updates — it makes `.github/dependabot.yml` invalid, which puts the repository's whole Dependabot configuration at risk, including the `github-actions` entry that does work. Do not add it before it is actually supported, and do not leave it in a configuration file as a placeholder.
+PowerShell module dependencies are therefore declared with `#Requires -Modules` in the function files that use them, as described in [PowerShell module standard](Standards.md), and the build collects them into the compiled manifest. Keeping those declarations current is a review responsibility.
 
-Support is proposed upstream. [dependabot/dependabot-core#15501](https://github.com/dependabot/dependabot-core/issues/15501) requests the ecosystem, and [dependabot/dependabot-core#15666](https://github.com/dependabot/dependabot-core/pull/15666) implements it for PowerShell's native declarations — `#Requires -Modules` in `.ps1` and `.psm1` files, and `RequiredModules` in a `.psd1` manifest — resolved against the PowerShell Gallery. That pull request is open and unmerged, so nothing changes for module repositories yet. When it ships and `powershell` appears in the options reference, revisit this section together with the `dependabot.yml` that `Template-PSModule` distributes.
-
-Until then, PowerShell module dependencies are declared with `#Requires -Modules` in the function files that use them, as described in [PowerShell module standard](Standards.md), and the build collects them into the compiled manifest. Keeping those declarations current is a review responsibility.
+A PowerShell ecosystem is proposed in [dependabot/dependabot-core#15501](https://github.com/dependabot/dependabot-core/issues/15501) and implemented in [dependabot/dependabot-core#15666](https://github.com/dependabot/dependabot-core/pull/15666), covering PowerShell's native declarations — `#Requires -Modules` in `.ps1` and `.psm1` files, and `RequiredModules` in a `.psd1` manifest — resolved against the PowerShell Gallery. Adopt it once it ships and `powershell` appears in the options reference, updating this section and the `dependabot.yml` that `Template-PSModule` distributes together.
 
 ## README default
 
