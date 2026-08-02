@@ -1,21 +1,23 @@
-# PowerShell module repository defaults
+# Repository Standard
 
-This page defines the default repository contract for PowerShell module repositories in the PSModule organization. It describes what a newly created or maintained module repository should look like before module-specific code, tests, documentation, and managed repository files are considered.
+This is the PSModule organization's Repository Standard. It applies to the PSModule organization and is the standard for PowerShell module repositories. It describes what a newly created or maintained module repository should look like before module-specific code, tests, documentation, and managed repository files are considered.
 
-The implementation standard still lives in [PowerShell module standard](Standards.md). Type-specific conventions for integration (API) and data modules live in [Module types](Module-Types.md). This page covers repository defaults: files, metadata, README shape, release integration, placeholder handling, shared community files, and managed-file distribution.
+This standard operates at the same altitude as the [MSX Enterprise Repository Standard](https://msxorg.github.io/docs/Ways-of-Working/Repository-Standard/): MSX sets the enterprise-wide default, and this standard adds to and adjusts that default for PowerShell module repositories. Rules this standard does not change are inherited from the MSX default; where this standard adds or overrides a rule, it governs PowerShell module repositories.
+
+The implementation standard still lives in [PowerShell module standard](Standards.md). Type-specific conventions for integration (API) and data modules live in [Module types](Module-Types.md). This page covers the repository standard for module repositories: files, metadata, README shape, release integration, placeholder handling, shared community files, and managed-file distribution.
 
 ## Scope
 
-These defaults apply to repositories whose primary artifact is a PowerShell module published through the PSModule framework.
+This standard applies to repositories whose primary artifact is a PowerShell module published through the PSModule framework.
 
-They do not apply directly to:
+It does not apply directly to:
 
 - GitHub Action repositories such as `Build-PSModule`, `Invoke-Pester`, or `Publish-PSModule`.
 - Documentation repositories such as `PSModule/docs`.
 - Template repositories other than `Template-PSModule`.
 - Test, archive, service, or infrastructure repositories that are not published as module artifacts.
 
-Two baseline expectations still apply to every PSModule repository, including the types listed above. Each repository stands on its own: it carries its own governance and community files instead of relying on the organization `.github` fallback, and each repository ships the [agent onboarding files](#agent-onboarding-files) so an agent can work in it without prior context. What differs by type is the concrete file set and layout: the required files, README shape, and framework wiring on the rest of this page are module defaults, and non-module repositories keep only the equivalent baseline appropriate to their own type. This repository, `PSModule/docs`, follows those two baseline expectations itself.
+Two baseline expectations still apply to every PSModule repository, including the types listed above. Each repository stands on its own: it carries its own governance and community files instead of relying on the organization `.github` fallback, and each repository ships the [agent onboarding files](#agent-onboarding-files) so an agent can work in it without prior context. What differs by type is the concrete file set and layout: the required files, README shape, and framework wiring on the rest of this page are the module standard, and non-module repositories keep only the equivalent baseline appropriate to their own type. This repository, `PSModule/docs`, follows those two baseline expectations itself.
 
 Each initiative should keep its own repository standards in its central documentation repository. For the PSModule organization, this repository is the source of truth.
 
@@ -88,11 +90,11 @@ Module repositories use the PSModule framework layout:
 | `.github/workflows/Process-PSModule.yml` | Caller workflow that runs the module's CI/CD by calling the shared Process-PSModule workflow. |
 | `.github/release.yml` | Release-note and changelog categorization for GitHub releases. |
 | `.github/linters/` | Linter configuration used by the framework's linting stage, including `.markdown-lint.yml` and `.powershell-psscriptanalyzer.psd1`. |
-| `.github/dependabot.yml` | Dependency and supply-chain update configuration. |
+| `.github/dependabot.yml` | Configures ecosystem-appropriate dependency-update pull requests. For PowerShell module repositories the `github-actions` ecosystem is expected; add any other ecosystems the module actually develops in. |
 | `.github/CODEOWNERS` | Ownership routing for reviews and protected areas. |
-| `.github/pull_request_template.md` | PR Manager-compatible pull request template. |
-| `.gitattributes` | Git line-ending and file handling defaults. |
-| `.gitignore` | Shared ignore rules. |
+| `.github/pull_request_template.md` | Scaffolds pull requests in the MSX PR Format (PR Manager) style — an icon + change-type + user-facing-outcome title, user-facing description sections, an optional technical-details block, and a related-issues block. |
+| `.gitattributes` | Normalizes line endings and declares text/binary handling so the module can be developed and built consistently on Linux, macOS, and Windows. |
+| `.gitignore` | Ignores files that must never be committed, tailored to the PowerShell-module ecosystem: operating-system files, editor and developer-tooling files, PowerShell and Pester test-harness artifacts, and all local build outputs and files created during build and test. |
 | `src/` | Module source compiled into the shipped artifact. |
 | `src/functions/public/` | Exported commands, grouped by domain. |
 | `src/functions/private/` | Internal helper commands, grouped by domain. |
@@ -132,7 +134,7 @@ Name the caller file `Process-PSModule.yml`, matching [`PSModule/Template-PSModu
 Every module repository must carry the same baseline community, governance, and automation files. GitHub's organization-level `.github` community-file fallback is useful for display defaults, but it is not enough as the long-term PSModule standard because:
 
 - agents and humans need the files in the repository they are changing, not only inherited through GitHub UI behavior;
-- tools such as Dependabot, linters, CODEOWNERS, and release automation read repository-local files;
+- tools such as Dependabot and CODEOWNERS read repository-local files — as do linters and release automation when the module uses those linters or generates releases;
 - reviews need diffs against the actual managed file in the target repository;
 - repository-local files make the standard portable to other initiatives such as MSXOrg, where each initiative should define its own standards and managed files;
 - central fallback files in `PSModule/.github` do not provide a reliable enforcement or update workflow across all repositories.
@@ -149,15 +151,12 @@ Required baseline files for module repositories:
 | `CODE_OF_CONDUCT.md` | Community participation rules. |
 | `AGENTS.md` | Cross-tool agent instructions pointing to the canonical guidance in `PSModule/docs`. |
 | `CLAUDE.md` | Claude Code entry point that imports `AGENTS.md`. |
-| `.github/dependabot.yml` | Supply-chain maintenance for GitHub Actions and any other Dependabot ecosystem the repository actually uses. |
+| `.github/dependabot.yml` | Configures ecosystem-appropriate dependency-update pull requests. For PowerShell module repositories the `github-actions` ecosystem is expected; add any other ecosystems the module actually develops in. |
 | `.github/CODEOWNERS` | Review routing for source, docs, and GitHub workflow files. |
-| `.github/pull_request_template.md` | Consistent PR Manager-style PR descriptions and change classification. |
-| `.github/release.yml` | Release-note and changelog categorization where the repository creates GitHub releases. |
+| `.github/pull_request_template.md` | Scaffolds pull requests in the MSX PR Format (PR Manager) style — an icon + change-type + user-facing-outcome title, user-facing description sections, an optional technical-details block, and a related-issues block. |
 | `.github/PSModule.yml` | Module workflow defaults and overrides. |
-| `.github/linters/.markdown-lint.yml` | Markdown linting defaults. |
-| `.github/linters/.powershell-psscriptanalyzer.psd1` | PSScriptAnalyzer defaults. |
-| `.gitattributes` | Git attribute defaults. |
-| `.gitignore` | Shared ignore rules. |
+| `.gitattributes` | Normalizes line endings and declares text/binary handling so the module can be developed and built consistently on Linux, macOS, and Windows. |
+| `.gitignore` | Ignores files that must never be committed, tailored to the PowerShell-module ecosystem: operating-system files, editor and developer-tooling files, PowerShell and Pester test-harness artifacts, and all local build outputs and files created during build and test. |
 
 Repositories can add local files, but they should not remove these baseline files unless the repository is explicitly outside the module standard.
 
