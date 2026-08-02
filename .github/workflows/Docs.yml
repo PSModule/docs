@@ -95,7 +95,11 @@ jobs:
 
   publish:
     name: Publish
-    needs: [build, lint]
+    # `lint` is deliberately not a dependency. It only runs on `pull_request`, which is exactly when
+    # `publish` must not run, so the edge can never carry a signal. Because a plain `if:` is implicitly
+    # wrapped in `success()`, and `success()` is false when a dependency is skipped, keeping `lint` here
+    # skipped `publish` on every push and schedule. `needs: [build]` still blocks a failed or cancelled build.
+    needs: [build]
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     environment:
