@@ -8,7 +8,7 @@ A module repository in PSModule follows a predictable structure so the framework
 - `tests/`: Pester tests and test helpers
 - `examples/`: usage examples for consumers
 - `icon/`: module icon assets
-- `.github/workflows/`: workflow entrypoint using Process-PSModule
+- `.github/workflows/Process-PSModule.yml`: caller workflow that invokes the reusable `PSModule/Process-PSModule/.github/workflows/workflow.yml`
 - `.github/PSModule.yml`: repository-level framework settings
 
 ## Source layout overview
