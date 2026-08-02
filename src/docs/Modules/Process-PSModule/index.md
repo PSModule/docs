@@ -10,6 +10,7 @@ This section documents how module repositories are formed and how they move from
 - [Module Anatomy](module-anatomy.md)
 - [Module Build Validation](module-build-validation.md)
 - [Build, Test, Pack, Publish](build-test-pack-publish.md)
+- [GitHub App Authentication](github-app-authentication.md)
 - [Template Quickstart](template-quickstart.md)
 - [Module Bootstrap](module-bootstrap.md)
 

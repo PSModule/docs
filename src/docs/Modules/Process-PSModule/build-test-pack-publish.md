@@ -18,4 +18,8 @@ Version progression is label-driven in pull requests and resolved in the plan st
 
 Test and lint stages run before publish gates, and publish is blocked when required checks fail.
 
+## GitHub API authentication
+
+GitHub API interactions in Process-PSModule workflows use GitHub App installation tokens (not `github.token`). For the full permission and scoping model, see [GitHub App Authentication](github-app-authentication.md).
+
 For complete cross-org release capability docs, use [MSX Capabilities](https://msxorg.github.io/docs/Capabilities/).
