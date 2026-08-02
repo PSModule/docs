@@ -37,12 +37,26 @@ After creating the repository:
 Each module repository should have:
 
 - A concise GitHub repository description that starts with or clearly says `A PowerShell module ...`.
-- `RepoType: Module` as the repository custom property.
+- `Type: Module` as the repository custom property.
 - Topics that help users find the module, when relevant.
 - Branch protection and workflow requirements inherited from organization defaults.
 - `main` as the default branch unless there is a documented legacy reason.
 
 The repository description is used as a short landing-page summary in documentation and automation. Keep it user-facing and avoid implementation details.
+
+### Organization custom properties
+
+Custom properties are defined once for the whole organization and set per repository. The organization schema is the source of truth; read it with `gh api /orgs/PSModule/properties/schema` before automating against a property, and update this page when the schema changes.
+
+| Property | Value type | Required | Module repository expectation |
+| --- | --- | --- | --- |
+| `Type` | Single select: `Action`, `Archive`, `Docs`, `Framework`, `FunctionApp`, `Memory`, `Module`, `Other`, `Template`, `Workflow` | Yes, organization default `Other` | `Module`. Set it explicitly after repository creation; a new repository otherwise inherits `Other`. `Template-PSModule` itself is `Template`. |
+| `SubscribeTo` | Multi select: `Custom Instructions`, `Prompts`, `Hooks`, `CODEOWNERS`, `dependabot.yml`, `PSModule Settings`, `Linter Settings`, `gitattributes`, `gitignore`, `License` | No | Opt-in for [managed file distribution](#managed-file-distribution). Select the file types the distribution runtime should own in this repository; leave a type unselected to keep a repository-local version. |
+| `Description` | String | No | Optional machine-readable description for automation that needs it independently of the GitHub repository description. |
+| `Archive` | True/false | No | Set to `true` only when the repository is no longer maintained. |
+| `Upstream` | URL | No | Set when the module wraps, mirrors, or is generated from an upstream project. |
+
+There is no `RepoType` property. Automation and repository search select module repositories with the `props.Type:Module` qualifier, for example `gh search repos --owner PSModule 'props.Type:Module'`.
 
 ## Default branch and worktrees
 
