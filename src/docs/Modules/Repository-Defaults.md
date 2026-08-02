@@ -230,13 +230,15 @@ Repositories with other package ecosystems add them explicitly rather than repla
 
 Dependabot PRs still go through normal review. Automated dependency updates are not a substitute for reviewing release notes, changed permissions, pinned SHAs, or generated lockfiles.
 
-### There is no PowerShell ecosystem
+### There is no PowerShell ecosystem yet
 
-Dependabot has no `package-ecosystem` for PowerShell or the PowerShell Gallery. The valid values are enumerated in Dependabot's own configuration parser ([`common/lib/dependabot/config/file.rb`](https://github.com/dependabot/dependabot-core/blob/main/common/lib/dependabot/config/file.rb)) and listed in the [Dependabot options reference](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#package-ecosystem); neither contains `powershell`.
+Dependabot has no `package-ecosystem` for PowerShell or the PowerShell Gallery today. The valid values are enumerated in Dependabot's own configuration parser ([`common/lib/dependabot/config/file.rb`](https://github.com/dependabot/dependabot-core/blob/main/common/lib/dependabot/config/file.rb)) and listed in the [Dependabot options reference](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#package-ecosystem); neither contains `powershell`.
 
-Configuring `package-ecosystem: powershell` therefore does not produce PowerShell dependency updates — it makes `.github/dependabot.yml` invalid, which puts the repository's whole Dependabot configuration at risk, including the `github-actions` entry that does work. Do not add it, and do not leave it in place as a placeholder for a future capability.
+Configuring `package-ecosystem: powershell` therefore does not produce PowerShell dependency updates — it makes `.github/dependabot.yml` invalid, which puts the repository's whole Dependabot configuration at risk, including the `github-actions` entry that does work. Do not add it before it is actually supported, and do not leave it in a configuration file as a placeholder.
 
-PowerShell module dependencies are declared with `#Requires -Modules` in the function files that use them, as described in [PowerShell module standard](Standards.md), and the build collects them into the compiled manifest. Keeping those declarations current is a review responsibility until Dependabot supports the ecosystem.
+Support is proposed upstream. [dependabot/dependabot-core#15501](https://github.com/dependabot/dependabot-core/issues/15501) requests the ecosystem, and [dependabot/dependabot-core#15666](https://github.com/dependabot/dependabot-core/pull/15666) implements it for PowerShell's native declarations — `#Requires -Modules` in `.ps1` and `.psm1` files, and `RequiredModules` in a `.psd1` manifest — resolved against the PowerShell Gallery. That pull request is open and unmerged, so nothing changes for module repositories yet. When it ships and `powershell` appears in the options reference, revisit this section together with the `dependabot.yml` that `Template-PSModule` distributes.
+
+Until then, PowerShell module dependencies are declared with `#Requires -Modules` in the function files that use them, as described in [PowerShell module standard](Standards.md), and the build collects them into the compiled manifest. Keeping those declarations current is a review responsibility.
 
 ## README default
 
