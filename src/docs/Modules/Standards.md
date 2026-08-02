@@ -49,6 +49,9 @@ Layout rules:
 - **No nested functions.** Do not define helper functions inside other functions. Extract helper logic to a separate function file and decide whether it belongs in `src/functions/private/<Group>/` (internal-only) or `src/functions/public/<Group>/` (part of the module API).
 - **Declare dependencies where they are used.** Use `#Requires -Modules <Name>` at the top of each function file that needs an external module. Do not add `RequiredModules` to `src/manifest.psd1` — the build collects all `#Requires` declarations automatically and writes them into the compiled manifest. Entries in `src/manifest.psd1` are silently ignored for this purpose.
 - **Group documentation pages with source.** Place a `<Group>.md` file alongside the function files in each `src/functions/public/<Group>/` folder to provide a category overview in generated documentation.
+- **Point `.LINK` at the grouped page.** A public command's generated page is published under its group, so its canonical URL is `https://psmodule.io/<Module>/Functions/<Group>/<Name>/`. Every command's first `.LINK` uses that form, and each private helper links the public command it serves. `Test-PSModule` enforces it as `PublicHelpLink`.
+
+Grouping an existing module changes those URLs. Moving a command into a group folder moves its generated page, so every `.LINK` in the module — the public commands and all the private helpers pointing at them — must be updated in the same change, and any published reference to the old flat `Functions/<Name>/` address stops resolving. Treat the link update and any redirect as part of the regrouping, not as follow-up work.
 
 ## Module naming
 
