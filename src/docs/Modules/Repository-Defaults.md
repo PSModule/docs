@@ -198,31 +198,45 @@ This page defines the required target state (the file requirements). Runtime mig
 
 Every module repository must include `.github/dependabot.yml`. Dependabot is part of the repository supply-chain control, not an optional convenience.
 
-Module repositories should configure at least:
+Configure the `github-actions` ecosystem. It keeps the pinned actions current, including the pinned `PSModule/Process-PSModule` reference in the [caller workflow](#caller-workflow-and-reusable-workflow). This is what [`PSModule/Template-PSModule`](https://github.com/PSModule/Template-PSModule) ships, and it is the default for new repositories:
 
 ```yaml
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
+  - package-ecosystem: github-actions
+    directory: /
     labels:
-      - "dependencies"
-      - "github-actions"
-
-  - package-ecosystem: "powershell"
-    directory: "/"
+      - dependencies
+      - github-actions
     schedule:
-      interval: "weekly"
-    labels:
-      - "dependencies"
-      - "powershell"
+      interval: daily
+    cooldown:
+      default-days: 7
 ```
 
-The GitHub Actions ecosystem keeps pinned actions current. The PowerShell ecosystem keeps PowerShell dependency declarations current where Dependabot supports them. Repositories with additional package ecosystems should add them explicitly rather than replacing these defaults.
+Add `nuget` when the module ships or builds against .NET dependencies, as [`PSModule/Sodium`](https://github.com/PSModule/Sodium) does:
+
+```yaml
+  - package-ecosystem: nuget
+    directory: /
+    labels:
+      - dependencies
+      - .NET
+    schedule:
+      interval: weekly
+```
+
+Repositories with other package ecosystems add them explicitly rather than replacing the `github-actions` entry. Older repositories still use a weekly interval without a cooldown; align them with the template default when the file is touched anyway.
 
 Dependabot PRs still go through normal review. Automated dependency updates are not a substitute for reviewing release notes, changed permissions, pinned SHAs, or generated lockfiles.
+
+### There is no PowerShell ecosystem
+
+Dependabot has no `package-ecosystem` for PowerShell or the PowerShell Gallery. The valid values are enumerated in Dependabot's own configuration parser ([`common/lib/dependabot/config/file.rb`](https://github.com/dependabot/dependabot-core/blob/main/common/lib/dependabot/config/file.rb)) and listed in the [Dependabot options reference](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#package-ecosystem); neither contains `powershell`.
+
+Configuring `package-ecosystem: powershell` therefore does not produce PowerShell dependency updates — it makes `.github/dependabot.yml` invalid, which puts the repository's whole Dependabot configuration at risk, including the `github-actions` entry that does work. Do not add it, and do not leave it in place as a placeholder for a future capability.
+
+PowerShell module dependencies are declared with `#Requires -Modules` in the function files that use them, as described in [PowerShell module standard](Standards.md), and the build collects them into the compiled manifest. Keeping those declarations current is a review responsibility until Dependabot supports the ecosystem.
 
 ## README default
 
