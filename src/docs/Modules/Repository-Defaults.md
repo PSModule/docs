@@ -86,7 +86,9 @@ Module repositories use the PSModule framework layout:
 | `CLAUDE.md` | Claude Code entry point. Imports `AGENTS.md` so Claude reads the same instructions. |
 | `.github/copilot-instructions.md` | VS Code and GitHub Copilot repository instructions. Points to the same documentation. |
 | `.github/PSModule.yml` | Module workflow configuration overrides. |
-| `.github/workflows/workflow.yml` | Reusable Process-PSModule workflow entry point. |
+| `.github/workflows/Process-PSModule.yml` | Caller workflow that runs the module's CI/CD by calling the shared Process-PSModule workflow. |
+| `.github/release.yml` | Release-note and changelog categorization for GitHub releases. |
+| `.github/linters/` | Linter configuration used by the framework's linting stage, including `.markdown-lint.yml` and `.powershell-psscriptanalyzer.psd1`. |
 | `.github/dependabot.yml` | Dependency and supply-chain update configuration. |
 | `.github/CODEOWNERS` | Ownership routing for reviews and protected areas. |
 | `.github/pull_request_template.md` | PR Manager-compatible pull request template. |
@@ -104,6 +106,27 @@ Module repositories use the PSModule framework layout:
 | `icon/` | Module icon assets. |
 
 Detailed source layout rules live in [PowerShell module standard](Standards.md#repository-layout).
+
+### Caller workflow and reusable workflow
+
+The module repository owns a caller workflow; the framework owns the reusable workflow it calls. These are two different files in two different repositories, and they must not be confused:
+
+| Role | Repository | File |
+| --- | --- | --- |
+| Caller workflow | The module repository | `.github/workflows/Process-PSModule.yml` |
+| Reusable workflow | [`PSModule/Process-PSModule`](https://github.com/PSModule/Process-PSModule) | `.github/workflows/workflow.yml` |
+
+The caller workflow declares the triggers, concurrency, and permissions for the module repository, and delegates the work:
+
+```yaml
+jobs:
+  Process-PSModule:
+    uses: PSModule/Process-PSModule/.github/workflows/workflow.yml@<commit-sha> # <version tag>
+    secrets:
+      APIKey: ${{ secrets.APIKEY }}
+```
+
+Name the caller file `Process-PSModule.yml`, matching [`PSModule/Template-PSModule`](https://github.com/PSModule/Template-PSModule) and every existing module repository. `workflow.yml` is the reusable workflow's own filename inside `PSModule/Process-PSModule`; it appears only inside the `uses:` reference, never as a file in the module repository. Pin the reference to a commit SHA with the version tag in a trailing comment so Dependabot can update it.
 
 ## Required common files
 
