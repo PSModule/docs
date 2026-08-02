@@ -84,7 +84,6 @@ Module repositories use the PSModule framework layout:
 | `CODE_OF_CONDUCT.md` | Community conduct expectations. |
 | `AGENTS.md` | Agent onboarding entry point. Points agents to the canonical guidance in `PSModule/docs`. |
 | `CLAUDE.md` | Claude Code entry point. Imports `AGENTS.md` so Claude reads the same instructions. |
-| `.github/copilot-instructions.md` | VS Code and GitHub Copilot repository instructions. Points to the same documentation. |
 | `.github/PSModule.yml` | Module workflow configuration overrides. |
 | `.github/workflows/Process-PSModule.yml` | Caller workflow that runs the module's CI/CD by calling the shared Process-PSModule workflow. |
 | `.github/release.yml` | Release-note and changelog categorization for GitHub releases. |
@@ -150,8 +149,7 @@ Required baseline files for module repositories:
 | `CODE_OF_CONDUCT.md` | Community participation rules. |
 | `AGENTS.md` | Cross-tool agent instructions pointing to the canonical guidance in `PSModule/docs`. |
 | `CLAUDE.md` | Claude Code entry point that imports `AGENTS.md`. |
-| `.github/copilot-instructions.md` | VS Code and GitHub Copilot repository instructions pointing to the documentation. |
-| `.github/dependabot.yml` | Supply-chain maintenance for GitHub Actions and PowerShell dependencies. |
+| `.github/dependabot.yml` | Supply-chain maintenance for GitHub Actions and any other Dependabot ecosystem the repository actually uses. |
 | `.github/CODEOWNERS` | Review routing for source, docs, and GitHub workflow files. |
 | `.github/pull_request_template.md` | Consistent PR Manager-style PR descriptions and change classification. |
 | `.github/release.yml` | Release-note and changelog categorization where the repository creates GitHub releases. |
@@ -173,6 +171,10 @@ Every repository must be usable by an agent that has never seen it before, witho
 - `CLAUDE.md`: a thin file that imports `AGENTS.md` with `@AGENTS.md` so Claude Code reads the same instructions. Claude-specific notes, if any, go below the import.
 
 See [PSModule/Template-PSModule](https://github.com/PSModule/Template-PSModule) for a concrete implementation example of `AGENTS.md` and `CLAUDE.md`.
+
+These two files are the required set. `AGENTS.md` is the entry point that AGENTS.md-aware runtimes read directly, so a repository does not need a per-runtime copy of the same pointer to be usable by an agent.
+
+Runtime-specific adapter files such as `.github/copilot-instructions.md` and `.github/instructions/*.instructions.md` are optional, not required. MSX's [agentic development capability](https://msxorg.github.io/docs/Capabilities/agentic-development/spec/) states that such client adapters *may* add runtime-specific loading or path rules, while [Agentic Development](https://msxorg.github.io/docs/Ways-of-Working/Agentic-Development/) describes the per-repository pointer files as `AGENTS.md`, the `CLAUDE.md` that imports it, and path-scoped local-rule adapters. Neither makes a Copilot-specific file mandatory. Add one only when a runtime genuinely needs loading or path rules that `AGENTS.md` cannot express, and keep it pointing at `AGENTS.md` rather than restating it. `Template-PSModule` ships without one.
 
 These files are the agent equivalent of the README: pointers, not copies. Keep them short so the linked documentation stays the single source of truth. Like the other governance files, they live in the repository itself so it can stand on its own.
 
