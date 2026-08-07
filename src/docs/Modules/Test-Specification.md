@@ -4,6 +4,8 @@
 
 This document defines the structure and guidelines for writing Pester tests for PowerShell functions. The goal is to ensure consistency and comprehensive test coverage while maintaining clarity.
 
+Tests run against the **built and imported module**, not against source files, and test files do not bootstrap or import the module themselves. See [Standards § Tests](Standards.md#tests) for the full process: file layout, running tests locally, and the no-mocks rule.
+
 ## Test Structure
 
 Each function is tested within a structured Pester `Describe` block that follows this hierarchy:
