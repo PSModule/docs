@@ -1,4 +1,23 @@
-﻿Import-Module -Name (Join-Path $PSScriptRoot 'Helper.psm1')
+﻿#Requires -Version 7.0
+
+<#
+    .SYNOPSIS
+    Updates generated index content for the docs repository.
+
+    .DESCRIPTION
+    Orchestrates the update-index action flow by collecting organization repository
+    metadata and regenerating module catalog documentation artifacts.
+
+    .EXAMPLE
+    ./main.ps1
+#>
+[CmdletBinding()]
+param()
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+Import-Module -Name (Join-Path $PSScriptRoot 'update-index.Helpers.psm1')
 
 LogGroup 'Initialize update-index run' {
     Write-Host "Starting update-index in [$PSScriptRoot]"

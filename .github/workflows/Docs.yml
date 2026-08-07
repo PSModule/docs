@@ -9,16 +9,21 @@ on:
       - main
     paths:
       - src/**
+      - .github/scripts/**
       - .github/actions/update-index/**
       - .github/workflows/Docs.yml
-      - .github/workflows/Update-Index.yml
   pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
     branches:
       - main
     paths:
       - src/**
+      - .github/scripts/**
       - .github/workflows/Docs.yml
-      - .github/workflows/Update-Index.yml
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -30,7 +35,7 @@ permissions:
 jobs:
   lint:
     name: Lint
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -59,16 +64,28 @@ jobs:
           VALIDATE_YAML_PRETTIER: false
           VALIDATE_HTML_PRETTIER: false
 
-  build:
-    name: Build
+  publish:
+    name: Publish
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: https://psmodule.io/docs/
     permissions:
-      contents: read
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
+
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.SCRIBBLER_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.SCRIBBLER_BOT_PRIVATE_KEY }}
+          permission-contents: write
 
       - name: Update index
         uses: ./.github/actions/update-index
@@ -88,27 +105,128 @@ jobs:
         run: zensical build --clean
         working-directory: src
 
-      - name: Upload pages artifact
-        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
-        with:
-          path: src/site
+      - name: Publish live docs
+        id: publish-live
+        shell: pwsh
+        env:
+          REPOSITORY: ${{ github.repository }}
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          ./.github/scripts/docs/Publish-LiveDocs.ps1 `
+            -Repository $env:REPOSITORY `
+            -Token $env:APP_TOKEN `
+            -BuildDirectory "$PWD/src/site" `
+            -CommitSha $env:COMMIT_SHA
 
-  publish:
-    name: Publish
-    needs: [build, lint]
-    if: github.event_name != 'pull_request'
+  preview:
+    name: Preview
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    needs: [lint]
     runs-on: ubuntu-24.04
     environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      name: pr-preview-${{ github.event.number }}
+      url: ${{ steps.preview-url.outputs.url }}
     permissions:
-      contents: read
-      pages: write # deploy to GitHub Pages
-      id-token: write # OIDC token for actions/deploy-pages
+      contents: write
+      deployments: write
+      issues: write
+    env:
+      PREVIEW_URL: https://psmodule.io/docs/previews/pr-${{ github.event.number }}/
     steps:
-      - name: Configure pages
-        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
-        id: deployment
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.SCRIBBLER_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.SCRIBBLER_BOT_PRIVATE_KEY }}
+          permission-contents: write
+          permission-issues: write
+
+      - name: Update index
+        uses: ./.github/actions/update-index
+        with:
+          ClientID: ${{ secrets.SCRIBBLER_BOT_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
+          PrivateKey: ${{ secrets.SCRIBBLER_BOT_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: 3.x
+
+      - name: Install Zensical
+        run: pip install zensical
+
+      - name: Build preview site
+        shell: pwsh
+        env:
+          PREVIEW_SITE_URL: ${{ env.PREVIEW_URL }}
+        run: |
+          ./.github/scripts/docs/Set-ZensicalSiteUrl.ps1 -ConfigPath "$PWD/zensical.toml" -SiteUrl $env:PREVIEW_SITE_URL
+          zensical build --clean
+        working-directory: src
+
+      - name: Publish preview docs
+        id: preview-url
+        shell: pwsh
+        env:
+          REPOSITORY: ${{ github.repository }}
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_NUMBER: ${{ github.event.number }}
+          PREVIEW_SITE_URL: ${{ env.PREVIEW_URL }}
+        run: |
+          ./.github/scripts/docs/Publish-PreviewDocs.ps1 `
+            -Repository $env:REPOSITORY `
+            -Token $env:APP_TOKEN `
+            -PullRequestNumber $env:PR_NUMBER `
+            -PreviewUrl $env:PREVIEW_SITE_URL `
+            -BuildDirectory "$PWD/src/site"
+
+  preview-cleanup:
+    name: Preview cleanup
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      deployments: write
+      issues: write
+    env:
+      PREVIEW_URL: https://psmodule.io/docs/previews/pr-${{ github.event.number }}/
+      PREVIEW_ENVIRONMENT: pr-preview-${{ github.event.number }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.SCRIBBLER_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.SCRIBBLER_BOT_PRIVATE_KEY }}
+          permission-administration: write
+          permission-contents: write
+          permission-deployments: write
+          permission-issues: write
+
+      - name: Cleanup preview resources
+        shell: pwsh
+        env:
+          REPOSITORY: ${{ github.repository }}
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_NUMBER: ${{ github.event.number }}
+          PREVIEW_SITE_URL: ${{ env.PREVIEW_URL }}
+          PREVIEW_ENV: ${{ env.PREVIEW_ENVIRONMENT }}
+        run: |
+          ./.github/scripts/docs/Cleanup-PreviewDocs.ps1 `
+            -Repository $env:REPOSITORY `
+            -Token $env:APP_TOKEN `
+            -PullRequestNumber $env:PR_NUMBER `
+            -PreviewUrl $env:PREVIEW_SITE_URL `
+            -EnvironmentName $env:PREVIEW_ENV

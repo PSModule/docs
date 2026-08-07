@@ -1,0 +1,89 @@
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+function Invoke-Git {
+    <#
+        .SYNOPSIS
+        Executes a git command and optionally allows non-zero exits.
+    #>
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$Arguments,
+        [switch]$AllowFailure
+    )
+
+    & git @Arguments
+    $exitCode = $LASTEXITCODE
+    if ($exitCode -ne 0 -and -not $AllowFailure) {
+        throw "git $($Arguments -join ' ') failed with exit code $exitCode."
+    }
+
+    return $exitCode
+}
+
+function Write-WorkflowOutput {
+    <#
+        .SYNOPSIS
+        Writes a named value to the GitHub Actions output file.
+    #>
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Name,
+        [Parameter(Mandatory = $true)]
+        [string]$Value
+    )
+
+    if (-not $env:GITHUB_OUTPUT) {
+        throw 'GITHUB_OUTPUT is not defined.'
+    }
+
+    "$Name=$Value" >> $env:GITHUB_OUTPUT
+}
+
+function Invoke-Gh {
+    <#
+        .SYNOPSIS
+        Executes a gh command and optionally allows non-zero exits.
+    #>
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$Arguments,
+        [switch]$AllowFailure
+    )
+
+    $output = & gh @Arguments
+    $exitCode = $LASTEXITCODE
+    if ($exitCode -ne 0 -and -not $AllowFailure) {
+        throw "gh $($Arguments -join ' ') failed with exit code $exitCode."
+    }
+
+    return $output
+}
+
+function Write-IssueComment {
+    <#
+        .SYNOPSIS
+        Creates or updates a marker-based issue/PR comment.
+    #>
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Repository,
+        [Parameter(Mandatory = $true)]
+        [int]$IssueNumber,
+        [Parameter(Mandatory = $true)]
+        [string]$Marker,
+        [Parameter(Mandatory = $true)]
+        [string]$Body
+    )
+
+    $commentsJson = Invoke-Gh -Arguments @('api', "repos/$Repository/issues/$IssueNumber/comments?per_page=100")
+    $comments = @($commentsJson | ConvertFrom-Json)
+    $existing = $comments | Where-Object { $_.body -like "*$Marker*" } | Select-Object -First 1
+
+    if ($null -ne $existing) {
+        Invoke-Gh -Arguments @('api', '--method', 'PATCH', "repos/$Repository/issues/comments/$($existing.id)", '-f', "body=$Body") | Out-Null
+        return
+    }
+
+    Invoke-Gh -Arguments @('api', '--method', 'POST', "repos/$Repository/issues/$IssueNumber/comments", '-f', "body=$Body") | Out-Null
+}
